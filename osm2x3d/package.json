@@ -1,0 +1,25 @@
+{
+  "name": "osm2x3d",
+  "description": "osm2x3d ==============",
+  "version": "0.0.7",
+  "dependencies": {
+    "node-expat": "",
+    "body-parser": "~1.0.0",
+    "rgbcolor": "0.0.4"
+  },
+  "main": "./osmx3d.js",
+  "scripts": {
+    "test": "osm2x3dTester.sh"
+  },
+  "author": "Clement IGONET <clement@igonet.fr>",
+  "keywords": [],
+  "licenses": {
+    "type": "gpl30"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.framasoft.org:pizaninja/OpenEarthView.git"
+  },
+  "devDependencies": {},
+  "license": "BSD"
+}
