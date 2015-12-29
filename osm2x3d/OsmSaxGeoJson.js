@@ -108,9 +108,9 @@ var geoBld = {
 
 function convert(onConvert) {
     "use strict";
-    var saxStream = sax.createStream(true);
-    saxStream.on("error", function (e) {
-        console.error("error!", e);
+    var xmlStream = sax.createStream(true);
+    xmlStream.on('error', function (error) {
+        console.error("error!", error);
         this._parser.error = null;
         this._parser.resume();
     });
@@ -122,15 +122,16 @@ function convert(onConvert) {
             onRelation = false;
     var way = {};
     var relation = {};
-    saxStream.on("opentag", function (node) {
-        if (node.name === 'node') {
-            var id = node.attributes.id;
-            var lat = node.attributes.lat;
-            var lon = node.attributes.lon;
+    xmlStream.on('opentag', function (node) {
+        var name = node.name, attributes = node.attributes;
+        if (name === 'node') {
+            var id = attributes.id;
+            var lat = attributes.lat;
+            var lon = attributes.lon;
             nodeMap[id] = [+lon, +lat];
-        } else if (node.name === 'way') {
+        } else if (name === 'way') {
             way.nodes = [];
-            way.id = node.attributes.id;
+            way.id = attributes.id;
             way.isBld = false;
             way.name = undefined;
             way.color = undefined;
@@ -141,34 +142,34 @@ function convert(onConvert) {
             way.roofHeight = undefined;
             way.roofShape = "flat";
             onWay = true;
-        } else if (node.name === 'nd' && onWay) {
-            if (!nodeMap.hasOwnProperty(node.attributes.ref)) {
-                console.log("ERROR: Cannot link way to this node: " + node.attributes.ref);
+        } else if (name === 'nd' && onWay) {
+            if (!nodeMap.hasOwnProperty(attributes.ref)) {
+                console.log("ERROR: Cannot link way to this node: " + attributes.ref);
             } else {
-                way.nodes[way.nodes.length] = nodeMap[node.attributes.ref];
+                way.nodes[way.nodes.length] = nodeMap[attributes.ref];
             }
-        } else if (node.name === 'tag' && onWay) {
-            if (node.attributes.k === 'building') {
+        } else if (name === 'tag' && onWay) {
+            if (attributes.k === 'building') {
                 way.isBld = true;
-            } else if (node.attributes.k === 'building:levels') {
-                way.bldLevels = node.attributes.v;
-            } else if (node.attributes.k === 'building:min_level') {
-                way.bldMinLevel = node.attributes.V;
-            } else if (node.attributes.k === 'height') {
-                way.osmBldPartHeight = heightToMeter(node.attributes.v);
-            } else if (node.attributes.k === 'min_height') {
-                way.minHeight = heightToMeter(node.attributes.v);
-            } else if (node.attributes.k === 'name') {
-                way.name = node.attributes.v;
-            } else if (node.attributes.k === 'building:colour') {
-                way.color = node.attributes.v;
-            } else if (node.attributes.k === 'roof:shape') {
-                way.roofShape = node.attributes.v;
-            } else if (node.attributes.k === 'roof:height') {
-                way.roofHeight = node.attributes.v;
+            } else if (attributes.k === 'building:levels') {
+                way.bldLevels = attributes.v;
+            } else if (attributes.k === 'building:min_level') {
+                way.bldMinLevel = attributes.V;
+            } else if (attributes.k === 'height') {
+                way.osmBldPartHeight = heightToMeter(attributes.v);
+            } else if (attributes.k === 'min_height') {
+                way.minHeight = heightToMeter(attributes.v);
+            } else if (attributes.k === 'name') {
+                way.name = attributes.v;
+            } else if (attributes.k === 'building:colour') {
+                way.color = attributes.v;
+            } else if (attributes.k === 'roof:shape') {
+                way.roofShape = attributes.v;
+            } else if (attributes.k === 'roof:height') {
+                way.roofHeight = attributes.v;
             }
-        } else if (node.name === 'relation') {
-            relation.id = node.attributes.id;
+        } else if (name === 'relation') {
+            relation.id = attributes.id;
             relation.isBld = false;
             relation.osmBldPartHeight = undefined;
             relation.minHeight = undefined;
@@ -176,33 +177,33 @@ function convert(onConvert) {
             relation.pptRoofHeight = undefined;
             relation.roofShape = 'flat';
             onRelation = true;
-        } else if (onRelation && node.name === 'member' && node.attributes.type === 'way') {
-            if (node.attributes.ref in geoBldParts) {
+        } else if (onRelation && name === 'member' && attributes.type === 'way') {
+            if (attributes.ref in geoBldParts) {
                 var geoBld = getGeoBuilding(relation.id);
-                geoBld.features[geoBld.features.length] = geoBldParts[node.attributes.ref];
-                if (geoRoofs[node.attributes.ref]) {
-                    geoBld.features[geoBld.features.length] = geoRoofs[node.attributes.ref];
+                geoBld.features[geoBld.features.length] = geoBldParts[attributes.ref];
+                if (geoRoofs[attributes.ref]) {
+                    geoBld.features[geoBld.features.length] = geoRoofs[attributes.ref];
                 }
             }
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'name') {
-            relation.name = node.attributes.v;
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'building:part' && node.attributes.v === 'yes') {
+        } else if (onRelation && name === 'tag' && attributes.k === 'name') {
+            relation.name = attributes.v;
+        } else if (onRelation && name === 'tag' && attributes.k === 'building:part' && attributes.v === 'yes') {
             relation.isBld = true;
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'building' && node.attributes.v === 'yes') {
+        } else if (onRelation && name === 'tag' && attributes.k === 'building' && attributes.v === 'yes') {
             relation.isBld = true;
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'type' && node.attributes.v === 'building') {
+        } else if (onRelation && name === 'tag' && attributes.k === 'type' && attributes.v === 'building') {
             relation.isBld = true;
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'height') {
-            relation.osmBldPartHeight = heightToMeter(node.attributes.v);
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'min_height') {
-            relation.minHeight = heightToMeter(node.attributes.v);
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'roof:shape') {
-            relation.roofShape = node.attributes.v;
-        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'roof:height') {
-            relation.optRoofHeight = node.attributes.v;
+        } else if (onRelation && name === 'tag' && attributes.k === 'height') {
+            relation.osmBldPartHeight = heightToMeter(attributes.v);
+        } else if (onRelation && name === 'tag' && attributes.k === 'min_height') {
+            relation.minHeight = heightToMeter(attributes.v);
+        } else if (onRelation && name === 'tag' && attributes.k === 'roof:shape') {
+            relation.roofShape = attributes.v;
+        } else if (onRelation && name === 'tag' && attributes.k === 'roof:height') {
+            relation.optRoofHeight = attributes.v;
         }
     });
-    saxStream.on("closetag", function (name) {
+    xmlStream.on('closetag', function (name) {
         if (name === 'way') {
             onWay = false;
             if (way.roofShape) {
@@ -277,7 +278,7 @@ function convert(onConvert) {
             }
         }
     });
-    return saxStream;
+    return xmlStream;
 }
 
 // Functions which will be available to external callers

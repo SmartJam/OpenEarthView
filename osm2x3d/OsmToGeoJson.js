@@ -108,7 +108,10 @@ var geoBld = {
 
 function convert(onConvert) {
     "use strict";
-    var parser = new expat.Parser('UTF-8');
+    var xmlStream = new expat.Parser('UTF-8');
+    xmlStream.on('error', function (error) {
+        console.error("error!", error);
+    })
     var blocks = [],
             geoBldParts = {},
             geoRoofs = {},
@@ -117,7 +120,7 @@ function convert(onConvert) {
             onRelation = false;
     var way = {};
     var relation = {};
-    parser.on('startElement', function (name, attributes) {
+    xmlStream.on('startElement', function (name, attributes) {
         if (name === 'node') {
             var id = attributes.id;
             var lat = attributes.lat;
@@ -197,7 +200,7 @@ function convert(onConvert) {
             relation.optRoofHeight = attributes.v;
         }
     });
-    parser.on('endElement', function (name) {
+    xmlStream.on('endElement', function (name) {
         if (name === 'way') {
             onWay = false;
             if (way.roofShape) {
@@ -272,7 +275,7 @@ function convert(onConvert) {
             }
         }
     });
-    return parser;
+    return xmlStream;
 }
 
 // Functions which will be available to external callers
