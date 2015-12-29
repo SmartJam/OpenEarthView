@@ -3,7 +3,7 @@
   "description": "osm2x3d ==============",
   "version": "0.0.7",
   "dependencies": {
-    "node-expat": "",
+    "sax": "",
     "body-parser": "~1.0.0",
     "rgbcolor": "0.0.4"
   },
@@ -13,13 +13,10 @@
   },
   "author": "Clement IGONET <clement@igonet.fr>",
   "keywords": [],
-  "licenses": {
-    "type": "gpl30"
-  },
   "repository": {
     "type": "git",
     "url": "git@git.framasoft.org:pizaninja/OpenEarthView.git"
   },
   "devDependencies": {},
-  "license": "BSD"
+  "license": "LGPL-3.0"
 }

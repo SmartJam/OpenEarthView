@@ -4,20 +4,28 @@
 
 //var OsmGround = require('./OsmGround');
 // info: https://www.npmjs.com/package/geolib
-
+var util = require('util');
+var stream = require('stream');
 var RGBColor = require('rgbcolor');
+var sax = require("sax");
 
 function getRGB(osmColor) {
-    var hexRGB = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(osmColor);
-    if (hexRGB) {
-        return "rgb("
-                + (parseInt(result[1], 16)) + ","
-                + (parseInt(result[2], 16)) + ","
-                + (parseInt(result[3], 16)) + ")";
-    }
-    var color = new RGBColor(osmColor);
-    if (color.ok) {
-        return color.toRGB();
+//    console.log("osmColor: " + osmColor);
+//    #9D9E99
+    if (osmColor) {
+        var hexRGB = /^#?([a-fA-F\d]{2})([a-fA-F\d]{2})([a-fA-F\d]{2})$/i.exec(osmColor);
+//        console.log("hexRGB: " + JSON.stringify(hexRGB));
+        if (hexRGB) {
+            return "rgb("
+                    + (parseInt(hexRGB[1], 16)) + ","
+                    + (parseInt(hexRGB[2], 16)) + ","
+                    + (parseInt(hexRGB[3], 16)) + ")";
+        }
+//        console.log("osmColor: " + osmColor);
+        var color = new RGBColor(osmColor);
+        if (color.ok) {
+            return color.toRGB();
+        }
     }
     return "rgb(0,0,0)";
 }
@@ -53,6 +61,26 @@ function getGeoBuilding(id) {
     }
     return geoBlds[id];
 }
+
+//function getGeoBound(bounds) {
+//    "use strict";
+//    return {
+//        "type": "Feature",
+//        "bbox": [bounds.minlon, bounds.minlat, bounds.maxlon, bounds.maxlat],
+//        "geometry": {
+//            "type": "Polygon",
+//            "coordinates": [[
+//                    [bounds.minlon, bounds.minlat],
+//                    [bounds.maxlon, bounds.minlat],
+//                    [bounds.maxlon, bounds.maxlat],
+//                    [bounds.minlon, bounds.maxlat]
+//                ]]
+//        },
+//        properties: {
+//            "type": "bounds"
+//        }
+//    }
+//}
 
 function removeBuilding(id) {
     "use strict";
@@ -109,47 +137,37 @@ var geoBld = {
     }
 };
 
-function convert(osmInputStream, geoJsonOutputStream, onBlock) {
+function convert(onConvert) {
     "use strict";
-
-    var geoJsonOS = geoJsonOutputStream,
+    var saxStream = sax.createStream(true);
+    saxStream.on("error", function (e) {
+        console.error("error!", e);
+        this._parser.error = null;
+        this._parser.resume();
+    });
+    var blocks = [],
             expat = require('node-expat'),
             parser = new expat.Parser('UTF-8'),
             geoBldParts = {},
             geoRoofs = {},
             nodeMap = {},
-            onOsm = false,
             onWay = false,
             onRelation = false;
     var way = {};
     var relation = {};
-    parser.on('startElement', function (name, attrs) {
-        if (name === 'osm') {
-            onOsm = true;
-        }
-
-        if (name === 'bounds' && onOsm) {
-            var bounds = attrs;
-//      console.log(name, attrs)
-//      console.log(bounds);
-            var minBound = [
-                +bounds.minlon,
-                +bounds.minlat
-            ];
-            var maxBound = [
-                +bounds.maxlon,
-                +bounds.maxlat
-            ];
-//            console.log(minBound, maxBound);
-        } else if (name === 'node') {
-            var id = attrs.id;
-            var lat = attrs.lat;
-            var lon = attrs.lon;
+    saxStream.on("opentag", function (node) {
+//    parser.on('startElement', function (name, attrs) {
+        if (node.name === 'node') {
+//            console.log("node: " + JSON.stringify(node));
+            var id = node.attributes.id;
+            var lat = node.attributes.lat;
+            var lon = node.attributes.lon;
             nodeMap[id] = [+lon, +lat];
 //            console.log(id + ":" + JSON.stringify(nodeMap[id]));
-        } else if (name === 'way') {
+        } else if (node.name === 'way') {
+
             way.nodes = [];
-            way.id = attrs.id;
+            way.id = node.attributes.id;
             way.isBld = false;
             way.name = undefined;
             way.color = undefined;
@@ -161,35 +179,35 @@ function convert(osmInputStream, geoJsonOutputStream, onBlock) {
             way.roofShape = "flat";
             onWay = true;
 //            console.log("way.id: " + attrs.id);
-        } else if (name === 'nd' && onWay) {
-            if (!nodeMap.hasOwnProperty(attrs.ref)) {
-                console.log("ERROR: Cannot link way to this node: " + attrs.ref);
+        } else if (node.name === 'nd' && onWay) {
+            if (!nodeMap.hasOwnProperty(node.attributes.ref)) {
+                console.log("ERROR: Cannot link way to this node: " + node.attributes.ref);
             } else {
-                way.nodes[way.nodes.length] = nodeMap[attrs.ref];
+                way.nodes[way.nodes.length] = nodeMap[node.attributes.ref];
             }
-        } else if (name === 'tag' && onWay) {
-            if (attrs.k === 'building') {
+        } else if (node.name === 'tag' && onWay) {
+            if (node.attributes.k === 'building') {
                 way.isBld = true;
-            } else if (attrs.k === 'building:levels') {
-                way.bldLevels = attrs.v;
-            } else if (attrs.k === 'building:min_level') {
-                way.bldMinLevel = attrs.V;
-            } else if (attrs.k === 'height') {
-                way.osmBldPartHeight = heightToMeter(attrs.v);
-            } else if (attrs.k === 'min_height') {
-                way.minHeight = heightToMeter(attrs.v);
-            } else if (attrs.k === 'name') {
-                way.name = attrs.v;
-            } else if (attrs.k === 'building:colour') {
-                way.color = attrs.v;
-            } else if (attrs.k === 'roof:shape') {
-                way.roofShape = attrs.v;
-            } else if (attrs.k === 'roof:height') {
-                way.roofHeight = attrs.v;
+            } else if (node.attributes.k === 'building:levels') {
+                way.bldLevels = node.attributes.v;
+            } else if (node.attributes.k === 'building:min_level') {
+                way.bldMinLevel = node.attributes.V;
+            } else if (node.attributes.k === 'height') {
+                way.osmBldPartHeight = heightToMeter(node.attributes.v);
+            } else if (node.attributes.k === 'min_height') {
+                way.minHeight = heightToMeter(node.attributes.v);
+            } else if (node.attributes.k === 'name') {
+                way.name = node.attributes.v;
+            } else if (node.attributes.k === 'building:colour') {
+                way.color = node.attributes.v;
+            } else if (node.attributes.k === 'roof:shape') {
+                way.roofShape = node.attributes.v;
+            } else if (node.attributes.k === 'roof:height') {
+                way.roofHeight = node.attributes.v;
             }
 //    console.log(name, attrs)
-        } else if (name === 'relation') {
-            relation.id = attrs.id;
+        } else if (node.name === 'relation') {
+            relation.id = node.attributes.id;
             relation.isBld = false;
             relation.osmBldPartHeight = undefined;
             relation.minHeight = undefined;
@@ -197,36 +215,39 @@ function convert(osmInputStream, geoJsonOutputStream, onBlock) {
             relation.pptRoofHeight = undefined;
             relation.roofShape = 'flat';
             onRelation = true;
-        } else if (onRelation && name === 'member' && attrs.type === 'way') {
+        } else if (onRelation && node.name === 'member' && node.attributes.type === 'way') {
 //            console.log("osmBldParts: " + JSON.stringify(osmBldParts));
-            if (attrs.ref in geoBldParts) {
+            if (node.attributes.ref in geoBldParts) {
                 var geoBld = getGeoBuilding(relation.id);
 //                console.log("osmBld: " + JSON.stringify(osmBld));
-                geoBld.features[geoBld.features.length] = geoBldParts[attrs.ref];
-                if (geoRoofs[attrs.ref]) {
-                    geoBld.features[geoBld.features.length] = geoRoofs[attrs.ref];
+                geoBld.features[geoBld.features.length] = geoBldParts[node.attributes.ref];
+                if (geoRoofs[node.attributes.ref]) {
+                    geoBld.features[geoBld.features.length] = geoRoofs[node.attributes.ref];
                 }
             }
-        } else if (onRelation && name === 'tag' && attrs.k === 'name') {
-            relation.name = attrs.v;
-        } else if (onRelation && name === 'tag' && attrs.k === 'building:part' && attrs.v === 'yes') {
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'name') {
+            relation.name = node.attributes.v;
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'building:part' && node.attributes.v === 'yes') {
             relation.isBld = true;
-        } else if (onRelation && name === 'tag' && attrs.k === 'building' && attrs.v === 'yes') {
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'building' && node.attributes.v === 'yes') {
             relation.isBld = true;
-        } else if (onRelation && name === 'tag' && attrs.k === 'type' && attrs.v === 'building') {
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'type' && node.attributes.v === 'building') {
             relation.isBld = true;
-        } else if (onRelation && name === 'tag' && attrs.k === 'height') {
-            relation.osmBldPartHeight = heightToMeter(attrs.v);
-        } else if (onRelation && name === 'tag' && attrs.k === 'min_height') {
-            relation.minHeight = heightToMeter(attrs.v);
-        } else if (onRelation && name === 'tag' && attrs.k === 'roof:shape') {
-            relation.roofShape = attrs.v;
-        } else if (onRelation && name === 'tag' && attrs.k === 'roof:height') {
-            relation.optRoofHeight = attrs.v;
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'height') {
+            relation.osmBldPartHeight = heightToMeter(node.attributes.v);
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'min_height') {
+            relation.minHeight = heightToMeter(node.attributes.v);
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'roof:shape') {
+            relation.roofShape = node.attributes.v;
+        } else if (onRelation && node.name === 'tag' && node.attributes.k === 'roof:height') {
+            relation.optRoofHeight = node.attributes.v;
         }
     });
-    parser.on('endElement', function (name) {
-        if (name === 'way') {
+    saxStream.on("closetag", function (node) {
+//        console.log("node: " + JSON.stringify(node));
+//    parser.on('endElement', function (name) {
+//        console.log("coucou");
+        if (node === 'way') {
             onWay = false;
             if (way.roofShape) {
                 var geoRoof = {
@@ -261,18 +282,24 @@ function convert(osmInputStream, geoJsonOutputStream, onBlock) {
                     "height": way.osmBldPartHeight
                 }
             };
+//            console.log("geoBldPart");
             if (way.isBld) {
                 var geoBld = getGeoBuilding(way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
                 if (geoRoof) {
                     geoBld.features[geoBld.features.length] = geoRoof;
                 }
-                if (onBlock !== undefined) {
-                    onBlock(geoBld);
-                }
-                if (geoJsonOutputStream !== undefined) {
-                    geoJsonOutputStream.write(JSON.stringify(geoBld));
-                }
+                blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+//                console.log(JSON.stringify(geoBld));
+//                console.log(JSON.stringify(geoBld));
+//                if (onBlock !== undefined) {
+//                    onBlock(geoBld);
+//                }
+//                if (geoJsonOutputStream !== undefined) {
+//                    geoJsonOutputStream.write(JSON.stringify(geoBld));
+//                }
+//                if (!osmInputStream && !geoJsonOutputStream) {
+//                }
             } else {
                 geoBldParts[way.id] = geoBldPart;
                 if (geoRoof) {
@@ -280,7 +307,7 @@ function convert(osmInputStream, geoJsonOutputStream, onBlock) {
                 }
 //                console.log("osmBldParts[" + way.id + "]: " + JSON.stringify(osmBldPart));
             }
-        } else if (name === 'relation') {
+        } else if (node === 'relation') {
             if (!relation.isBld) {
                 removeBuilding(relation.id);
             } else {
@@ -297,51 +324,108 @@ function convert(osmInputStream, geoJsonOutputStream, onBlock) {
                         }
                     }
                 }
-                if (onBlock !== undefined) {
-                    onBlock(geoBld);
-                }
-                if (geoJsonOutputStream !== undefined) {
-                    geoJsonOutputStream.write(JSON.stringify(geoBld));
-                }
+                blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+//                console.log(JSON.stringify(geoBld));
+//                if (onBlock !== undefined) {
+//                    onBlock(geoBld);
+//                }
+//                if (geoJsonOutputStream !== undefined) {
+//                    geoJsonOutputStream.write(JSON.stringify(geoBld));
+//                }
+
+
+//                if (!osmInputStream && !geoJsonOutputStream) {
+//                }
             }
 //            console.log('relation: ' + JSON.stringify(relation));
             onRelation = false;
-        } else if (name === 'osm') {
-//            console.log("osmBlds: " + JSON.stringify(osmBlds, null, 2));
-            if (geoJsonOutputStream !== undefined) {
-                geoJsonOutputStream.end();
+        } else if (node === 'osm') {
+//            console.log("node: " + JSON.stringify(node));
+
+            if (onConvert !== undefined) {
+                onConvert(blocks);
             }
+//            console.log("osmBlds: " + JSON.stringify(osmBlds, null, 2));
+//            if (geoJsonOutputStream !== undefined) {
+//                geoJsonOutputStream.end();
+//            }
         }
 //    console.log(name)
     });
-    parser.on('text', function (text) {
-//    console.log(text)
-    });
-    parser.on('error', function (error) {
-//    console.error(error)
-    });
-    var readline = require('readline');
-    var osmIS = osmInputStream;
-    if (osmIS === undefined) {
-        osmIS = process.stdin;
-    }
-
-    var rl = readline.createInterface({
-        input: osmIS
-//,
-//        output: myOsmOS
-    });
-    rl.on('line', function (block) {
-//    console.log('Read: '+block);
-        parser.write(block);
-    });
-//    console.log("osmBld: " + JSON.stringify(osmBld));
-
+//    parser.on('text', function (text) {
+////        console.log(text)
+//    });
+//    parser.on('error', function (error) {
+////        console.error(error)
+//    });
+//    var readline = require('readline');
+//    var rl = readline.createInterface({
+//        input: process.stdin
+//    });
+//    rl.on('line', function (block) {
+//        parser.write(block);
+//    });
+//    return rl;
+    return saxStream;
 }
 
 
 // Functions which will be available to external callers
 exports.convert = convert;
 
-//osmToJSON();
 
+
+//var stream = require('stream');
+//var util = require('util');
+//
+//function EchoStream () { // step 2
+//  stream.Writable.call(this);
+//};
+//util.inherits(EchoStream, stream.Writable); // step 1
+//EchoStream.prototype._write = function (chunk, encoding, done) { // step 3
+//  console.log(chunk.toString());
+//  done();
+//}
+//
+//var myStream = new EchoStream(); // instanciate your brand new stream
+//process.stdin.pipe(myStream);
+
+
+//function createWriteStream(onConvert) {
+//    var converter = convert(onConvert);
+//    var ws = new stream.Writable();
+//    ws._write = function (chunk, encoding, done) {
+////        console.log("chunk.toString(): " + chunk.toString())
+//        converter.write(chunk.toString());
+//        done();
+//    };
+//    return ws;
+//}
+
+//function createWriteStream() { // step 2
+//    createWriteStream.Writable.call(this);
+//    var converter;
+//}
+//createWriteStream.prototype.init = function (onConvert) { // step 3
+//    converter = convert(onConvert); ;
+//}
+//util.inherits(createWriteStream, stream.Writable); // step 1
+//createWriteStream.prototype._write = function (chunk, encoding, done) { // step 3
+//    this.converter.write(chunk.toString());
+//    done();
+//}
+//
+//
+//
+//exports.createWriteStream = createWriteStream;
+
+
+//var writable = new stream.Writable({
+//    init: function(onConvert) {
+//        
+//    };
+//    write: function (chunk, encoding, next) {
+//        console.log(chunk.toString());
+//        next();
+//    }
+//});

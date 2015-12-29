@@ -2,7 +2,7 @@
 /node_modules*
 /trash/
 /x2js-v1.1.5/
-/*server*
+/server_old.js
 /OsmGround.js
 /osm2x3d.nfo
 /myResources

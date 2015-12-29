@@ -2,24 +2,24 @@
 var fs = require('fs');
 var assert = require('assert');
 var osmToGeoJson = require('./OsmToGeoJson.js');
-var geoJsonOS = fs.createWriteStream('target/ESB_light_geoJson.json');
-
 var ref = require("./resources/ESB_light_geoJson.json");
 
-var onBlock;
-onBlock = function (geoJsonBlockData) {
-    process.stdout.write("OsmToGeoJson assertion 1...");
-    assert.equal(JSON.stringify(ref), JSON.stringify(geoJsonBlockData), "message");
+//onConvert1 = function (geoJson) {
+//    process.stdout.write("OsmToGeoJson assertion 1...");
+//    assert.deepEqual(geoJson, ref, "message");
+//    process.stdout.write("OK\n");
+//}
+
+onConvert2 = function (geoJson) {
+    process.stdout.write("OsmToGeoJson assertion 2...");
+//    console.log(JSON.stringify(geoJson));
+    assert.deepEqual(geoJson, ref, "message");
     process.stdout.write("OK\n");
-//    console.log("geoJsonBlockData: " + JSON.stringify(geoJsonBlockData));
 }
 
-geoJsonOS.on('finish', function () {
-    process.stdout.write("OsmToGeoJson assertion 2...");
-    var result = require('./target/ESB_light_geoJson.json', "utf8");
-    assert.equal(JSON.stringify(ref), JSON.stringify(result), "message");
-    process.stdout.write("OK\n");
-});
+//osmToGeoJson.convert(onConvert1);
 
-osmToGeoJson.convert(process.stdin, geoJsonOS, onBlock);
 
+var ws = osmToGeoJson.convert(onConvert2);
+var fileReadStream = fs.createReadStream('resources/ESB_light.osm');
+fileReadStream.pipe(ws);
