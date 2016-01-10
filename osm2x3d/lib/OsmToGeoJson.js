@@ -2,6 +2,21 @@ var util = require('util');
 var stream = require('stream');
 var RGBColor = require('rgbcolor');
 var expat = require('node-expat');
+var turf = require('turf');
+
+//function centroid(geonodes) {
+//    var sumlon = 0;
+//    var sumlat = 0;
+//    for (var i = 0; i < geonodes.length; i++) {
+//        sumlon += geonodes[i][0];
+//        sumlat += geonodes[i][1];
+//    }
+//    return [
+//        sumlon / geonodes.length,
+//        sumlat / geonodes.length
+//    ];
+//}
+
 function getRGB(osmColor) {
     if (osmColor) {
         var hexRGB = /^#?([a-fA-F\d]{2})([a-fA-F\d]{2})([a-fA-F\d]{2})$/i.exec(osmColor);
@@ -82,7 +97,12 @@ var geoGroundBlock = {
     "type": "Feature",
     "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-73.9860386, 40.7487894], [-73.9860386, 40.7487894], [-73.9860386, 40.7487894], [-73.9860386, 40.7487894]]]
+        "coordinates": [[
+                [-73.9860386, 40.7487894],
+                [-73.9860386, 40.7487894],
+                [-73.9860386, 40.7487894],
+                [-73.9860386, 40.7487894]
+            ]]
     },
     "properties": {
         "tile": 'http://a.tile.openstreetmap.org/zoom/x/y.png',
@@ -130,7 +150,8 @@ function convert(options, onConvert) {
     var xmlStream = new expat.Parser('UTF-8');
     xmlStream.on('error', function (error) {
         console.error("error!", error);
-    })
+    });
+    var bounds;
     var blocks = [],
             geoBldParts = {},
             geoRoofs = {},
@@ -141,7 +162,7 @@ function convert(options, onConvert) {
     var relation = {};
     xmlStream.on('startElement', function (name, attributes) {
         if (name === 'bounds') {
-            var bounds = createGroundBlock(
+            bounds = createGroundBlock(
                     +attributes.minlat, +attributes.minlon,
                     +attributes.maxlat, +attributes.maxlon,
                     ((options && options.tile) ? options.tile : null));
@@ -245,21 +266,22 @@ function convert(options, onConvert) {
                     }
                 };
             }
+//            var bldPartCentroid = centroid([way.nodes]);
             var geoBldPart = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [way.nodes]
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [way.nodes]
                 },
-                "properties": {
-                    "id": way.id,
-                    "type": "buildingPart",
-                    "minHeight": way.minHeight,
-                    "minLevel": way.bldMinLevel,
-                    "name": way.name,
-                    "color": getRGB(way.color),
-                    "levels": way.bldLevels,
-                    "height": way.osmBldPartHeight
+                'properties': {
+                    'id': way.id,
+                    'type': 'buildingPart',
+                    'minHeight': way.minHeight,
+                    'minLevel': way.bldMinLevel,
+                    'name': way.name,
+                    'color': getRGB(way.color),
+                    'levels': way.bldLevels,
+                    'height': way.osmBldPartHeight
                 }
             };
             if (way.isBld) {
@@ -268,7 +290,9 @@ function convert(options, onConvert) {
                 if (geoRoof) {
                     geoBld.features[geoBld.features.length] = geoRoof;
                 }
-                blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                if (turf.inside(turf.centroid(geoBld), bounds)) {
+                    blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                }
             } else {
                 geoBldParts[way.id] = geoBldPart;
                 if (geoRoof) {
@@ -292,7 +316,9 @@ function convert(options, onConvert) {
                         }
                     }
                 }
-                blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                if (turf.inside(turf.centroid(geoBld), bounds)) {
+                    blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                }
             }
             onRelation = false;
         } else if (name === 'osm') {

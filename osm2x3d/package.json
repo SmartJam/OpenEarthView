@@ -1,12 +1,13 @@
 {
     "name": "osm2x3d",
     "description": "osm2x3d ==============",
-  "version": "0.0.8",
+    "version": "0.0.9",
     "dependencies": {
         "sax": "",
         "body-parser": "~1.0.0",
         "rgbcolor": "0.0.4",
-        "node-xml-compare": ""
+        "node-xml-compare": "",
+        "turf": ""
     },
     "main": "./osmx3d.js",
     "scripts": {
