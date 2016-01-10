@@ -1,7 +1,7 @@
 {
     "name": "osm2x3d",
     "description": "osm2x3d ==============",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "dependencies": {
         "sax": "",
         "body-parser": "~1.0.0",

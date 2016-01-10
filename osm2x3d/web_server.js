@@ -85,7 +85,7 @@ var server = http.createServer(function (request, response) {
                         onX3dJsonConvert = function (x3dJsonScene) {
                             console.timeEnd("server");
                             console.log('Conversion to x3dJson done.');
-                            response.setHeader('Content-Type', 'application/json');
+                            response.setHeader('Content-Type', 'text/xml');
                             x3dJsonToX3d.convert(x3dJsonScene, response);
                             response.end();
                         };

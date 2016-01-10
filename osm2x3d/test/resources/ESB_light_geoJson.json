@@ -32,7 +32,7 @@
                 },
                 "properties": {
                     "id": "137425131",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "75"
@@ -60,7 +60,7 @@
                 },
                 "properties": {
                     "id": "137425128",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "115"
@@ -88,7 +88,7 @@
                 },
                 "properties": {
                     "id": "137425127",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "255"
@@ -116,7 +116,7 @@
                 },
                 "properties": {
                     "id": "137425129",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "290"
@@ -143,7 +143,7 @@
                 },
                 "properties": {
                     "id": "137425125",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "310"
@@ -170,7 +170,7 @@
                 },
                 "properties": {
                     "id": "137425144",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "320"
@@ -197,7 +197,7 @@
                 },
                 "properties": {
                     "id": "137425142",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "330"
@@ -224,7 +224,7 @@
                 },
                 "properties": {
                     "id": "137425145",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(0,0,0)",
                     "roofShape": "pyramidal",
                     "height": "443.2"
@@ -252,7 +252,7 @@
                 },
                 "properties": {
                     "id": "137425133",
-                    "type": "geoRoof",
+                    "type": "roof",
                     "color": "rgb(245, 245, 220)",
                     "roofShape": "flat",
                     "height": "90"

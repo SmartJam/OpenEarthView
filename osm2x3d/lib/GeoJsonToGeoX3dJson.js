@@ -92,7 +92,7 @@ function newX3dJsonBlFloordPart(minHeight, points) {
 function getGeoJsonRoof(geoJsonBlock, id) {
     var result;
     for (var idx = 0; idx < geoJsonBlock.features.length; idx++) {
-        if (geoJsonBlock.features[idx].properties.type === "geoRoof" && geoJsonBlock.features[idx].properties.id === id) {
+        if (geoJsonBlock.features[idx].properties.type === "roof" && geoJsonBlock.features[idx].properties.id === id) {
             result = geoJsonBlock.features[idx];
             break;
         }

@@ -2,6 +2,7 @@ var util = require('util');
 var stream = require('stream');
 var RGBColor = require('rgbcolor');
 var sax = require("sax");
+var turf = require('turf');
 
 function getRGB(osmColor) {
     if (osmColor) {
@@ -58,14 +59,40 @@ function removeBuilding(id) {
     }
 }
 
+function createGroundBlock(minlat, minlon, maxlat, maxlon, url) {
+    "use strict";
+    var bounds = {
+        'type': 'Feature',
+        'geometry': {
+            'type': 'Polygon',
+            'coordinates': [[
+                    [+minlon, +minlat], [+maxlon, +minlat],
+                    [+maxlon, +maxlat], [+minlon, +maxlat]]]
+        },
+        'properties': {
+            'type': 'bounds'
+        }
+    };
+    if (url) {
+//        'url': 'http://a.tile.openstreetmap.org/' + zoom + '/' + x + '/' + y + '.png',
+        bounds['properties']['tile'] = url;
+    }
+    return bounds;
+}
+
 var geoGroundBlock = {
     "type": "Feature",
     "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-73.9860386, 40.7487894], [-73.9860386, 40.7487894], [-73.9860386, 40.7487894], [-73.9860386, 40.7487894]]]
+        "coordinates": [[
+                [-73.9860386, 40.7487894],
+                [-73.9860386, 40.7487894],
+                [-73.9860386, 40.7487894],
+                [-73.9860386, 40.7487894]
+            ]]
     },
     "properties": {
-        "type": "ground"
+        "tile": 'http://a.tile.openstreetmap.org/zoom/x/y.png',
     }
 };
 var geoBldPart = {
@@ -83,14 +110,14 @@ var geoBldPart = {
         "height": 75
     }
 };
-var geoRoof = {
+var roof = {
     "type": "Feature",
     "geometry": {
         "type": "Polygon",
         "coordinates": []
     },
     "properties": {
-        "type": "geoRoof",
+        "type": "roof",
         "color": "rgb(221, 123, 56)",
         "roofShape": "flat",
         "maxHeight": 95
@@ -98,15 +125,14 @@ var geoRoof = {
 };
 var geoBld = {
     "type": "FeatureCollection",
-    "features": [geoBldPart, geoRoof],
+    "features": [geoBldPart, roof],
     "properties": {
         "id": "2098969",
         "type": "building",
         "name": "Empire State Building"
     }
 };
-
-function convert(onConvert) {
+function convert(options, onConvert) {
     "use strict";
     var xmlStream = sax.createStream(true);
     xmlStream.on('error', function (error) {
@@ -116,7 +142,7 @@ function convert(onConvert) {
     });
     var blocks = [],
             geoBldParts = {},
-            geoRoofs = {},
+            roofs = {},
             nodeMap = {},
             onWay = false,
             onRelation = false;
@@ -124,7 +150,14 @@ function convert(onConvert) {
     var relation = {};
     xmlStream.on('opentag', function (node) {
         var name = node.name, attributes = node.attributes;
-        if (name === 'node') {
+        if (name === 'bounds') {
+            bounds = createGroundBlock(
+                    +attributes.minlat, +attributes.minlon,
+                    +attributes.maxlat, +attributes.maxlon,
+                    ((options && options.tile) ? options.tile : null));
+//            console.log(JSON.stringify(bounds));
+            blocks[blocks.length] = bounds;
+        } else if (name === 'node') {
             var id = attributes.id;
             var lat = attributes.lat;
             var lon = attributes.lon;
@@ -181,8 +214,8 @@ function convert(onConvert) {
             if (attributes.ref in geoBldParts) {
                 var geoBld = getGeoBuilding(relation.id);
                 geoBld.features[geoBld.features.length] = geoBldParts[attributes.ref];
-                if (geoRoofs[attributes.ref]) {
-                    geoBld.features[geoBld.features.length] = geoRoofs[attributes.ref];
+                if (roofs[attributes.ref]) {
+                    geoBld.features[geoBld.features.length] = roofs[attributes.ref];
                 }
             }
         } else if (onRelation && name === 'tag' && attributes.k === 'name') {
@@ -207,7 +240,7 @@ function convert(onConvert) {
         if (name === 'way') {
             onWay = false;
             if (way.roofShape) {
-                var geoRoof = {
+                var roof = {
                     "type": "Feature",
                     "geometry": {
                         "type": "Polygon",
@@ -215,7 +248,7 @@ function convert(onConvert) {
                     },
                     "properties": {
                         "id": way.id,
-                        "type": "geoRoof",
+                        "type": "roof",
                         "color": getRGB(way.color),
                         "roofShape": way.roofShape,
                         "height": way.osmBldPartHeight
@@ -223,33 +256,35 @@ function convert(onConvert) {
                 };
             }
             var geoBldPart = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [way.nodes]
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [way.nodes]
                 },
-                "properties": {
-                    "id": way.id,
-                    "type": "buildingPart",
-                    "minHeight": way.minHeight,
-                    "minLevel": way.bldMinLevel,
-                    "name": way.name,
-                    "color": getRGB(way.color),
-                    "levels": way.bldLevels,
-                    "height": way.osmBldPartHeight
+                'properties': {
+                    'id': way.id,
+                    'type': 'buildingPart',
+                    'minHeight': way.minHeight,
+                    'minLevel': way.bldMinLevel,
+                    'name': way.name,
+                    'color': getRGB(way.color),
+                    'levels': way.bldLevels,
+                    'height': way.osmBldPartHeight
                 }
             };
             if (way.isBld) {
                 var geoBld = getGeoBuilding(way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
-                if (geoRoof) {
-                    geoBld.features[geoBld.features.length] = geoRoof;
+                if (roof) {
+                    geoBld.features[geoBld.features.length] = roof;
                 }
-                blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                if (turf.inside(turf.centroid(geoBld), bounds)) {
+                    blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                }
             } else {
                 geoBldParts[way.id] = geoBldPart;
-                if (geoRoof) {
-                    geoRoofs[way.id] = geoRoof;
+                if (roof) {
+                    roofs[way.id] = roof;
                 }
             }
         } else if (name === 'relation') {
@@ -269,17 +304,16 @@ function convert(onConvert) {
                         }
                     }
                 }
-                blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                if (turf.inside(turf.centroid(geoBld), bounds)) {
+                    blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                }
             }
             onRelation = false;
         } else if (name === 'osm') {
-            if (onConvert !== undefined) {
-                onConvert(blocks);
-            }
+            onConvert(blocks);
         }
     });
     return xmlStream;
 }
 
-// Functions which will be available to external callers
 exports.convert = convert;

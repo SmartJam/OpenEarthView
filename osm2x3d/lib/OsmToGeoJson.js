@@ -4,19 +4,6 @@ var RGBColor = require('rgbcolor');
 var expat = require('node-expat');
 var turf = require('turf');
 
-//function centroid(geonodes) {
-//    var sumlon = 0;
-//    var sumlat = 0;
-//    for (var i = 0; i < geonodes.length; i++) {
-//        sumlon += geonodes[i][0];
-//        sumlat += geonodes[i][1];
-//    }
-//    return [
-//        sumlon / geonodes.length,
-//        sumlat / geonodes.length
-//    ];
-//}
-
 function getRGB(osmColor) {
     if (osmColor) {
         var hexRGB = /^#?([a-fA-F\d]{2})([a-fA-F\d]{2})([a-fA-F\d]{2})$/i.exec(osmColor);
@@ -123,14 +110,14 @@ var geoBldPart = {
         "height": 75
     }
 };
-var geoRoof = {
+var roof = {
     "type": "Feature",
     "geometry": {
         "type": "Polygon",
         "coordinates": []
     },
     "properties": {
-        "type": "geoRoof",
+        "type": "roof",
         "color": "rgb(221, 123, 56)",
         "roofShape": "flat",
         "maxHeight": 95
@@ -138,7 +125,7 @@ var geoRoof = {
 };
 var geoBld = {
     "type": "FeatureCollection",
-    "features": [geoBldPart, geoRoof],
+    "features": [geoBldPart, roof],
     "properties": {
         "id": "2098969",
         "type": "building",
@@ -154,7 +141,7 @@ function convert(options, onConvert) {
     var bounds;
     var blocks = [],
             geoBldParts = {},
-            geoRoofs = {},
+            roofs = {},
             nodeMap = {},
             onWay = false,
             onRelation = false;
@@ -225,8 +212,8 @@ function convert(options, onConvert) {
             if (attributes.ref in geoBldParts) {
                 var geoBld = getGeoBuilding(relation.id);
                 geoBld.features[geoBld.features.length] = geoBldParts[attributes.ref];
-                if (geoRoofs[attributes.ref]) {
-                    geoBld.features[geoBld.features.length] = geoRoofs[attributes.ref];
+                if (roofs[attributes.ref]) {
+                    geoBld.features[geoBld.features.length] = roofs[attributes.ref];
                 }
             }
         } else if (onRelation && name === 'tag' && attributes.k === 'name') {
@@ -251,7 +238,7 @@ function convert(options, onConvert) {
         if (name === 'way') {
             onWay = false;
             if (way.roofShape) {
-                var geoRoof = {
+                var roof = {
                     "type": "Feature",
                     "geometry": {
                         "type": "Polygon",
@@ -259,14 +246,13 @@ function convert(options, onConvert) {
                     },
                     "properties": {
                         "id": way.id,
-                        "type": "geoRoof",
+                        "type": "roof",
                         "color": getRGB(way.color),
                         "roofShape": way.roofShape,
                         "height": way.osmBldPartHeight
                     }
                 };
             }
-//            var bldPartCentroid = centroid([way.nodes]);
             var geoBldPart = {
                 'type': 'Feature',
                 'geometry': {
@@ -287,16 +273,16 @@ function convert(options, onConvert) {
             if (way.isBld) {
                 var geoBld = getGeoBuilding(way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
-                if (geoRoof) {
-                    geoBld.features[geoBld.features.length] = geoRoof;
+                if (roof) {
+                    geoBld.features[geoBld.features.length] = roof;
                 }
                 if (turf.inside(turf.centroid(geoBld), bounds)) {
                     blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
                 }
             } else {
                 geoBldParts[way.id] = geoBldPart;
-                if (geoRoof) {
-                    geoRoofs[way.id] = geoRoof;
+                if (roof) {
+                    roofs[way.id] = roof;
                 }
             }
         } else if (name === 'relation') {
@@ -322,11 +308,7 @@ function convert(options, onConvert) {
             }
             onRelation = false;
         } else if (name === 'osm') {
-//            if (onConvert !== undefined) {
             onConvert(blocks);
-//            }
-            // tile ground
-
         }
     });
     return xmlStream;

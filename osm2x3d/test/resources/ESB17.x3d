@@ -27,18 +27,6 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='68.95840246963188 81.06448794464083 45.20716613732549 71.12366150259066 62.54245520232177 47.33906669348125 64.04358671139367 45.2597215646312 64.62180033038173 44.447998600121096 79.54415948506625 50.73051195547859 88.37303666110795 54.422183520554455 81.93485040820904 63.251060695806075 73.35060207206394 75.03772292039416 68.95840246963188 81.06448794464083' solid='false' endCap='false' spine='0 0 0 0 9.99 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='34633854' id='34633854'>
             <Transform translation='0 0 0'>
@@ -53,32 +41,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='104.66309341449191 95.0083317460596 252.56346534487636 157.355327115006 289.2021936734047 107.21753469130424 141.6798844948695 43.98097990828693 124.05548862195937 68.2214739172262 122.15405537544943 70.83455469309663 106.56452665942167 92.28405604303525 104.66309341449191 95.0083317460596' solid='false' endCap='false' spine='0 0 0 0 20 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260787' id='265260787'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='103.7512950164124 237.54910821117036 101.24940916690578 236.48163691554942 99.40357338357776 238.98352276505605 93.32121089693928 236.3926809739843 95.9787696439873 232.78996535126365 112.30218487496438 210.71777241194945 120.88643321268967 214.38720499143653 103.7512950164124 237.54910821117036' solid='false' endCap='false' spine='0 0 0 0 17.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -105,32 +69,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='132.45070558296993 197.619010053424 115.14877499714694 190.32462286562748 132.2950326854285 166.8180153724276 149.59696327125152 174.11240256101422 148.87419624830653 175.10203740786446 133.41810144423138 196.28467093389781 132.45070558296993 197.619010053424' solid='false' endCap='false' spine='0 0 0 0 45.9 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260800' id='265260800'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='95.9787696439873 232.78996535126365 84.38113879453374 227.83067162263794 101.11597525495316 205.19138455792014 112.71360610440672 210.1506782857558 112.30218487496438 210.71777241194945 95.9787696439873 232.78996535126365' solid='false' endCap='false' spine='0 0 0 0 50.3 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -157,32 +97,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='84.38113879453374 227.83067162263794 60.39639311749541 217.57849938629502 76.8866007380182 195.28391659346312 77.14234906991913 194.93921232078716 101.11597525495316 205.19138455792014 84.38113879453374 227.83067162263794' solid='false' endCap='false' spine='0 0 0 0 51.2 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260814' id='265260814'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='125.56773962303558 160.26863419316487 106.35325630027852 186.62183180775722 105.83064014447235 187.33347933869788 79.79990781696716 176.34742058582552 80.28916549360004 175.69137051885681 99.53700729553037 149.28257544108257 107.8210293317573 152.77409613743941 116.85005737493786 156.5880821216735 123.22152667107038 159.27899934631463 125.56773962303558 160.26863419316487' solid='false' endCap='false' spine='0 0 0 0 46 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -209,32 +125,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='116.85005737493786 156.5880821216735 107.8210293317573 152.77409613743941 126.87983975855312 126.6321688835704 135.919987293738 130.4461548670144 120.00799329220325 152.26259947521774 116.85005737493786 156.5880821216735' solid='false' endCap='false' spine='0 0 0 0 22.2 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260824' id='265260824'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='107.8210293317573 152.77409613743941 99.53700729553037 149.28257544108257 91.0639538857491 145.71321829595502 74.72941916118754 138.81913284401634 63.96575026262296 134.28237983683726 83.03568018142309 108.14045258217817 126.87983975855312 126.6321688835704 107.8210293317573 152.77409613743941' solid='false' endCap='false' spine='0 0 0 0 49.4 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -261,32 +153,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='59.529072689013304 218.7571656082798 33.76520818541334 207.73774837781428 51.12273623441825 184.2644993629976 76.8866007380182 195.28391659346312 60.39639311749541 217.57849938629502 59.529072689013304 218.7571656082798' solid='false' endCap='false' spine='0 0 0 0 66.1 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260831' id='265260831'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='80.28916549360004 175.69137051885681 71.80499259181444 172.11089388093487 91.0639538857491 145.71321829595502 99.53700729553037 149.28257544108257 80.28916549360004 175.69137051885681' solid='false' endCap='false' spine='0 0 0 0 17.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -313,32 +181,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='20.69980430448099 240.55137123089435 0.7625539571987621 232.02272035714105 17.441792954436266 209.4723892339884 37.3790433017185 218.0010401069516 35.288578681654215 220.82539124433544 20.88883568119569 240.30674239178782 20.69980430448099 240.55137123089435' solid='false' endCap='false' spine='0 0 0 0 46.1 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260835' id='265260835'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='71.80499259181444 172.11089388093487 55.47045786725288 165.2168084289962 74.72941916118754 138.81913284401634 91.0639538857491 145.71321829595502 71.80499259181444 172.11089388093487' solid='false' endCap='false' spine='0 0 0 0 28.5 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -365,32 +209,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='33.76520818541334 207.73774837781428 25.447827673173474 204.17951072548112 31.69698255093786 195.72869630049857 42.805355722178376 180.70626171066445 51.12273623441825 184.2644993629976 33.76520818541334 207.73774837781428' solid='false' endCap='false' spine='0 0 0 0 18.2 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260850' id='265260850'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='31.69698255093786 195.72869630049857 30.240329011463384 195.10600471112298 23.468557979473015 204.26846666625616 17.174925130531033 201.577549441615 35.05506933534209 177.39265289664775 42.805355722178376 180.70626171066445 31.69698255093786 195.72869630049857' solid='false' endCap='false' spine='0 0 0 0 20.7 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -417,32 +237,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='0.7625539571987621 232.02272035714105 -11.680158333567926 226.7076028638351 5.610652760250755 203.32330978979343 18.053365051017444 208.63842728388948 17.441792954436266 209.4723892339884 0.7625539571987621 232.02272035714105' solid='false' endCap='false' spine='0 0 0 0 42.9 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260877' id='265260877'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='16.31872419563342 202.72285718600665 9.669267582011182 199.8762670638241 10.525468516908795 198.73095931943246 8.245972521709989 197.7524439653766 26.126116724940875 173.57866691241367 35.05506933534209 177.39265289664775 17.174925130531033 201.577549441615 16.31872419563342 202.72285718600665' solid='false' endCap='false' spine='0 0 0 0 21.1 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -469,32 +265,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='288.0902444081863 216.45543062670208 293.5387958126548 218.72380713068668 289.0576402694478 224.93960353006787 294.4505942107344 227.18574104846363 281.44078779456413 245.26603612041353 276.3147016756026 243.13109352917166 275.16939393121095 244.72118097980868 246.22535452633696 232.67877042410976 271.96698004434813 196.896243030479 295.20671971285265 206.57020164783384 288.0902444081863 216.45543062670208' solid='false' endCap='false' spine='0 0 0 0 145.6 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260883' id='265260883'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='96.83497057888492 57.9581821880889 77.42033638740885 84.60048661138518 68.95840246963188 81.06448794464083 73.35060207206394 75.03772292039416 88.37303666110795 54.422183520554455 89.05132571287535 54.700170837254085 96.54586376939089 57.835867768140595 96.83497057888492 57.9581821880889' solid='false' endCap='false' spine='0 0 0 0 16.9 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -521,32 +293,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='8.245972521709989 197.7524439653766 -7.643782495816124 190.95843394700736 10.23636170741476 166.78465689483448 26.126116724940875 173.57866691241367 8.245972521709989 197.7524439653766' solid='false' endCap='false' spine='0 0 0 0 45.5 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260891' id='265260891'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='40.04772154077084 134.6159646167188 34.15439042926688 132.12519826000658 39.96988509200013 124.16364151165689 58.93973957802093 98.1551481697405 59.03981501238044 98.01059476499348 64.93314612388438 100.5013611217057 40.04772154077084 134.6159646167188' solid='false' endCap='false' spine='0 0 0 0 8.9 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -573,32 +321,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='20.710923798065476 150.56131709742684 11.337191482208985 146.60277770844573 30.59615277614364 120.20510212346589 39.96988509200013 124.16364151165689 34.15439042926688 132.12519826000658 20.710923798065476 150.56131709742684' solid='false' endCap='false' spine='0 0 0 0 20.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260901' id='265260901'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='39.96988509200013 124.16364151165689 30.59615277614364 120.20510212346589 15.90730296619108 114.0115447088834 4.976841678080779 109.39695525372372 23.946696162521402 83.38846191101723 58.93973957802093 98.1551481697405 39.96988509200013 124.16364151165689' solid='false' endCap='false' spine='0 0 0 0 22.7 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -625,32 +349,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='54.480823020402646 40.73408805024653 45.67418482994974 37.03129699316635 65.0554605438327 10.366753583491178 73.86209873428561 14.080664134155837 54.94784171144672 40.08915747607224 54.480823020402646 40.73408805024653' solid='false' endCap='false' spine='0 0 0 0 23.1 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260907' id='265260907'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='11.337191482208985 146.60277770844573 -3.340538835739262 140.40922029465335 15.90730296619108 114.0115447088834 30.59615277614364 120.20510212346589 11.337191482208985 146.60277770844573' solid='false' endCap='false' spine='0 0 0 0 63.5 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -677,32 +377,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='45.67418482994974 37.03129699316635 34.17662941485568 32.19431768448894 28.160983883403418 29.67019284939352 47.542259597286375 3.005649439718345 65.0554605438327 10.366753583491178 45.67418482994974 37.03129699316635' solid='false' endCap='false' spine='0 0 0 0 21.9 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260912' id='265260912'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='45.20716613732549 71.12366150259066 37.76822554557204 67.93236710773216 55.03679765380192 44.18113077621586 62.54245520232177 47.33906669348125 45.20716613732549 71.12366150259066' solid='false' endCap='false' spine='0 0 0 0 16.3 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -729,32 +405,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='37.76822554557204 67.93236710773216 16.00737840055059 58.79214413739771 16.24088774686271 58.458559357516165 33.27595050878047 35.02978831387709 55.03679765380192 44.18113077621586 37.76822554557204 67.93236710773216' solid='false' endCap='false' spine='0 0 0 0 23.3 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260915' id='265260915'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='28.160983883403418 29.67019284939352 22.456684145453814 27.26838243345632 19.265389752175487 25.92292382113575 38.646665466058444 -0.7305000949549378 47.542259597286375 3.005649439718345 28.160983883403418 29.67019284939352' solid='false' endCap='false' spine='0 0 0 0 19.4 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -781,32 +433,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='4.976841678080779 109.39695525372372 -2.6733692759761754 106.17230238048202 16.296485210044622 80.16380903856562 23.946696162521402 83.38846191101723 4.976841678080779 109.39695525372372' solid='false' endCap='false' spine='0 0 0 0 11.7 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260917' id='265260917'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='34.17662941485568 32.19431768448894 32.38639109628975 34.65172556281795 33.27595050878047 35.02978831387709 16.24088774686271 58.458559357516165 0.44008867011161834 51.80910274389393 2.3081634390284345 49.251619431205405 18.17567947096575 27.424055330997735 21.36697386582425 28.76951394331831 22.456684145453814 27.26838243345632 28.160983883403418 29.67019284939352 34.17662941485568 32.19431768448894' solid='false' endCap='false' spine='0 0 0 0 14.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -833,32 +461,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='124.05548862195937 68.2214739172262 97.20191383714966 56.93518886285547 115.05981905637192 31.93856935258801 128.24753735567242 38.85489379011548 129.6597129239693 37.976453869629076 131.99480638393018 37.954214884040276 142.03570825954975 42.035068692179586 141.6798844948695 43.98097990828693 124.05548862195937 68.2214739172262' solid='false' endCap='false' spine='0 0 0 0 22.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260897' id='265260897'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='63.63216548195133 43.7363510699705 54.94784171144672 40.08915747607224 73.86209873428561 14.080664134155837 82.3573911296557 17.438750918560068 63.63216548195133 43.7363510699705' solid='false' endCap='false' spine='0 0 0 0 17.6 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -885,32 +489,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='142.5138464441783 200.1208959029306 133.41810144423138 196.28467093389781 148.87419624830653 175.10203740786446 157.95882175466897 178.93826237689723 154.45618156630783 183.74188320798154 142.5138464441783 200.1208959029306' solid='false' endCap='false' spine='0 0 0 0 18.9 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260932' id='265260932'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='183.4669379279482 190.7026856158965 218.7268491657728 205.5694473081892 203.88232645985897 225.92923837691808 203.52650269359856 225.78468497217108 203.07060349455878 226.39625706875225 202.73701871546734 226.26282315679964 202.40343393479571 226.7187223558394 201.93641524375164 226.51857148791046 201.5583524919024 227.03006815092223 200.8133464833686 226.7187223558394 200.53535916745906 227.09678510689852 159.11524899264512 209.62806213073972 159.53778971409176 209.04984851254176 176.97315421186738 185.14293928348403 185.0459058857908 188.54550403906586 183.4669379279482 190.7026856158965' solid='false' endCap='false' spine='0 0 0 0 45.6 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -937,32 +517,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='185.0459058857908 188.54550403906586 176.97315421186738 185.14293928348403 159.53778971409176 209.04984851254176 141.5353310893324 201.45523502245678 142.5138464441783 200.1208959029306 154.45618156630783 183.74188320798154 160.01592789872032 186.08809615994673 166.22060480530712 177.58168427178225 167.22135914416165 178.00422499322892 170.37929506142703 173.66762285397877 137.44335778997885 159.7682570237376 132.2950326854285 166.8180153724276 115.14877499714694 190.32462286562748 106.35325630027852 186.62183180775722 125.56773962303558 160.26863419316487 123.22152667107038 159.27899934631463 126.37946258833577 154.95351669985888 120.00799329220325 152.26259947521774 135.919987293738 130.4461548670144 205.88383513914823 159.95728839887212 185.0459058857908 188.54550403906586' solid='false' endCap='false' spine='0 0 0 0 48.4 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260939' id='265260939'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='183.4669379279482 190.7026856158965 185.0459058857908 188.54550403906586 205.88383513914823 159.95728839887212 241.143746378553 174.8351695839592 218.7268491657728 205.5694473081892 183.4669379279482 190.7026856158965' solid='false' endCap='false' spine='0 0 0 0 66.6 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -989,32 +545,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='271.96698004434813 196.896243030479 277.33769500162606 189.43506345234667 294.0502924748765 196.39586586026164 293.50543733506174 197.14087186879544 300.04369902232014 199.85402807902537 295.20671971285265 206.57020164783384 271.96698004434813 196.896243030479' solid='false' endCap='false' spine='0 0 0 0 21.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260949' id='265260949'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='106.56452665942167 92.28405604303525 82.86888779187736 82.3209906153963 97.02400195401945 62.83963946715382 118.99611945976422 72.07993787184779 120.43053401206973 70.11178767015164 122.15405537544943 70.83455469309663 106.56452665942167 92.28405604303525' solid='false' endCap='false' spine='0 0 0 0 23.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1041,32 +573,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='96.54586376939089 57.835867768140595 89.05132571287535 54.700170837254085 90.58581570112054 52.58746723081092 81.08976896531574 48.59556936423672 99.33685642839154 23.754622751510674 115.05981905637192 31.93856935258801 97.20191383714966 56.93518886285547 96.54586376939089 57.835867768140595' solid='false' endCap='false' spine='0 0 0 0 23.5 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260954' id='265260954'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='63.96575026262296 134.28237983683726 74.72941916118754 138.81913284401634 55.47045786725288 165.2168084289962 20.710923798065476 150.56131709742684 34.15439042926688 132.12519826000658 40.04772154077084 134.6159646167188 64.93314612388438 100.5013611217057 83.03568018142309 108.14045258217817 63.96575026262296 134.28237983683726' solid='false' endCap='false' spine='0 0 0 0 45.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1093,32 +601,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='277.07082717772084 62.12799193700323 275.98111689651114 61.67209273796347 274.3354319819021 63.94046924115796 257.75626841902414 56.99078632603738 258.0787337061113 56.53488712699762 267.7971702946437 43.124778973389326 273.8795327828623 45.67114279328345 284.587604218245 30.882217549761474 296.18523506769856 35.74143584402769 277.07082717772084 62.12799193700323' solid='false' endCap='false' spine='0 0 0 0 47.3 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265301727' id='265301727'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='205.33897999775328 35.474568020122454 196.27659347697963 31.671701528682778 219.29394329275652 -0.11892799837376095 221.26209349445267 -2.8320842086037032 230.32448001522636 0.9707822820458881 205.90607412473705 34.68508404120115 205.33897999775328 35.474568020122454' solid='false' endCap='false' spine='0 0 0 0 22.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1145,32 +629,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='196.27659347697963 31.671701528682778 178.56324166329446 24.254999921728032 179.27488919265497 23.287604059676514 200.96901938091003 -6.679428670430892 208.7304252613308 -3.4214173203861686 209.34199735791196 -4.288737748078181 219.29394329275652 -0.11892799837376095 196.27659347697963 31.671701528682778' solid='false' endCap='false' spine='0 0 0 0 33.2 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265301911' id='265301911'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='300.55519568454184 36.78666815484992 300.91101944922207 36.29741047742696 311.6746883493668 40.81192449901723 332.134554850875 49.38505334315802 310.6072170521657 79.1296962205378 274.3354319819021 63.94046924115796 275.98111689651114 61.67209273796347 277.07082717772084 62.12799193700323 296.18523506769856 35.74143584402769 296.61889528114955 35.140983240240914 300.55519568454184 36.78666815484992' solid='false' endCap='false' spine='0 0 0 0 52.8 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1197,32 +657,8 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='258.0787337061113 56.53488712699762 205.90607412473705 34.68508404120115 230.32448001522636 0.9707822820458881 221.26209349445267 -2.8320842086037032 208.15221164234273 -8.313994092245496 221.44000537600272 -26.672276481685117 295.7849333318407 4.473422471987222 280.662423306857 25.35582969573217 267.7971702946437 43.124778973389326 258.0787337061113 56.53488712699762' solid='false' endCap='false' spine='0 0 0 0 47.2 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
         </Group>
         <Group class='building' DEF='265260889' id='265260889'>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='79.54415948506625 50.73051195547859 64.62180033038173 44.447998600121096 63.4653730924056 43.95874092348822 63.63216548195133 43.7363510699705 82.3573911296557 17.438750918560068 99.33685642839154 23.754622751510674 81.08976896531574 48.59556936423672 79.54415948506625 50.73051195547859' solid='false' endCap='false' spine='0 0 0 0 8.2 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 0 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1249,18 +685,6 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='154.3561061319483 60.971564699817186 167.32143457852115 66.45347458345898 170.1680247007037 62.60613012163179 194.85329841667843 73.05845322590362 192.00670829449587 76.90579768773081 197.85556143482222 79.38544455243871 218.7268491657728 88.22544122048474 224.4089099181336 90.62725163563185 227.31109750349805 86.69095123302964 251.97413223388398 97.13215484450707 249.09418363252811 101.04621626231057 262.68220366926664 106.7949939698576 236.1510941715441 142.77767223220735 222.58531312039437 137.04001401745472 219.52745263906866 141.18758478078024 194.86441790868275 130.74638116930282 197.88891991399552 126.64328837636481 192.0734252496821 124.1747610044513 171.22437650432033 115.35700332199407 165.48671828877764 112.92183442846377 162.39549932827865 117.1138831629669 137.6879866282953 106.65044056511057 140.80144457438308 102.43615284580873 127.82499663422576 96.94312346937254 154.3561061319483 60.971564699817186' solid='false' endCap='false' spine='0 0 0 0 75 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 90 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1269,18 +693,6 @@
                             </Material>
                         </Appearance>
                         <Extrusion convex='false' creaseAngle='0.785' crossSection='240.18747000929588 97.32118621964159 236.08437721635786 102.8698130592597 243.15637454984656 105.86095658618927 238.49730712350927 112.15458943434118 228.95678241810705 125.09767889532522 224.93152607393975 130.5462303013739 217.84840924528638 127.54396728164993 213.60076304839143 133.30386448199135 197.88891991399552 126.64328837636481 192.0734252496821 124.1747610044513 171.22437650432033 115.35700332199407 165.48671828877764 112.92183442846377 149.4857683448877 106.13894390288891 153.76677302095592 100.33456873215997 146.82820959783967 97.3990226684123 151.07585579631478 91.63912546807087 165.05305807532667 72.71374895322768 172.00274099044725 75.66041450976974 176.07247530579215 70.14514614774475 192.00670829449587 76.90579768773081 197.85556143482222 79.38544455243871 218.7268491657728 88.22544122048474 224.4089099181336 90.62725163563185 240.18747000929588 97.32118621964159' solid='false' endCap='false' spine='0 0 0 0 25 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='240.18747000929588 97.32118621964159 236.08437721635786 102.8698130592597 243.15637454984656 105.86095658618927 238.49730712350927 112.15458943434118 228.95678241810705 125.09767889532522 224.93152607393975 130.5462303013739 217.84840924528638 127.54396728164993 213.60076304839143 133.30386448199135 197.88891991399552 126.64328837636481 192.0734252496821 124.1747610044513 171.22437650432033 115.35700332199407 165.48671828877764 112.92183442846377 149.4857683448877 106.13894390288891 153.76677302095592 100.33456873215997 146.82820959783967 97.3990226684123 151.07585579631478 91.63912546807087 165.05305807532667 72.71374895322768 172.00274099044725 75.66041450976974 176.07247530579215 70.14514614774475 192.00670829449587 76.90579768773081 197.85556143482222 79.38544455243871 218.7268491657728 88.22544122048474 224.4089099181336 90.62725163563185 240.18747000929588 97.32118621964159' solid='false' endCap='false' spine='0 0 0 0 115 0'>
                         </Extrusion>
                     </Shape>
                 </Group>
@@ -1297,18 +709,6 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='176.07247530579215 70.14514614774475 192.00670829449587 76.90579768773081 197.85556143482222 79.38544455243871 193.7969466130618 84.87847392808482 214.65711485200805 93.71847059692092 218.7268491657728 88.22544122048474 224.4089099181336 90.62725163563185 240.18747000929588 97.32118621964159 236.08437721635786 102.8698130592597 217.84840924528638 127.54396728164993 213.60076304839143 133.30386448199135 197.88891991399552 126.64328837636481 192.0734252496821 124.1747610044513 196.0430841306675 118.81516553996772 175.19403538530574 109.9751688719217 171.22437650432033 115.35700332199407 165.48671828877764 112.92183442846377 149.4857683448877 106.13894390288891 153.76677302095592 100.33456873215997 172.00274099044725 75.66041450976974 176.07247530579215 70.14514614774475' solid='false' endCap='false' spine='0 0 0 0 255 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 255 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1317,18 +717,6 @@
                             </Material>
                         </Appearance>
                         <Extrusion convex='false' creaseAngle='0.785' crossSection='172.89230040293796 108.99665351786587 170.2125026718813 112.63272761896972 167.02120827702282 111.27614951385476 153.08848396760837 105.38281840156071 156.07962749532803 101.3242035790102 174.29335647923054 76.62781037103117 177.07322964622688 72.86942185076909 194.30844327528348 80.16380903856562 191.53968960187163 83.9221975588277 193.7969466130618 84.87847392808482 214.65711485200805 93.71847059692092 217.01444729597756 94.70810544377116 219.7832009693894 90.96083641551338 223.11904876978502 92.37301198460035 236.58475438499505 98.07731172096979 233.77152274198576 101.88017821240946 215.5577937565031 126.57657142038849 212.6000087079567 130.579588778967 198.98974968720955 124.81969157941568 195.66502138039846 123.4186355031231 198.37817759062838 119.80480038760804 196.0430841306675 118.81516553996772 175.19403538530574 109.9751688719217 172.89230040293796 108.99665351786587' solid='false' endCap='false' spine='0 0 0 0 35 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='172.89230040293796 108.99665351786587 170.2125026718813 112.63272761896972 167.02120827702282 111.27614951385476 153.08848396760837 105.38281840156071 156.07962749532803 101.3242035790102 174.29335647923054 76.62781037103117 177.07322964622688 72.86942185076909 194.30844327528348 80.16380903856562 191.53968960187163 83.9221975588277 193.7969466130618 84.87847392808482 214.65711485200805 93.71847059692092 217.01444729597756 94.70810544377116 219.7832009693894 90.96083641551338 223.11904876978502 92.37301198460035 236.58475438499505 98.07731172096979 233.77152274198576 101.88017821240946 215.5577937565031 126.57657142038849 212.6000087079567 130.579588778967 198.98974968720955 124.81969157941568 195.66502138039846 123.4186355031231 198.37817759062838 119.80480038760804 196.0430841306675 118.81516553996772 175.19403538530574 109.9751688719217 172.89230040293796 108.99665351786587' solid='false' endCap='false' spine='0 0 0 0 290 0'>
                         </Extrusion>
                     </Shape>
                 </Group>
@@ -1352,43 +740,7 @@
                             <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
                             </Material>
                         </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='178.46316622893497 78.36245122720528 159.8602550011789 103.45914617104216 172.89230040293796 108.99665351786587 175.19403538530574 109.9751688719217 196.0430841306675 118.81516553996772 198.37817759062838 119.80480038760804 211.7771662506522 125.49798063197315 230.36895798640393 100.40128568813628 217.01444729597756 94.70810544377116 214.65711485200805 93.71847059692092 193.7969466130618 84.87847392808482 191.53968960187163 83.9221975588277 178.46316622893497 78.36245122720528' solid='false' endCap='false' spine='0 0 0 0 310 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
                         <Extrusion convex='false' creaseAngle='0.785' crossSection='178.96354339915231 79.71902933232026 161.66161281332933 103.08108341998302 211.276789082015 124.14140252685819 228.57871966783802 100.77934843840534 178.96354339915231 79.71902933232026' solid='false' endCap='false' spine='0 0 0 0 320 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='178.96354339915231 79.71902933232026 161.66161281332933 103.08108341998302 211.276789082015 124.14140252685819 228.57871966783802 100.77934843840534 178.96354339915231 79.71902933232026' solid='false' endCap='false' spine='0 0 0 0 320 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='180.47579440022852 83.79988313966948 167.0434472626116 101.93577567559137 209.76453807935863 120.06054871871888 223.19688521697555 101.92465618279698 180.47579440022852 83.79988313966948' solid='false' endCap='false' spine='0 0 0 0 330 0'>
                         </Extrusion>
                     </Shape>
                 </Group>
@@ -1417,18 +769,6 @@
                     </Shape>
                 </Group>
             </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='200.0572209828305 99.34493388451965 201.24700669839976 102.60294523535447 199.04534715039148 105.53849129910213 194.75322298231893 106.42805071238294 190.88363953411286 104.77124630497954 189.6938538201238 101.51323495414472 191.89551336655188 98.57768889118715 196.1876375362046 97.68812947790633 200.0572209828305 99.34493388451965' solid='false' endCap='false' spine='0 0 0 0 443.2 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
             <Transform translation='0 75 0'>
                 <Group class='buildingPart'>
                     <Shape>
@@ -1437,18 +777,6 @@
                             </Material>
                         </Appearance>
                         <Extrusion convex='false' creaseAngle='0.785' crossSection='251.97413223388398 97.13215484450707 249.09418363252811 101.04621626231057 240.3209039212485 112.93295392046808 238.49730712350927 112.15458943434118 228.95678241810705 125.09767889532522 230.81373769343938 125.88716287503661 222.58531312039437 137.04001401745472 219.52745263906866 141.18758478078024 194.86441790868275 130.74638116930282 197.88891991399552 126.64328837636481 192.0734252496821 124.1747610044513 171.22437650432033 115.35700332199407 165.48671828877764 112.92183442846377 162.39549932827865 117.1138831629669 137.6879866282953 106.65044056511057 140.80144457438308 102.43615284580873 149.3078564617575 90.89411945953708 151.07585579631478 91.63912546807087 160.3495126778118 79.07409875735588 158.57039385125015 78.31797325602768 167.32143457852115 66.45347458345898 170.1680247007037 62.60613012163179 194.85329841667843 73.05845322590362 192.00670829449587 76.90579768773081 197.85556143482222 79.38544455243871 218.7268491657728 88.22544122048474 224.4089099181336 90.62725163563185 227.31109750349805 86.69095123302964 251.97413223388398 97.13215484450707' solid='false' endCap='false' spine='0 0 0 0 15 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0.96 0.96 0.86' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='251.97413223388398 97.13215484450707 249.09418363252811 101.04621626231057 240.3209039212485 112.93295392046808 238.49730712350927 112.15458943434118 228.95678241810705 125.09767889532522 230.81373769343938 125.88716287503661 222.58531312039437 137.04001401745472 219.52745263906866 141.18758478078024 194.86441790868275 130.74638116930282 197.88891991399552 126.64328837636481 192.0734252496821 124.1747610044513 171.22437650432033 115.35700332199407 165.48671828877764 112.92183442846377 162.39549932827865 117.1138831629669 137.6879866282953 106.65044056511057 140.80144457438308 102.43615284580873 149.3078564617575 90.89411945953708 151.07585579631478 91.63912546807087 160.3495126778118 79.07409875735588 158.57039385125015 78.31797325602768 167.32143457852115 66.45347458345898 170.1680247007037 62.60613012163179 194.85329841667843 73.05845322590362 192.00670829449587 76.90579768773081 197.85556143482222 79.38544455243871 218.7268491657728 88.22544122048474 224.4089099181336 90.62725163563185 227.31109750349805 86.69095123302964 251.97413223388398 97.13215484450707' solid='false' endCap='false' spine='0 0 0 0 90 0'>
                         </Extrusion>
                     </Shape>
                 </Group>
@@ -1474,30 +802,6 @@
                             <Material diffuseColor='0 0 0' transparency='0'>
                             </Material>
                         </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='78.58788311580912 51.50887644239558 72.77238845307588 59.34811877079698 79.07714079402217 62.02791650264372 74.22904199255035 68.56617818990215 67.90205066601526 65.8641414724666 66.6121895160865 67.59878232785063 61.041323691669696 65.23033039029663 62.33118484159844 63.4845700421182 55.67060873439172 60.63797991993564 62.13103397287943 51.931417163842234 66.36756067777007 53.73277497520257 70.5484899194788 48.09519219401936 78.58788311580912 51.50887644239558' solid='false' endCap='false' spine='0 0 0 0 115 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='73.35060207206394 75.03772292039416 68.45802529941453 72.98061677713291 63.76559939390395 70.97910809784365 59.06205399796923 68.96647992576 54.35850860045434 66.96497124568064 49.654963202939456 64.94122358080259 62.54245520232177 47.33906669348125 64.04358671139367 45.2597215646312 70.5484899194788 48.09519219401936 78.58788311580912 51.50887644239558 72.77238845307588 59.34811877079698 79.07714079402217 62.02791650264372 81.93485040820904 63.251060695806075 73.35060207206394 75.03772292039416' solid='false' endCap='false' spine='0 0 0 0 106 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
                         <Extrusion convex='false' creaseAngle='0.785' crossSection='73.35060207206394 75.03772292039416 68.45802529941453 72.98061677713291 63.76559939390395 70.97910809784365 59.06205399796923 68.96647992576 54.35850860045434 66.96497124568064 49.654963202939456 64.94122358080259 62.54245520232177 47.33906669348125 64.04358671139367 45.2597215646312 70.5484899194788 48.09519219401936 78.58788311580912 51.50887644239558 72.77238845307588 59.34811877079698 79.07714079402217 62.02791650264372 81.93485040820904 63.251060695806075 73.35060207206394 75.03772292039416' solid='false' endCap='false' spine='0 0 0 0 106 0'>
                         </Extrusion>
                     </Shape>
@@ -1522,43 +826,7 @@
                             <Material diffuseColor='0 0 0' transparency='0'>
                             </Material>
                         </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='73.35060207206394 75.03772292039416 68.45802529941453 72.98061677713291 66.85681835598312 75.13779835396359 62.19775092964583 73.14740916746872 63.76559939390395 70.97910809784365 59.06205399796923 68.96647992576 57.46084705453782 71.12366150259066 52.76842114902725 69.11103333050701 54.35850860045434 66.96497124568064 49.654963202939456 64.94122358080259 62.54245520232177 47.33906669348125 64.04358671139367 45.2597215646312 70.5484899194788 48.09519219401936 78.58788311580912 51.50887644239558 72.77238845307588 59.34811877079698 79.07714079402217 62.02791650264372 81.93485040820904 63.251060695806075 73.35060207206394 75.03772292039416' solid='false' endCap='false' spine='0 0 0 0 88 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
                         <Extrusion convex='false' creaseAngle='0.785' crossSection='72.77238845307588 59.34811877079698 79.07714079402217 62.02791650264372 81.93485040820904 63.251060695806075 73.35060207206394 75.03772292039416 68.45802529941453 72.98061677713291 66.85681835598312 75.13779835396359 62.19775092964583 73.14740916746872 57.46084705453782 71.12366150259066 52.76842114902725 69.11103333050701 54.35850860045434 66.96497124568064 49.654963202939456 64.94122358080259 62.54245520232177 47.33906669348125 64.04358671139367 45.2597215646312 70.5484899194788 48.09519219401936 78.58788311580912 51.50887644239558 72.77238845307588 59.34811877079698' solid='false' endCap='false' spine='0 0 0 0 58 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='72.77238845307588 59.34811877079698 79.07714079402217 62.02791650264372 81.93485040820904 63.251060695806075 73.35060207206394 75.03772292039416 68.45802529941453 72.98061677713291 66.85681835598312 75.13779835396359 62.19775092964583 73.14740916746872 57.46084705453782 71.12366150259066 52.76842114902725 69.11103333050701 54.35850860045434 66.96497124568064 49.654963202939456 64.94122358080259 62.54245520232177 47.33906669348125 64.04358671139367 45.2597215646312 70.5484899194788 48.09519219401936 78.58788311580912 51.50887644239558 72.77238845307588 59.34811877079698' solid='false' endCap='false' spine='0 0 0 0 58 0'>
-                        </Extrusion>
-                    </Shape>
-                </Group>
-            </Transform>
-            <Transform translation='0 0 0'>
-                <Group class='buildingPart'>
-                    <Shape>
-                        <Appearance>
-                            <Material diffuseColor='0 0 0' transparency='0'>
-                            </Material>
-                        </Appearance>
-                        <Extrusion convex='false' creaseAngle='0.785' crossSection='64.04358671139367 45.2597215646312 70.5484899194788 48.09519219401936 78.58788311580912 51.50887644239558 72.77238845307588 59.34811877079698 79.07714079402217 62.02791650264372 81.93485040820904 63.251060695806075 73.35060207206394 75.03772292039416 68.45802529941453 72.98061677713291 66.85681835598312 75.13779835396359 62.19775092964583 73.14740916746872 60.55206601503682 75.34906871468691 55.826281631933135 73.31420155701446 57.46084705453782 71.12366150259066 52.76842114902725 69.11103333050701 54.35850860045434 66.96497124568064 49.654963202939456 64.94122358080259 62.54245520232177 47.33906669348125 64.04358671139367 45.2597215646312' solid='false' endCap='false' spine='0 0 0 0 47 0'>
                         </Extrusion>
                     </Shape>
                 </Group>
