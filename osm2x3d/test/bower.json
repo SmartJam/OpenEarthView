@@ -1,0 +1,28 @@
+{
+    "name": "openEarthView",
+    "authors": [
+        "Clément Igonet <clement@igonet.fr>"
+    ],
+    "description": "Open Earth View web site",
+    "main": "index.html",
+    "moduleType": [
+        "node"
+    ],
+    "keywords": [
+        "x3d",
+        "x3dom",
+        "osm"
+    ],
+    "license": "MIT",
+    "homepage": "http://wiki.openstreetmap.org/wiki/Open_Earth_View",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "bower-x3dom": "master"
+    }
+}

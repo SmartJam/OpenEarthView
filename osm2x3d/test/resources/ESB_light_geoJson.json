@@ -1,4 +1,13 @@
 [{
+        "type": "Feature",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[-73.9862797, 40.7481926], [-73.9852939, 40.7481926], [-73.9852939, 40.7486022], [-73.9862797, 40.7486022]]]
+        },
+        "properties": {
+            "type": "bounds"
+        }
+    }, {
         "type": "FeatureCollection",
         "features": [{
                 "type": "Feature",
@@ -10,6 +19,7 @@
                     "id": "137425131",
                     "type": "buildingPart",
                     "minHeight": "20",
+                    "minLevel": "5",
                     "color": "rgb(245, 245, 220)",
                     "levels": "20",
                     "height": "75"
@@ -37,6 +47,7 @@
                     "id": "137425128",
                     "type": "buildingPart",
                     "minHeight": "90",
+                    "minLevel": "24",
                     "color": "rgb(245, 245, 220)",
                     "levels": "29",
                     "height": "115"
@@ -64,6 +75,7 @@
                     "id": "137425127",
                     "type": "buildingPart",
                     "minHeight": "115",
+                    "minLevel": "29",
                     "color": "rgb(245, 245, 220)",
                     "levels": "71",
                     "height": "255"
@@ -91,6 +103,7 @@
                     "id": "137425129",
                     "type": "buildingPart",
                     "minHeight": "255",
+                    "minLevel": "71",
                     "color": "rgb(245, 245, 220)",
                     "levels": "80",
                     "height": "290"
@@ -226,6 +239,7 @@
                     "id": "137425133",
                     "type": "buildingPart",
                     "minHeight": "75",
+                    "minLevel": "20",
                     "color": "rgb(245, 245, 220)",
                     "levels": "24",
                     "height": "90"

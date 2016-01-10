@@ -2,7 +2,6 @@ var util = require('util');
 var stream = require('stream');
 var RGBColor = require('rgbcolor');
 var expat = require('node-expat');
-
 function getRGB(osmColor) {
     if (osmColor) {
         var hexRGB = /^#?([a-fA-F\d]{2})([a-fA-F\d]{2})([a-fA-F\d]{2})$/i.exec(osmColor);
@@ -58,6 +57,27 @@ function removeBuilding(id) {
     }
 }
 
+function createGroundBlock(minlat, minlon, maxlat, maxlon, url) {
+    "use strict";
+    var bounds = {
+        'type': 'Feature',
+        'geometry': {
+            'type': 'Polygon',
+            'coordinates': [[
+                    [+minlon, +minlat], [+maxlon, +minlat],
+                    [+maxlon, +maxlat], [+minlon, +maxlat]]]
+        },
+        'properties': {
+            'type': 'bounds'
+        }
+    };
+    if (url) {
+//        'url': 'http://a.tile.openstreetmap.org/' + zoom + '/' + x + '/' + y + '.png',
+        bounds['properties']['tile'] = url;
+    }
+    return bounds;
+}
+
 var geoGroundBlock = {
     "type": "Feature",
     "geometry": {
@@ -65,7 +85,7 @@ var geoGroundBlock = {
         "coordinates": [[[-73.9860386, 40.7487894], [-73.9860386, 40.7487894], [-73.9860386, 40.7487894], [-73.9860386, 40.7487894]]]
     },
     "properties": {
-        "type": "ground"
+        "tile": 'http://a.tile.openstreetmap.org/zoom/x/y.png',
     }
 };
 var geoBldPart = {
@@ -105,8 +125,7 @@ var geoBld = {
         "name": "Empire State Building"
     }
 };
-
-function convert(onConvert) {
+function convert(options, onConvert) {
     "use strict";
     var xmlStream = new expat.Parser('UTF-8');
     xmlStream.on('error', function (error) {
@@ -121,7 +140,14 @@ function convert(onConvert) {
     var way = {};
     var relation = {};
     xmlStream.on('startElement', function (name, attributes) {
-        if (name === 'node') {
+        if (name === 'bounds') {
+            var bounds = createGroundBlock(
+                    +attributes.minlat, +attributes.minlon,
+                    +attributes.maxlat, +attributes.maxlon,
+                    ((options && options.tile) ? options.tile : null));
+//            console.log(JSON.stringify(bounds));
+            blocks[blocks.length] = bounds;
+        } else if (name === 'node') {
             var id = attributes.id;
             var lat = attributes.lat;
             var lon = attributes.lon;
@@ -151,7 +177,7 @@ function convert(onConvert) {
             } else if (attributes.k === 'building:levels') {
                 way.bldLevels = attributes.v;
             } else if (attributes.k === 'building:min_level') {
-                way.bldMinLevel = attributes.V;
+                way.bldMinLevel = attributes.v;
             } else if (attributes.k === 'height') {
                 way.osmBldPartHeight = heightToMeter(attributes.v);
             } else if (attributes.k === 'min_height') {
@@ -270,13 +296,14 @@ function convert(onConvert) {
             }
             onRelation = false;
         } else if (name === 'osm') {
-            if (onConvert !== undefined) {
-                onConvert(blocks);
-            }
+//            if (onConvert !== undefined) {
+            onConvert(blocks);
+//            }
+            // tile ground
+
         }
     });
     return xmlStream;
 }
 
-// Functions which will be available to external callers
 exports.convert = convert;
