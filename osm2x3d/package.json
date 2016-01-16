@@ -3,10 +3,11 @@
     "description": "osm2x3d ==============",
     "version": "0.0.10",
     "dependencies": {
-        "sax": "",
         "body-parser": "~1.0.0",
-        "rgbcolor": "0.0.4",
+        "node-getopt": "",
         "node-xml-compare": "",
+        "rgbcolor": "0.0.4",
+        "sax": "",
         "turf": ""
     },
     "main": "./osmx3d.js",
