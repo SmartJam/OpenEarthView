@@ -8,10 +8,7 @@ function getRGB(osmColor) {
     if (osmColor) {
         var hexRGB = /^#?([a-fA-F\d]{2})([a-fA-F\d]{2})([a-fA-F\d]{2})$/i.exec(osmColor);
         if (hexRGB) {
-            return "rgb("
-                    + (parseInt(hexRGB[1], 16)) + ","
-                    + (parseInt(hexRGB[2], 16)) + ","
-                    + (parseInt(hexRGB[3], 16)) + ")";
+            return "rgb(" + (parseInt(hexRGB[1], 16)) + "," + (parseInt(hexRGB[2], 16)) + "," + (parseInt(hexRGB[3], 16)) + ")";
         }
         var color = new RGBColor(osmColor);
         if (color.ok) {
@@ -22,10 +19,11 @@ function getRGB(osmColor) {
 }
 
 var geoBlds = {};
+
 function heightToMeter(height) {
     "use strict";
     var result = 1,
-            unit = height.substr(height.length - 1);
+        unit = height.substr(height.length - 1);
     switch (unit) {
         case 'm':
             result = height.substr(0, height.length - 1);
@@ -36,6 +34,7 @@ function heightToMeter(height) {
     }
     return result;
 }
+
 function getGeoBuilding(id) {
     "use strict";
     if (!(geoBlds.hasOwnProperty(id))) {
@@ -59,217 +58,209 @@ function removeBuilding(id) {
     }
 }
 
-function createGroundBlock(minlat, minlon, maxlat, maxlon, url) {
+function groundBlock(bound, url) {
     "use strict";
     var bounds = {
         'type': 'Feature',
         'geometry': {
             'type': 'Polygon',
-            'coordinates': [[
-                    [+minlon, +minlat], [+maxlon, +minlat],
-                    [+maxlon, +maxlat], [+minlon, +maxlat]]]
+            'coordinates': [
+                [
+                    [+bound.minlon, +bound.minlat],
+                    [+bound.maxlon, +bound.minlat],
+                    [+bound.maxlon, +bound.maxlat],
+                    [+bound.minlon, +bound.maxlat]
+                ]
+            ]
         },
         'properties': {
             'type': 'bounds'
         }
     };
     if (url) {
-//        'url': 'http://a.tile.openstreetmap.org/' + zoom + '/' + x + '/' + y + '.png',
+        //        'url': 'http://a.tile.openstreetmap.org/' + zoom + '/' + x + '/' + y + '.png',
         bounds['properties']['tile'] = url;
     }
     return bounds;
 }
 
-var geoGroundBlock = {
-    "type": "Feature",
-    "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-                [-73.9860386, 40.7487894],
-                [-73.9860386, 40.7487894],
-                [-73.9860386, 40.7487894],
-                [-73.9860386, 40.7487894]
-            ]]
-    },
-    "properties": {
-        "tile": 'http://a.tile.openstreetmap.org/zoom/x/y.png',
-    }
-};
-var geoBldPart = {
-    "type": "Feature",
-    "geometry": {
-        "type": "Polygon",
-        "coordinates": []
-    },
-    "properties": {
-        "type": "buildingPart",
-        "minHeight": 20,
-        "minLevel": 5,
-        "color": "rgb(223, 55, 54)",
-        "levels": 20,
-        "height": 75
-    }
-};
-var roof = {
-    "type": "Feature",
-    "geometry": {
-        "type": "Polygon",
-        "coordinates": []
-    },
-    "properties": {
-        "type": "roof",
-        "color": "rgb(221, 123, 56)",
-        "roofShape": "flat",
-        "maxHeight": 95
-    }
-};
-var geoBld = {
-    "type": "FeatureCollection",
-    "features": [geoBldPart, roof],
-    "properties": {
-        "id": "2098969",
-        "type": "building",
-        "name": "Empire State Building"
-    }
-};
+
+function roofBlock(way) {
+    "use strict";
+    return {
+        "type": "Feature",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [way.nodes]
+        },
+        "properties": {
+            "id": way.id,
+            "type": "roof",
+            "color": getRGB(way.color),
+            "roofShape": way.roofShape,
+            "height": way.osmBldPartHeight
+        }
+    };
+}
+
+function geoBldPartBlock(way) {
+    return {
+        'type': 'Feature',
+        'geometry': {
+            'type': 'Polygon',
+            'coordinates': [way.nodes]
+        },
+        'properties': {
+            'id': way.id,
+            'type': 'buildingPart',
+            'minHeight': way.minHeight,
+            'minLevel': way.bldMinLevel,
+            'name': way.name,
+            'color': getRGB(way.color),
+            'levels': way.bldLevels,
+            'height': way.osmBldPartHeight
+        }
+    };
+}
+
+// var geoGroundBlock = {
+//     "type": "Feature",
+//     "geometry": {
+//         "type": "Polygon",
+//         "coordinates": [
+//             [
+//                 [-73.9860386, 40.7487894],
+//                 [-73.9860386, 40.7487894],
+//                 [-73.9860386, 40.7487894],
+//                 [-73.9860386, 40.7487894]
+//             ]
+//         ]
+//     },
+//     "properties": {
+//         "tile": 'http://a.tile.openstreetmap.org/zoom/x/y.png',
+//     }
+// };
+
 function convert(options, onConvert) {
     "use strict";
     var xmlStream = new expat.Parser('UTF-8');
-    xmlStream.on('error', function (error) {
+    xmlStream.on('error', function(error) {
         console.error("error!", error);
     });
     var bounds;
     var blocks = [],
-            geoBldParts = {},
-            roofs = {},
-            nodeMap = {},
-            onWay = false,
-            onRelation = false;
+        geoBldParts = {},
+        roofs = {},
+        nodeMap = {},
+        onWay = false,
+        onRelation = false;
     var way = {};
     var relation = {};
-    xmlStream.on('startElement', function (name, attributes) {
+    xmlStream.on('startElement', function(name, attrs) {
         if (name === 'bounds') {
-            bounds = createGroundBlock(
-                    +attributes.minlat, +attributes.minlon,
-                    +attributes.maxlat, +attributes.maxlon,
-                    ((options && options.tile) ? options.tile : null));
-//            console.log(JSON.stringify(bounds));
+            var tile = ((options && options.tile) ? options.tile : null);
+            bounds = groundBlock(attrs, tile);
             blocks[blocks.length] = bounds;
         } else if (name === 'node') {
-            var id = attributes.id;
-            var lat = attributes.lat;
-            var lon = attributes.lon;
+            var id = attrs.id;
+            var lat = attrs.lat;
+            var lon = attrs.lon;
             nodeMap[id] = [+lon, +lat];
         } else if (name === 'way') {
-            way.nodes = [];
-            way.id = attributes.id;
-            way.isBld = false;
-            way.name = undefined;
-            way.color = undefined;
-            way.osmBldPartHeight = undefined;
-            way.minHeight = 0;
-            way.bldLevels = undefined;
-            way.bldMinLevel = 0;
-            way.roofHeight = undefined;
-            way.roofShape = "flat";
+            way = {
+                nodes: [],
+                id: attrs.id,
+                isBld: false,
+                minHeight: 0,
+                bldMinLevel: 0
+            }
             onWay = true;
         } else if (name === 'nd' && onWay) {
-            if (!nodeMap.hasOwnProperty(attributes.ref)) {
-                console.log("ERROR: Cannot link way to this node: " + attributes.ref);
+            if (!nodeMap.hasOwnProperty(attrs.ref)) {
+                console.log("ERROR: Cannot link way to this node: " + attrs.ref);
             } else {
-                way.nodes[way.nodes.length] = nodeMap[attributes.ref];
+                way.nodes[way.nodes.length] = nodeMap[attrs.ref];
             }
         } else if (name === 'tag' && onWay) {
-            if (attributes.k === 'building') {
-                way.isBld = true;
-            } else if (attributes.k === 'building:levels') {
-                way.bldLevels = attributes.v;
-            } else if (attributes.k === 'building:min_level') {
-                way.bldMinLevel = attributes.v;
-            } else if (attributes.k === 'height') {
-                way.osmBldPartHeight = heightToMeter(attributes.v);
-            } else if (attributes.k === 'min_height') {
-                way.minHeight = heightToMeter(attributes.v);
-            } else if (attributes.k === 'name') {
-                way.name = attributes.v;
-            } else if (attributes.k === 'building:colour') {
-                way.color = attributes.v;
-            } else if (attributes.k === 'roof:shape') {
-                way.roofShape = attributes.v;
-            } else if (attributes.k === 'roof:height') {
-                way.roofHeight = attributes.v;
+            switch (attrs.k) {
+                case 'building':
+                    way.isBld = true;
+                    break;
+                case 'building:levels':
+                    way.bldLevels = attrs.v;
+                    break;
+                case 'building:min_level':
+                    way.bldMinLevel = attrs.v;
+                    break;
+                case 'height':
+                    way.osmBldPartHeight = heightToMeter(attrs.v);
+                    break;
+                case 'min_height':
+                    way.minHeight = heightToMeter(attrs.v);
+                    break;
+                case 'name':
+                    way.name = attrs.v;
+                    break;
+                case 'building:colour':
+                    way.color = attrs.v;
+                    break;
+                case 'roof:shape':
+                    way.roofShape = attrs.v;
+                    break;
+                case 'roof:height':
+                    way.roofHeight = attrs.v;
+                    break;
             }
         } else if (name === 'relation') {
-            relation.id = attributes.id;
-            relation.isBld = false;
-            relation.osmBldPartHeight = undefined;
-            relation.minHeight = undefined;
-            relation.name = undefined;
-            relation.pptRoofHeight = undefined;
-            relation.roofShape = 'flat';
-            onRelation = true;
-        } else if (onRelation && name === 'member' && attributes.type === 'way') {
-            if (attributes.ref in geoBldParts) {
+            relation = {
+                id: attrs.id,
+                isBld: false,
+                onRelation: true
+            };
+        } else if (onRelation && name === 'member' && attrs.type === 'way') {
+            if (attrs.ref in geoBldParts) {
                 var geoBld = getGeoBuilding(relation.id);
-                geoBld.features[geoBld.features.length] = geoBldParts[attributes.ref];
-                if (roofs[attributes.ref]) {
-                    geoBld.features[geoBld.features.length] = roofs[attributes.ref];
+                geoBld.features[geoBld.features.length] = geoBldParts[attrs.ref];
+                if (roofs[attrs.ref]) {
+                    geoBld.features[geoBld.features.length] = roofs[attrs.ref];
                 }
             }
-        } else if (onRelation && name === 'tag' && attributes.k === 'name') {
-            relation.name = attributes.v;
-        } else if (onRelation && name === 'tag' && attributes.k === 'building:part' && attributes.v === 'yes') {
-            relation.isBld = true;
-        } else if (onRelation && name === 'tag' && attributes.k === 'building' && attributes.v === 'yes') {
-            relation.isBld = true;
-        } else if (onRelation && name === 'tag' && attributes.k === 'type' && attributes.v === 'building') {
-            relation.isBld = true;
-        } else if (onRelation && name === 'tag' && attributes.k === 'height') {
-            relation.osmBldPartHeight = heightToMeter(attributes.v);
-        } else if (onRelation && name === 'tag' && attributes.k === 'min_height') {
-            relation.minHeight = heightToMeter(attributes.v);
-        } else if (onRelation && name === 'tag' && attributes.k === 'roof:shape') {
-            relation.roofShape = attributes.v;
-        } else if (onRelation && name === 'tag' && attributes.k === 'roof:height') {
-            relation.optRoofHeight = attributes.v;
+        } else if (onRelation && name === 'tag') {
+            switch (attrs.k) {
+                case 'name':
+                    relation.name = attrs.v;
+                    break;
+                case 'building:part':
+                    relation.isBld = (attrs.v === 'yes');
+                    break;
+                case 'building':
+                    relation.isBld = (attrs.v === 'yes');
+                    break;
+                case 'type':
+                    relation.isBld = (attrs.v === 'building');
+                    break;
+                case 'height':
+                    relation.osmBldPartHeight = heightToMeter(attrs.v);
+                    break;
+                case 'min_height':
+                    relation.minHeight = heightToMeter(attrs.v);
+                    break;
+                case 'roof:shape':
+                    relation.roofShape = attrs.v;
+                    break;
+                case 'roof:height':
+                    relation.optRoofHeight = attrs.v;
+                    break;
+            };
         }
     });
-    xmlStream.on('endElement', function (name) {
+    xmlStream.on('endElement', function(name) {
         if (name === 'way') {
             onWay = false;
             if (way.roofShape) {
-                var roof = {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Polygon",
-                        "coordinates": [way.nodes]
-                    },
-                    "properties": {
-                        "id": way.id,
-                        "type": "roof",
-                        "color": getRGB(way.color),
-                        "roofShape": way.roofShape,
-                        "height": way.osmBldPartHeight
-                    }
-                };
+                var roof = roofBlock(way);
             }
-            var geoBldPart = {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': [way.nodes]
-                },
-                'properties': {
-                    'id': way.id,
-                    'type': 'buildingPart',
-                    'minHeight': way.minHeight,
-                    'minLevel': way.bldMinLevel,
-                    'name': way.name,
-                    'color': getRGB(way.color),
-                    'levels': way.bldLevels,
-                    'height': way.osmBldPartHeight
-                }
-            };
+            var geoBldPart = geoBldPartBlock(way);
             if (way.isBld) {
                 var geoBld = getGeoBuilding(way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
