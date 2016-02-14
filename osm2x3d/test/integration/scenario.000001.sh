@@ -3,7 +3,7 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 classname="$(basename ${0/.sh/})"
 
-nodejs ../../web_server.js &
+nodejs ../../web_server.js --debug &
 sleep 1
 serverPid=$!
 wget --quiet "localhost:8081/3dbox?format=osm&zoom=18&xtile=134118&ytile=95589" -O 18_134118_95589_osm.xml

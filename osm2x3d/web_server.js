@@ -52,6 +52,7 @@ var server = http.createServer(function(request, response) {
 
         if (args.zoom >= 16 && args.zoom <= 19) {
             var loD = args.zoom - 15;
+            log.debug("Level of Details: " + loD);
             var left = tile2long(+args.xtile, args.zoom);
             var right = tile2long(+args.xtile + 1, args.zoom);
             var top = tile2lat(+args.ytile, args.zoom);
