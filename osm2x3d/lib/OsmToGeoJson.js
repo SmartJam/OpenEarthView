@@ -18,7 +18,7 @@ function getRGB(osmColor) {
             return color.toRGB();
         }
     }
-    return "rgb(255,0,0)";
+    return "rgb(240,240,240)";
 }
 
 var geoBlds = {};
