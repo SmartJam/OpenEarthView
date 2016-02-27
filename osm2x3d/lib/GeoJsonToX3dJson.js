@@ -216,7 +216,7 @@ var myOsmGround;
  *      |                            
  *      +----------------->          
  *                      long         
- *                                    
+ *                                   
  */
 
 /**
@@ -317,9 +317,9 @@ function convert(geoJson, options, onConvert) {
                     }
                     var diffuseColor = (geoJsonBldPart.properties.color) ?
                             geoToX3dColor(geoJsonBldPart.properties.color) : [
-                        (((13 * (1 + height)) % 100) / 100),
-                        (((17 * (1 + height)) % 100) / 100),
-                        (((23 * (1 + height)) % 100) / 100)];
+                        (((13 + 13 * (1 + height)) % 100) / 100),
+                        (((17 + 17 * (1 + height)) % 100) / 100),
+                        (((23 + 23 * (1 + height)) % 100) / 100)];
                     var height = ((geoJsonBldPart.properties.height) ? geoJsonBldPart.properties.height : 0)
                             - ((roof && roof.height) ? (roof.height) : 0)
                             - minHeight;
