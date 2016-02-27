@@ -8,10 +8,7 @@ function getRGB(osmColor) {
     if (osmColor) {
         var hexRGB = /^#?([a-fA-F\d]{2})([a-fA-F\d]{2})([a-fA-F\d]{2})$/i.exec(osmColor);
         if (hexRGB) {
-            return "rgb("
-                    + (parseInt(hexRGB[1], 16)) + ","
-                    + (parseInt(hexRGB[2], 16)) + ","
-                    + (parseInt(hexRGB[3], 16)) + ")";
+            return "rgb(" + (parseInt(hexRGB[1], 16)) + "," + (parseInt(hexRGB[2], 16)) + "," + (parseInt(hexRGB[3], 16)) + ")";
         }
         var color = new RGBColor(osmColor);
         if (color.ok) {
@@ -22,10 +19,11 @@ function getRGB(osmColor) {
 }
 
 var geoBlds = {};
+
 function heightToMeter(height) {
     "use strict";
     var result = 1,
-            unit = height.substr(height.length - 1);
+        unit = height.substr(height.length - 1);
     switch (unit) {
         case 'm':
             result = height.substr(0, height.length - 1);
@@ -36,6 +34,7 @@ function heightToMeter(height) {
     }
     return result;
 }
+
 function getGeoBuilding(id) {
     "use strict";
     if (!(geoBlds.hasOwnProperty(id))) {
@@ -65,16 +64,21 @@ function createGroundBlock(minlat, minlon, maxlat, maxlon, url) {
         'type': 'Feature',
         'geometry': {
             'type': 'Polygon',
-            'coordinates': [[
-                    [+minlon, +minlat], [+maxlon, +minlat],
-                    [+maxlon, +maxlat], [+minlon, +maxlat]]]
+            'coordinates': [
+                [
+                    [+minlon, +minlat],
+                    [+maxlon, +minlat],
+                    [+maxlon, +maxlat],
+                    [+minlon, +maxlat]
+                ]
+            ]
         },
         'properties': {
             'type': 'bounds'
         }
     };
     if (url) {
-//        'url': 'http://a.tile.openstreetmap.org/' + zoom + '/' + x + '/' + y + '.png',
+        //        'url': 'http://a.tile.openstreetmap.org/' + zoom + '/' + x + '/' + y + '.png',
         bounds['properties']['tile'] = url;
     }
     return bounds;
@@ -84,12 +88,14 @@ var geoGroundBlock = {
     "type": "Feature",
     "geometry": {
         "type": "Polygon",
-        "coordinates": [[
+        "coordinates": [
+            [
                 [-73.9860386, 40.7487894],
                 [-73.9860386, 40.7487894],
                 [-73.9860386, 40.7487894],
                 [-73.9860386, 40.7487894]
-            ]]
+            ]
+        ]
     },
     "properties": {
         "tile": 'http://a.tile.openstreetmap.org/zoom/x/y.png',
@@ -132,30 +138,29 @@ var geoBld = {
         "name": "Empire State Building"
     }
 };
+
 function convert(options, onConvert) {
     "use strict";
     var xmlStream = sax.createStream(true);
-    xmlStream.on('error', function (error) {
+    xmlStream.on('error', function(error) {
         console.error("error!", error);
         this._parser.error = null;
         this._parser.resume();
     });
     var blocks = [],
-            geoBldParts = {},
-            roofs = {},
-            nodeMap = {},
-            onWay = false,
-            onRelation = false;
+        geoBldParts = {},
+        roofs = {},
+        nodeMap = {},
+        onWay = false,
+        onRelation = false;
     var way = {};
     var relation = {};
-    xmlStream.on('opentag', function (node) {
-        var name = node.name, attributes = node.attributes;
+    xmlStream.on('opentag', function(node) {
+        var name = node.name,
+            attributes = node.attributes;
         if (name === 'bounds') {
-            bounds = createGroundBlock(
-                    +attributes.minlat, +attributes.minlon,
-                    +attributes.maxlat, +attributes.maxlon,
-                    ((options && options.tile) ? options.tile : null));
-//            console.log(JSON.stringify(bounds));
+            bounds = createGroundBlock(+attributes.minlat, +attributes.minlon, +attributes.maxlat, +attributes.maxlon, ((options && options.tile) ? options.tile : null));
+            //            console.log(JSON.stringify(bounds));
             blocks[blocks.length] = bounds;
         } else if (name === 'node') {
             var id = attributes.id;
@@ -202,13 +207,12 @@ function convert(options, onConvert) {
                 way.roofHeight = attributes.v;
             }
         } else if (name === 'relation') {
-            relation.id = attributes.id;
-            relation.isBld = false;
-            relation.osmBldPartHeight = undefined;
-            relation.minHeight = undefined;
-            relation.name = undefined;
-            relation.pptRoofHeight = undefined;
-            relation.roofShape = 'flat';
+            // FIXME
+            relation = {
+                id: attributes.id;
+                isBld: false;
+                roofShape = 'flat';
+            }
             onRelation = true;
         } else if (onRelation && name === 'member' && attributes.type === 'way') {
             if (attributes.ref in geoBldParts) {
@@ -236,7 +240,7 @@ function convert(options, onConvert) {
             relation.optRoofHeight = attributes.v;
         }
     });
-    xmlStream.on('closetag', function (name) {
+    xmlStream.on('closetag', function(name) {
         if (name === 'way') {
             onWay = false;
             if (way.roofShape) {

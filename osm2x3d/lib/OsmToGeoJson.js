@@ -3,6 +3,9 @@ var stream = require('stream');
 var RGBColor = require('rgbcolor');
 var expat = require('node-expat');
 var turf = require('turf');
+var log = require('loglevel');
+
+log.setLevel("debug");
 
 function getRGB(osmColor) {
     if (osmColor) {
@@ -215,13 +218,13 @@ function convert(options, onConvert) {
             relation = {
                 id: attrs.id,
                 isBld: false,
-                onRelation: true
             };
+            onRelation = true;
         } else if (onRelation && name === 'member' && attrs.type === 'way') {
             if (attrs.ref in geoBldParts) {
                 var geoBld = getGeoBuilding(relation.id);
                 geoBld.features[geoBld.features.length] = geoBldParts[attrs.ref];
-                if (roofs[attrs.ref]) {
+                if (roofs[attrs.ref] && options.loD > 1) {
                     geoBld.features[geoBld.features.length] = roofs[attrs.ref];
                 }
             }
@@ -264,7 +267,7 @@ function convert(options, onConvert) {
             if (way.isBld) {
                 var geoBld = getGeoBuilding(way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
-                if (roof) {
+                if (roof && options.loD > 1) {
                     geoBld.features[geoBld.features.length] = roof;
                 }
                 if (turf.inside(turf.centroid(geoBld), bounds)) {
@@ -277,9 +280,12 @@ function convert(options, onConvert) {
                 }
             }
         } else if (name === 'relation') {
+            // <tag k="type" v="building"/>
             if (!relation.isBld) {
                 removeBuilding(relation.id);
+                log.debug("relation is not a building.");
             } else {
+                log.debug("relation is a building.");
                 var geoBld = getGeoBuilding(relation.id);
                 if (relation.osmBldPartHeight !== undefined) {
                     geoBld.properties.name = relation.name;

@@ -4,6 +4,8 @@
     "version": "0.0.10",
     "dependencies": {
         "body-parser": "~1.0.0",
+        "chai": "",
+        "chai-fuzzy": "",
         "loglevel": "",
         "node-getopt": "",
         "node-xml-compare": "",
