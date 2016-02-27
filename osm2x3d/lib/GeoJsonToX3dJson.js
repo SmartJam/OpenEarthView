@@ -317,9 +317,9 @@ function convert(geoJson, options, onConvert) {
                     }
                     var diffuseColor = (geoJsonBldPart.properties.color) ?
                             geoToX3dColor(geoJsonBldPart.properties.color) : [
-                        (((13 + 13 * (1 + height)) % 100) / 100.0),
-                        (((17 + 17 * (1 + height)) % 100) / 100.0),
-                        (((23 + 23 * (1 + height)) % 100) / 100.0)];
+                        (((99 + 13 * (1 + height)) % 100) / 100.0),
+                        (((99 + 17 * (1 + height)) % 100) / 100.0),
+                        (((99 + 23 * (1 + height)) % 100) / 100.0)];
                     var height = ((geoJsonBldPart.properties.height) ? geoJsonBldPart.properties.height : 0)
                             - ((roof && roof.height) ? (roof.height) : 0)
                             - minHeight;
