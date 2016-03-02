@@ -64,16 +64,21 @@ var server = http.createServer(function(request, response) {
                 hostname: 'www.openstreetmap.org',
                 port: 80,
                 path: myPath,
-                method: 'GET',
+                method: 'GET'
             };
-            var request = http.request(options, function(osmReadStream) {
+            var osmRequest = http.request(options, function(osmReadStream) {
                 log.debug('Get osm map response.')
                 var onX3dJsonConvert;
-                var onGeoJsonConvert;
+                // var onGeoJsonConvert;
                 var myOptions = {
                     'origin': [left, top],
                     'loD': loD,
-                    'tile': 'http://a.tile.openstreetmap.org/' + args.zoom + '/' + args.xtile + '/' + args.ytile + '.png'
+                    'tile': 'http://a.tile.openstreetmap.org/' + args.zoom + '/' + args.xtile + '/' + args.ytile + '.png',
+                    'geoJsonExtended': false,
+                    'zoom': args.zoom,
+                    'xtile': args.xtile,
+                    'ytile': args.ytile
+                    JSON.parse(JSON.stringify(args));
                 }
                 var myWriteStream;
                 switch (args.format) {
@@ -85,17 +90,19 @@ var server = http.createServer(function(request, response) {
                         break;
                     case "geojson":
                         log.debug("geojson format.");
-
-                        onGeoJsonConvert = function(geoJson) {
-                                if (opt.options.debug) {
-                                    console.timeEnd("server");
-                                }
-                                log.debug('Conversion to geoJson done.');
-                                response.setHeader('Content-Type', 'application/json');
-                                response.end(JSON.stringify(geoJson));
+                        // cacheFile = CACHE_DIR + "/" + args.zoom + '/' + args.xtile + '/' + args.ytile + '/' + loD + '_geoJson.json';
+                        // if (FILE.exists(cacheFile)) {
+                        //     myWriteStream = FIE.toStream(cacheFile);
+                        // } else {
+                        myWriteStream = osmToGeoJson.convert(myOptions, function(geoJson) {
+                            if (opt.options.debug) {
+                                console.timeEnd("server");
                             }
-                            //                        osmToGeoJson.convert(myStream, onGeoJsonConvert);
-                        myWriteStream = osmToGeoJson.convert(myOptions, onGeoJsonConvert);
+                            log.debug('Conversion to geoJson done.');
+                            response.setHeader('Content-Type', 'application/json');
+                            response.end(JSON.stringify(geoJson));
+                        });
+                        // }
                         break;
                     case "x3djson":
                         log.debug("x3djson format.");
@@ -108,18 +115,18 @@ var server = http.createServer(function(request, response) {
                             response.setHeader('Content-Type', 'application/json');
                             response.end(JSON.stringify(x3dJsonScene));
                         };
-                        onGeoJsonConvert = function(geoJson) {
+                        myOptions.geoJsonExtended: true;
+                        myWriteStream = osmToGeoJson.convert(myOptions, function(geoJson) {
                             if (opt.options.debug) {
                                 console.timeEnd("server");
                             }
                             log.debug('Conversion to geoJson done.');
                             geoJsonToX3dJson.convert(geoJson, myOptions, onX3dJsonConvert);
-                        }
-                        myWriteStream = osmToGeoJson.convert(myOptions, onGeoJsonConvert);
+                        });
                         break;
                     case "x3d":
-                        log.debug("x3djson format.");
-                        myWriteStream = osmToGeoJson.convert(myOptions, onGeoJsonConvert);
+                        log.debug("x3d format.");
+                        // myWriteStream = osmToGeoJson.convert(myOptions, onGeoJsonConvert);
                         onX3dJsonConvert = function(x3dJsonScene) {
                             if (opt.options.debug) {
                                 console.timeEnd("server");
@@ -129,14 +136,14 @@ var server = http.createServer(function(request, response) {
                             x3dJsonToX3d.convert(x3dJsonScene, response);
                             response.end();
                         };
-                        onGeoJsonConvert = function(geoJson) {
+                        myOptions.geoJsonExtended: true;
+                        myWriteStream = osmToGeoJson.convert(myOptions, function(geoJson) {
                             if (opt.options.debug) {
                                 console.timeEnd("server");
                             }
                             log.debug('Conversion to geoJson done.');
                             geoJsonToX3dJson.convert(geoJson, myOptions, onX3dJsonConvert);
-                        }
-                        myWriteStream = osmToGeoJson.convert(myOptions, onGeoJsonConvert);
+                        });
                         break;
                     default:
                         response.end();
@@ -152,10 +159,10 @@ var server = http.createServer(function(request, response) {
                     response.end();
                 }
             });
-            request.on('error', function(e) {
+            osmRequest.on('error', function(e) {
                 log.debug('problem with request: ' + e.message);
             });
-            request.end();
+            osmRequest.end();
         }
     } else {
         log.debug("fallback");

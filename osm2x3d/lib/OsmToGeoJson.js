@@ -21,7 +21,7 @@ function getRGB(osmColor) {
     return "rgb(240,240,240)";
 }
 
-var geoBlds = {};
+
 
 function heightToMeter(height) {
     "use strict";
@@ -38,7 +38,7 @@ function heightToMeter(height) {
     return result;
 }
 
-function getGeoBuilding(id) {
+function getGeoBuilding(geoBlds, id) {
     "use strict";
     if (!(geoBlds.hasOwnProperty(id))) {
         var geoBld = {
@@ -54,7 +54,7 @@ function getGeoBuilding(id) {
     return geoBlds[id];
 }
 
-function removeBuilding(id) {
+function removeBuilding(geoBlds, id) {
     "use strict";
     if (geoBlds.hasOwnProperty(id)) {
         delete geoBlds[id];
@@ -145,7 +145,10 @@ function geoBldPartBlock(way) {
 // };
 
 function convert(options, onConvert) {
+    var geoBlds = {};
     "use strict";
+    log.debug("options:");
+    log.debug(JSON.stringify(options));
     var xmlStream = new expat.Parser('UTF-8');
     xmlStream.on('error', function(error) {
         console.error("error!", error);
@@ -222,9 +225,9 @@ function convert(options, onConvert) {
             onRelation = true;
         } else if (onRelation && name === 'member' && attrs.type === 'way') {
             if (attrs.ref in geoBldParts) {
-                var geoBld = getGeoBuilding(relation.id);
+                var geoBld = getGeoBuilding(geoBlds, relation.id);
                 geoBld.features[geoBld.features.length] = geoBldParts[attrs.ref];
-                if (roofs[attrs.ref] && options.loD > 1) {
+                if (roofs[attrs.ref] && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
                     geoBld.features[geoBld.features.length] = roofs[attrs.ref];
                 }
             }
@@ -265,9 +268,13 @@ function convert(options, onConvert) {
             }
             var geoBldPart = geoBldPartBlock(way);
             if (way.isBld) {
-                var geoBld = getGeoBuilding(way.id);
+                var geoBld = getGeoBuilding(geoBlds, way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
-                if (roof && options.loD > 1) {
+                if (null != options.geoJsonExtended) {
+                    log.debug("options.geoJsonExtended:");
+                    log.debug(options.geoJsonExtended);
+                }
+                if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
                     geoBld.features[geoBld.features.length] = roof;
                 }
                 if (turf.inside(turf.centroid(geoBld), bounds)) {
@@ -282,11 +289,11 @@ function convert(options, onConvert) {
         } else if (name === 'relation') {
             // <tag k="type" v="building"/>
             if (!relation.isBld) {
-                removeBuilding(relation.id);
+                removeBuilding(geoBlds, relation.id);
                 log.debug("relation is not a building.");
             } else {
                 log.debug("relation is a building.");
-                var geoBld = getGeoBuilding(relation.id);
+                var geoBld = getGeoBuilding(geoBlds, relation.id);
                 if (relation.osmBldPartHeight !== undefined) {
                     geoBld.properties.name = relation.name;
                     for (var i = 0; i < geoBld.features.length; i++) {
