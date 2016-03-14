@@ -21,8 +21,6 @@ function getRGB(osmColor) {
     return "rgb(240,240,240)";
 }
 
-
-
 function heightToMeter(height) {
     "use strict";
     var result = 1,
@@ -81,7 +79,6 @@ function groundBlock(bound, url) {
         }
     };
     if (url) {
-        //        'url': 'http://a.tile.openstreetmap.org/' + zoom + '/' + x + '/' + y + '.png',
         bounds['properties']['tile'] = url;
     }
     return bounds;
@@ -126,29 +123,9 @@ function geoBldPartBlock(way) {
     };
 }
 
-// var geoGroundBlock = {
-//     "type": "Feature",
-//     "geometry": {
-//         "type": "Polygon",
-//         "coordinates": [
-//             [
-//                 [-73.9860386, 40.7487894],
-//                 [-73.9860386, 40.7487894],
-//                 [-73.9860386, 40.7487894],
-//                 [-73.9860386, 40.7487894]
-//             ]
-//         ]
-//     },
-//     "properties": {
-//         "tile": 'http://a.tile.openstreetmap.org/zoom/x/y.png',
-//     }
-// };
-
 function convert(options, onConvert) {
     var geoBlds = {};
     "use strict";
-    log.debug("options:");
-    log.debug(JSON.stringify(options));
     var xmlStream = new expat.Parser('UTF-8');
     xmlStream.on('error', function(error) {
         console.error("error!", error);
@@ -270,10 +247,6 @@ function convert(options, onConvert) {
             if (way.isBld) {
                 var geoBld = getGeoBuilding(geoBlds, way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
-                if (null != options.geoJsonExtended) {
-                    log.debug("options.geoJsonExtended:");
-                    log.debug(options.geoJsonExtended);
-                }
                 if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
                     geoBld.features[geoBld.features.length] = roof;
                 }

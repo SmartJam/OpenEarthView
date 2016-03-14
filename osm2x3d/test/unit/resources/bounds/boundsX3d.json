@@ -1,0 +1,30 @@
+{
+    "X3D": {
+        "@version": "3.0",
+        "@profile": "Immersive",
+        "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema-instance",
+        "@xsd:noNamespaceSchemaLocation": "http://www.web3d.org/specifications/x3d-3.0.xsd",
+        "Scene": {
+            "-children": [{
+                "Transform": {
+                    "@translation": [54.80797934283345, -0.1, 0],
+                    "@rotation": "1 0 0 -1.5708",
+                    "-children": [{
+                        "Group": {
+                            "@class": "tile",
+                            "-children": [{
+                                "Shape": {
+                                    "-geometry": [{
+                                        "Rectangle2D": {
+                                            "@size": [109.6159586856669, 45.54544195334078]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }]
+        }
+    }
+}

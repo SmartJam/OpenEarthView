@@ -1,7 +1,10 @@
 {
     "name": "osm2x3d",
-    "description": "osm2x3d ==============",
-    "version": "0.0.10",
+    "description": "Open Earth View project - Open Street Map to 3D formats converter",
+    "version": "0.0.16",
+    "devDependencies": {
+        "pkgfiles": "2.3.0"
+    },
     "dependencies": {
         "body-parser": "~1.0.0",
         "chai": "",
@@ -13,10 +16,26 @@
         "sax": "",
         "turf": ""
     },
-    "main": "./osmx3d.js",
+    "main": "./web_server.js",
     "scripts": {
-        "test": "osm2x3dTester.sh"
+        "test": "./test/osm2x3dTester.sh",
+        "prepublish": "pkgfiles"
     },
+    "files": [
+        "lib",
+        "scripts",
+        "test/integration",
+        "test/production",
+        "test/unit/*Mocha.js",
+        "test/unit/resources/18_134118_95589",
+        "test/unit/resources/bounds",
+        "test/unit/resources/esb/esb_*",
+        "test/osm2x3dTester.sh",
+        "tools/junit.sh",
+        "package.json",
+        "README.md",
+        "web_server.js"
+    ],
     "author": "Clement IGONET <clement@igonet.fr>",
     "keywords": [],
     "repository": {

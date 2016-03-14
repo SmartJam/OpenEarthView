@@ -1,0 +1,390 @@
+{
+    "X3D": {
+        "@version": "3.0",
+        "@profile": "Immersive",
+        "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema-instance",
+        "@xsd:noNamespaceSchemaLocation": "http://www.web3d.org/specifications/x3d-3.0.xsd",
+        "Scene": {
+            "-children": [{
+                "Transform": {
+                    "@translation": [76.35199638048746, -0.1, 0],
+                    "@rotation": "1 0 0 -1.5708",
+                    "-children": [{
+                        "Group": {
+                            "@class": "tile",
+                            "-children": [{
+                                "Shape": {
+                                    "-geometry": [{
+                                        "Rectangle2D": {
+                                            "@size": [152.70399276097493, 110.33872570940198]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115216992",
+                    "@id": "115216992",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [75.901656927598, -99.67513224440683, 68.45159684235882, -100.00871702428837, 67.78442728249698, -93.00343664519579, 53.21789189209768, -93.78180113211278, 51.43877306573358, -73.09954477629675, 108.48177043446469, -70.54206146281814, 110.37208418739013, -90.55714825887108, 102.81082917558962, -91.00192796590653, 103.58919366211157, -98.34079312409057, 99.47498137618162, -98.45198805124447, 94.24881982394695, -98.78557283112602, 75.901656927598, -99.67513224440683],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115216720",
+                    "@id": "115216720",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [49.43726438614804, -9.162461955133168, 45.21185717365675, -2.935546062957579, 58.88883315097276, 1.9570307089017487, 63.11424036346405, -4.269885183273839, 49.43726438614804, -9.162461955133168],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115215945",
+                    "@id": "115215945",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [69.22996132888078, -109.90506549516093, 68.78518162233912, -104.79009886978388, 76.34643663413965, -104.45651408990234, 76.79121634078005, -109.57148071527939, 69.22996132888078, -109.90506549516093],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115216866",
+                    "@id": "115216866",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [118.26692397917095, -27.064845145533024, 114.15271169333978, -28.955158898458464, 111.48403345379363, -25.174531392607584, 116.37661022614675, -23.395412566045962, 118.26692397917095, -27.064845145533024],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115216739",
+                    "@id": "115216739",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [35.87148333549214, -14.055038727782582, 31.64607612300085, -7.828122835606995, 45.21185717365675, -2.935546062957579, 49.43726438614804, -9.162461955133168, 35.87148333549214, -14.055038727782582],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115217790",
+                    "@id": "115217790",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [137.39245136204184, -59.867348505028595, 135.61333253567776, -56.865085486094706, 141.95144335441466, -54.52999202613381, 144.0641469606603, -57.53225504585779, 137.39245136204184, -59.867348505028595],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115215553",
+                    "@id": "115215553",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [1.5122510023601041, -18.72522564691427, -1.8235967969491313, -15.61176770082648, 3.624954608605747, -12.498309754738685, 6.960802407914983, -15.722962627190297, 1.5122510023601041, -18.72522564691427],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "368815275",
+                    "@id": "368815275",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [94.24881982394695, -98.78557283112602, 94.58240460382848, -101.67664092369608, 99.80856615616192, -101.45425107017836, 101.14290527588561, -101.45425107017836, 101.47649005586592, -105.12368364966542, 100.36454078936367, -105.23487857602925, 101.14290527588561, -113.12971836840264, 85.35322569232396, -113.90808285452954, 85.68681047230427, -118.13349006741586, 82.12857281967483, -118.35587992014351, 82.23976774633493, -119.80141396682357, 73.78895332135237, -120.24619367306894, 73.56656346803216, -118.80065962717894, 69.00757147565933, -119.02304947990659, 68.34040191569872, -111.79537924808638, 69.45235118220097, -111.68418432172255, 69.22996132888078, -109.90506549516093, 76.79121634078005, -109.57148071527939, 76.34643663413965, -104.45651408990234, 76.11292728822256, -101.93238925480692, 75.901656927598, -99.67513224440683, 94.24881982394695, -98.78557283112602],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }, {
+                "Group": {
+                    "@class": "building",
+                    "@DEF": "115216340",
+                    "@id": "115216340",
+                    "-children": [{
+                        "Transform": {
+                            "@translation": [0, 0, 0],
+                            "-children": [{
+                                "Group": {
+                                    "@class": "buildingPart",
+                                    "-children": [{
+                                        "Shape": {
+                                            "-appearance": [{
+                                                "Appearance": {
+                                                    "-material": [{
+                                                        "Material": {
+                                                            "@diffuseColor": [0.94, 0.94, 0.94],
+                                                            "@transparency": 0
+                                                        }
+                                                    }]
+                                                }
+                                            }],
+                                            "-geometry": [{
+                                                "Extrusion": {
+                                                    "@convex": false,
+                                                    "@creaseAngle": 0.785,
+                                                    "@crossSection": [94.58240460382848, -101.67664092369608, 94.24881982394695, -98.78557283112602, 99.47498137618162, -98.45198805124447, 99.59729579553736, -99.57505681004731, 99.80856615616192, -101.45425107017836, 94.58240460382848, -101.67664092369608],
+                                                    "@solid": false,
+                                                    "@endCap": false,
+                                                    "@spine": [0, 0, 0, 0, 9.99, 0]
+                                                }
+                                            }]
+                                        }
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                }
+            }]
+        }
+    }
+}

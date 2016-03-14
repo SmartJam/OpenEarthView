@@ -1,7 +1,8 @@
 var http = require('http');
+// var httpSync = require('http-sync');
 var url = require('url');
 var querystring = require('querystring');
-var osmToGeoJson = require('./lib/OsmToGeoJson.js');
+var osmXmlToGeoJson = require('./lib/OsmXmlToGeoJson.js');
 var geoJsonToX3dJson = require('./lib/GeoJsonToX3dJson.js');
 var x3dJsonToX3d = require('./lib/X3dJsonToX3d.js')
 var log = require('loglevel');
@@ -13,7 +14,7 @@ opt = require('node-getopt').create([
         // [''  , 'color[=COLOR]'       , 'COLOR is optional'],
         // ['m' , 'multi-with-arg=ARG+' , 'multiple option with argument'],
         // [''  , 'no-comment'],
-        ['d', 'debug', 'display this help'],
+        ['d', 'debug', 'print in debug level'],
         // ['v' , 'version'             , 'show version']
     ]) // create Getopt instance
     .bindHelp() // bind option 'help' to default action
@@ -53,32 +54,38 @@ var server = http.createServer(function(request, response) {
         if (args.zoom >= 16 && args.zoom <= 19) {
             var loD = args.zoom - 15;
             log.debug("Level of Details: " + loD);
-            var left = tile2long(+args.xtile, args.zoom);
-            var right = tile2long(+args.xtile + 1, args.zoom);
-            var top = tile2lat(+args.ytile, args.zoom);
-            var bottom = tile2lat(+args.ytile + 1, args.zoom);
-            var myPath = "/api/0.6/map?bbox=" + left + "," + bottom + "," + right + "," + top;
-            log.debug("Path: " + myPath);
-            log.debug('<bounds minlat="' + bottom + '" minlon="' + left + '" maxlat="' + top + '" maxlon="' + right + '"/>');
+            // var options = {
+            //     hostname: 'www.openstreetmap.org',
+            //     port: 80,
+            //     path: "/api/0.6/map?bbox=" +
+            //         tile2long(+args.xtile, args.zoom) + "," + // left
+            //         tile2lat(+args.ytile + 1, args.zoom) + "," + // bottom
+            //         tile2long(+args.xtile + 1, args.zoom) + "," + // right
+            //         tile2lat(+args.ytile, args.zoom), // top
+            //     method: 'GET'
+            // };
             var options = {
-                hostname: 'www.openstreetmap.org',
-                port: 80,
-                path: myPath,
+                hostname: 'localhost',
+                port: 8082,
+                path: "/osmCache/osmXml?tile=" + args.zoom + "," + args.xtile + "," + args.ytile,
                 method: 'GET'
             };
+            // var osmRequest = http.request(optionsOverpass, function(osmReadStream) {
             var osmRequest = http.request(options, function(osmReadStream) {
                 log.debug('Get osm map response.')
                 var onX3dJsonConvert;
                 // var onGeoJsonConvert;
                 var myOptions = {
-                    'origin': [left, top],
-                    'loD': loD,
-                    'tile': 'http://a.tile.openstreetmap.org/' + args.zoom + '/' + args.xtile + '/' + args.ytile + '.png',
-                    'geoJsonExtended': false,
-                    'zoom': args.zoom,
-                    'xtile': args.xtile,
-                    'ytile': args.ytile
-                    JSON.parse(JSON.stringify(args));
+                    origin: [
+                        tile2long(+args.xtile, args.zoom),
+                        tile2lat(+args.ytile, args.zoom)
+                    ],
+                    loD: loD,
+                    tile: 'http://a.tile.openstreetmap.org/' + args.zoom + '/' + args.xtile + '/' + args.ytile + '.png',
+                    geoJsonExtended: false,
+                    zoom: args.zoom,
+                    xtile: args.xtile,
+                    ytile: args.ytile
                 }
                 var myWriteStream;
                 switch (args.format) {
@@ -94,7 +101,7 @@ var server = http.createServer(function(request, response) {
                         // if (FILE.exists(cacheFile)) {
                         //     myWriteStream = FIE.toStream(cacheFile);
                         // } else {
-                        myWriteStream = osmToGeoJson.convert(myOptions, function(geoJson) {
+                        myWriteStream = osmXmlToGeoJson.convert(myOptions, function(geoJson) {
                             if (opt.options.debug) {
                                 console.timeEnd("server");
                             }
@@ -115,8 +122,8 @@ var server = http.createServer(function(request, response) {
                             response.setHeader('Content-Type', 'application/json');
                             response.end(JSON.stringify(x3dJsonScene));
                         };
-                        myOptions.geoJsonExtended: true;
-                        myWriteStream = osmToGeoJson.convert(myOptions, function(geoJson) {
+                        myOptions.geoJsonExtended = true;
+                        myWriteStream = osmXmlToGeoJson.convert(myOptions, function(geoJson) {
                             if (opt.options.debug) {
                                 console.timeEnd("server");
                             }
@@ -126,7 +133,7 @@ var server = http.createServer(function(request, response) {
                         break;
                     case "x3d":
                         log.debug("x3d format.");
-                        // myWriteStream = osmToGeoJson.convert(myOptions, onGeoJsonConvert);
+                        // myWriteStream = osmXmlToGeoJson.convert(myOptions, onGeoJsonConvert);
                         onX3dJsonConvert = function(x3dJsonScene) {
                             if (opt.options.debug) {
                                 console.timeEnd("server");
@@ -136,8 +143,8 @@ var server = http.createServer(function(request, response) {
                             x3dJsonToX3d.convert(x3dJsonScene, response);
                             response.end();
                         };
-                        myOptions.geoJsonExtended: true;
-                        myWriteStream = osmToGeoJson.convert(myOptions, function(geoJson) {
+                        myOptions.geoJsonExtended = true;
+                        myWriteStream = osmXmlToGeoJson.convert(myOptions, function(geoJson) {
                             if (opt.options.debug) {
                                 console.timeEnd("server");
                             }
@@ -154,7 +161,9 @@ var server = http.createServer(function(request, response) {
                     if (opt.options.debug) {
                         console.time("server");
                     }
-                    osmReadStream.pipe(myWriteStream);
+                    osmReadStream.pipe(myWriteStream, {
+                        end: true
+                    });
                 } else {
                     response.end();
                 }
