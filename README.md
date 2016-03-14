@@ -1,0 +1,1 @@
+Presentation here: http://wiki.openstreetmap.org/wiki/Open_Earth_View
