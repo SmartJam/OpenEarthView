@@ -246,7 +246,7 @@ Osm2X3dGround.prototype.updateScene = function () {
 //                    + '&xtile=' + tiles[k].xtile
 //                    + '&ytile=' + tiles[k].ytile;
 //wget "localhost:8081/3dbox?format=x3d&xtile=38598&ytile=49263&zoom=17" -O ESB17.x3d
-            var url = 'http://localhost:8081/3dbox?'
+            var url = 'http://www.openearthview.net/3dtile.php?'
                     + 'format=x3d'
                     + '&xtile=' + tiles[k].xtile
                     + '&ytile=' + tiles[k].ytile
@@ -272,7 +272,7 @@ Osm2X3dGround.prototype.updateScene = function () {
     mainTransform.setAttribute('rotation', "1 0 0 -1.5708");
     mainTransform.appendChild(group);
     scene.appendChild(mainTransform);
-    //    
+    //
 //    } else {
 //        inline = document.createElement('inline');
 //        inline.setAttribute('id', 'x3dTile');
@@ -333,7 +333,7 @@ function view_changed(e) {
     // where...
     // C is the (equatorial) circumference of the Earth
     // z is the zoom level
-    // y is the latitude of where you're interested in the scale. 
+    // y is the latitude of where you're interested in the scale.
 
 }
 
@@ -420,7 +420,7 @@ Osm2X3dEarth.prototype.view_changed = function (e) {
 //                scene.appendChild(inlineGround);
 //
 //                viewpointGround = document.getElementById('viewpointGround');
-//                
+//
 //                    position = viewpointGround.getAttribute('position');
 //                    position.x = 0;
 //                    position.y = 0;

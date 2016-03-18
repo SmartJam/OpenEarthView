@@ -1,7 +1,7 @@
 {
-    "name": "osm-cache",
+    "name": "osmcache",
     "description": "Open Earth View project - Open Street Map cache",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "devDependencies": {
         "pkgfiles": "2.3.0"
     },

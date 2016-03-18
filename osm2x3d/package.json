@@ -1,7 +1,7 @@
 {
     "name": "osm2x3d",
     "description": "Open Earth View project - Open Street Map to 3D formats converter",
-    "version": "0.0.16",
+    "version": "0.0.17",
     "devDependencies": {
         "pkgfiles": "2.3.0"
     },

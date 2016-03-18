@@ -28,7 +28,7 @@ if (opt.options.debug) {
 var server = http.createServer(function(request, response) {
     var page = url.parse(request.url).pathname;
     log.debug("page:" + page);
-    if (page != '/3dbox') {
+    if (page != '/3dtile') {
         response.writeHead(404, {
             "Content-Type": "text/html"
         });
@@ -43,12 +43,12 @@ var server = http.createServer(function(request, response) {
         //wget "http://www.openearthview.net/osm2x3d.php?zoom=18&xtile=77196&ytile=98527" -O ESB18_old.x3d
         //wget "http://a.tile.openstreetmap.org/18/77196/98527.png"
         //wget "http://a.tile.openstreetmap.org/19/154393/197054.png"
-        //wget "localhost:8080/3dbox?format=x3d&xtile=77196&ytile=98527&zoom=18" -O x3d.x3d
-        //wget "localhost:8080/3dbox?format=x3djson&xtile=77196&ytile=98527&zoom=18" -O x3djson.json
-        //wget "localhost:8080/3dbox?format=geojson&xtile=154394&ytile=197054&zoom=19" -O ESB19_geojson.json
-        //wget "localhost:8080/3dbox?format=x3d&xtile=154394&ytile=197054&zoom=19" -O ESB19.x3d
+        //wget "localhost:8080/3dtile?format=x3d&xtile=77196&ytile=98527&zoom=18" -O x3d.x3d
+        //wget "localhost:8080/3dtile?format=x3djson&xtile=77196&ytile=98527&zoom=18" -O x3djson.json
+        //wget "localhost:8080/3dtile?format=geojson&xtile=154394&ytile=197054&zoom=19" -O ESB19_geojson.json
+        //wget "localhost:8080/3dtile?format=x3d&xtile=154394&ytile=197054&zoom=19" -O ESB19.x3d
         //wget "http://www.openearthview.net/osm2x3d.php?zoom=19&xtile=154394&ytile=197054" -O ESB19_old.x3d
-        //wget "localhost:8081/3dbox?format=x3d&xtile=38598&ytile=49263&zoom=17" -O ESB17.x3d
+        //wget "localhost:8081/3dtile?format=x3d&xtile=38598&ytile=49263&zoom=17" -O ESB17.x3d
         //wget "http://www.openearthview.net/osm2x3d.php?zoom=17&xtile=38598&ytile=49263" -O ESB17_old.x3d
 
         if (args.zoom >= 16 && args.zoom <= 19) {
