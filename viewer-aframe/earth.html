@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Hello, World! • A-Frame</title>
+    <meta name="description" content="Open Earth View - a-frame viewer">
+    <!-- <script src="node_modules/jquery/dist/jquery.min.js"></script> -->
+    <!-- <script src="node_modules/aframe/dist/aframe.min.js"></script> -->
+    <script src="https://aframe.io/releases/0.2.0/aframe.min.js"></script>
+    <!-- <script src="node_modules/aframe-keyboard-controls/dist/aframe-keyboard-controls.min.js"></script> -->
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-keyboard-controls/v1.0.0/dist/aframe-keyboard-controls.min.js"></script>
+    <!-- <script src="https://github.com/donmccurdy/aframe-extras/blob/master/dist/aframe-extras.js"></script> -->
+    <!-- <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v1.4.0/dist/aframe-extras.js"></script> -->
+
+    <!-- <script src="./earth.js" charset="UTF-8"></script> -->
+</head>
+
+<body id="body">
+    <!-- <a-assets>
+      <img id="world" src="resources/world/Stellar_density_map.png">
+      <img id="ground" src="http://a.tile.openstreetmap.org/18/134118/95589.png">
+      <img id="test" src="resources/world/00405060-Photosphere.jpg">
+  </a-assets> -->
+    <!-- <a-entity position="0.8 10 0" rotation="-90">
+      <a-entity camera look-controls wasd-controls></a-entity>
+  </a-entity>
+  <a-sky src="resources/world/Stellar_density_map.png"></a-sky> -->
+    <!-- <a-entity camera look-controls keyboard-controls></a-entity> -->
+    <script>
+        var R = 6378.137;
+        var lat, lon, altitude;
+        var zoom;
+        var doQueue = [];
+        var freeToUpdate = 1;
+        AFRAME.registerComponent('acceleration', {
+            tick: function() {
+                var matrixWorld = this.el.object3D.matrixWorld;
+                var position = new THREE.Vector3();
+                position.setFromMatrixPosition(matrixWorld);
+                var altitude = position.z;
+                this.el.setAttribute('keyboard-controls', {
+                    acceleration: (altitude - 1) * 50
+                });
+            }
+        })
+        AFRAME.registerComponent('openearthview', {
+            tick: function() {
+                var matrixWorld = this.el.object3D.matrixWorld;
+                var position = new THREE.Vector3();
+                position.setFromMatrixPosition(matrixWorld);
+                // altitude = position.z;
+                var oldZoom = zoom;
+                zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(position.z)), 19), 1));
+                if (Math.abs(zoom - oldZoom) >= 1) {
+                    console.log('from ', oldZoom, 'to', zoom);
+                    lon = position.x / (R * Math.cos(lat)) + lon;
+                    lat = (position.y / R) + lat;
+                    console.log('lon/lat: ', lon, lat);
+                    doQueue.push({
+                        'lon': position.x / (R * Math.cos(lat)) + lon,
+                        'lat': (position.y / R) + lat,
+                        'alti': position.z
+                    });
+                    // updateScene(
+                    //     position.x / (R * Math.cos(lat)) + lon, (position.y / R) + lat, position.z
+                    // );
+                }
+                if (doQueue.length > 0 && freeToUpdate == 1) {
+                    freeToUpdate = 0;
+                    updateScene(doQueue.shift());
+                    freeToUpdate = 1;
+                }
+            }
+        })
+    </script>
+    <a-scene id="myScene">
+        <a-entity id="myCameraPosition" position="0 0 50">
+            <a-entity id="myCamera" camera openearthview acceleration look-controls keyboard-controls>
+                <!-- <a-sky src="resources/photosphere.jpg"></a-sky> -->
+            </a-entity>
+
+        </a-entity>
+        <!-- <a-sky color="#6EBAA7"></a-sky> -->
+        <!-- `keyboard-controls="acceleration:65" -->
+
+        <!-- <a-plane id="myCenter"></a-plane> -->
+        <!-- <a-plane id="myCenter" position="0 0 0" rotation="0 0 0" width="75" height="75" src="http://a.tile.openstreetmap.org/18/134118/95589.png"></a-plane> -->
+
+        <!-- <a-plane position="75 0 0" rotation="0 0 0" width="75" height="75" src="http://a.tile.openstreetmap.org/18/134119/95589.png"></a-plane>
+        <a-plane position="-75 75 0" rotation="0 0 0" width="75" height="75" src="http://a.tile.openstreetmap.org/18/134117/95588.png"></a-plane>
+        <a-plane position="-75 0 0" rotation="0 0 0" width="75" height="75" src="http://a.tile.openstreetmap.org/18/134117/95589.png"></a-plane>
+        <a-plane position="-75 -75 0" rotation="0 0 0" width="75" height="75" src="http://a.tile.openstreetmap.org/18/134117/95590.png"></a-plane> -->
+
+        <a-cylinder id="x-axe" position="100 0 0" rotation="0 0 -90" color="#0000FF" height="200" radius="0.1"></a-cylinder>
+        <a-cylinder id="y-axe" position="0 100 0" rotation="0 0 0" color="#00FF00" height="200" radius="0.1"></a-cylinder>
+        <a-cylinder id="z-axe" position="0 0 100" rotation="-90 0 0" color="#FF0000" height="200" radius="0.1"></a-cylinder>
+
+        <!-- <a-cylinder id="x-axe" position="10 0 0" rotation="0 0 90" color="#0000FF" height="20" radius="0.1"></a-cylinder>
+        <a-cylinder id="y-axe" position="0 0 -10" rotation="-90 0 0" color="#00FF00" height="20" radius="0.1"></a-cylinder>
+        <a-cylinder id="z-axe" position="0 10 0" rotation="0 90 0" color="#FF0000" height="20" radius="0.1"></a-cylinder> -->
+    </a-scene>
+
+    <!-- http://a.tile.openstreetmap.org/18/134118/95589.png -->
+    <!-- <a-entity geometry="primitive: plane; height: 10; width: 10" material="side: double"></a-entity> -->
+    <!-- <a-plane src="#test" rotation="-90 0 0" width="10" height="10"></a-plane> -->
+    <!-- <a-plane rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane> -->
+    <!-- <a-plane rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane> -->
+    <!-- <a-plane src="#test" rotation="-90 0 0" width="10" height="10"></a-plane> -->
+    <!-- <a-plane src="#ground" height="100" width="100"></a-plane> -->
+    <!-- <script>
+        console.log('cici');
+    </script> -->
+    <script>
+        // initialization //
+        var defaultLon = 4.18304443359375;
+        var defaultLat = 43.734390911602034;
+        var defaultAlti = 50;
+
+        var params = getSearchParameters();
+        lat = (params.lat) ? params.lat : defaultLat;
+        lon = (params.lon) ? params.lon : defaultLon;
+        altitude = (params.alti) ? params.alti : defaultAlti;
+        document.querySelector('#myCameraPosition').setAttribute('position', '0 0 ' + +altitude);
+        console.log("params: ", JSON.stringify(params));
+        console.log(+lon, '/', lat, '/', altitude);
+
+        // var x = function measure(lat1, lon1, lat2, lon2);
+        // var y = function measure(lat1, lon1, lat2, lon2);
+
+        updateScene({
+            'lon': lon,
+            'lat': lat,
+            'alti': altitude
+        });
+
+        function updateScene(position) {
+            var lon_ = position.lon;
+            var lat_ = position.lat;
+            var altitude_ = position.alti;
+
+            // var width = measure(lat, lon, lat, lonP);
+
+            console.log("Update scene !");
+            var zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(altitude_)), 19), 1));
+            var xtile = long2tile(lon_, zoom);
+            var ytile = lat2tile(lat_, zoom);
+            console.log("tile x/y: ", xtile, "/", ytile);
+            var lon1 = tile2long(xtile, zoom);
+            var lat1 = tile2lat(ytile, zoom);
+            var lon2 = tile2long(xtile + 1, zoom);
+            var lat2 = tile2lat(ytile + 1, zoom);
+            var xShift = measure(lat1, lon_, lat1, lon1);
+            var yShift = measure(lat_, lon1, lat1, lon1);
+            var width = measure(lat1, lon1, lat1, lon2);
+            // var height = measure(lat, lon, latP, lon);
+            console.log("width: ", width);
+
+            // var myCenter = document.getElementById('#myCenter');
+            var myCenter = document.querySelector('#myCenter')
+                // console.log("myCenter: ", JSON.stringify(myCenter));
+            if (myCenter !== null) {
+                console.log('I m going to delete the old tile.');
+                myCenter.parentNode.removeChild(myCenter);
+            } else {
+                console.log('I cant delete myCenter');
+            }
+
+            // <a-plane id="myCenter" position="0 0 0" rotation="0 0 0" width="75" height="75" src="http://a.tile.openstreetmap.org/18/134118/95589.png"></a-plane>
+            var aPlane = document.createElement('a-plane');
+
+            // aPlane.setAttribute('position', '0 0 0');
+            // aPlane.setAttribute('rotation', '-90 0 0');
+            // aPlane.setAttribute('width', 10);
+            // aPlane.setAttribute('height', 10);
+            var url = 'http://a.tile.openstreetmap.org/' + zoom + '/' + xtile + '/' + ytile + '.png';
+            console.log('url: ' + url);
+            aPlane.setAttribute('src', url);
+            aPlane.setAttribute('width', +width);
+            aPlane.setAttribute('height', width);
+            aPlane.setAttribute('position', "" + (-xShift + width / 2) + " " + (yShift - width / 2) + " 0");
+            aPlane.setAttribute('id', 'myCenter');
+            document.querySelector('#myScene').appendChild(aPlane);
+        }
+        // <a-plane id="myCenter" position="0 0 0" rotation="0 0 0" width="75" height="75" src="http://a.tile.openstreetmap.org/18/134118/95589.png"></a-plane>
+        // console.log("lon: " + tile2long(134118, 18));
+        // console.log("lat: " + tile2lat(95589, 18));
+
+        // var altitude;
+        // var zoom;
+        // var acceleration;
+        // document.querySelector('#myCamera').addEventListener('componentchanged', function(evt) {
+        //     if (evt.detail.name === 'position') {
+        //         if (evt.detail.oldData.z !== evt.detail.newData.z) {
+        //             altitude = evt.detail.newData.z + 150;
+        //             console.log('Altitude:', altitude);
+        //             zoom = Math.max(Math.min(Math.floor(26 - Math.log2(altitude)), 19), 1);
+        //             console.log('Zoom:', zoom);
+        //             var player = document.querySelector('[keyboard-controls]');
+        //             acceleration = (altitude < 10) ? altitude : altitude * 10;
+        //             player.setAttribute('keyboard-controls', {
+        //                 acceleration: acceleration
+        //             })
+        //             console.log('acceleration:', acceleration);
+        //         }
+        //     }
+        // });
+        // $(document).ready(function() {
+        //     $("<a-scene/>", {
+        //         "id": "aScene"
+        //     }).appendTo($("#body"));
+        //     // $("<a-entity/>", {
+        //     //     "id": "aEntity",
+        //     //     "position": "0.8 10 0",
+        //     //     "rotation": "-90"
+        //     // }).appendTo($("#aScene"));
+        //     // $("<a-entity/>", {
+        //     //     "id": "aEntityCamera",
+        //     //     "camera": "",
+        //     //     "looks-controls": "",
+        //     //     "keyboard-controls": ""
+        //     // }).appendTo($("#aEntity"));
+        //     $("<a-plane/>", {
+        //         "rotation": "-90 0 0",
+        //         "width": 10,
+        //         "height": 10,
+        //         "src": "http://a.tile.openstreetmap.org/18/134118/95589.png"
+        //     }).appendTo($("#aScene"));
+        //     // "color": "#7BC8A4"
+        // });
+
+        // TOOLBOX //
+        function getSearchParameters() {
+            var prmstr = window.location.search.substr(1);
+            return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+        }
+
+        function transformToAssocArray(prmstr) {
+            var params = {};
+            var prmarr = prmstr.split("&");
+            for (var i = 0; i < prmarr.length; i++) {
+                var tmparr = prmarr[i].split("=");
+                params[tmparr[0]] = tmparr[1];
+            }
+            return params;
+        }
+
+        function long2tile(lon, zoom) {
+            return (Math.floor((lon + 180) / 360 * Math.pow(2, zoom)));
+        }
+
+        function lat2tile(lat, zoom) {
+            return (Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom)));
+        }
+
+        function tile2long(x, z) {
+            return (x / Math.pow(2, z) * 360 - 180);
+        }
+
+        function tile2lat(y, z) {
+            var n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
+            return (180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))));
+        }
+
+        function measure(lat1, lon1, lat2, lon2) { // generally used geo measurement function
+            // var R = 6378.137; // Radius of earth in KM
+            var dLat = (lat2 - lat1) * Math.PI / 180;
+            var dLon = (lon2 - lon1) * Math.PI / 180;
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c;
+            return d * 1000; // meters
+        }
+
+        function lonOffsetMeter2lon(lon, lat, x) {
+            return x / (R * Math.cos(lat)) + lon;
+        }
+
+        function latOffsetMeter2lat(lat, y) {
+            var R = 6378.137;
+            return (y / R) + lat;
+        }
+    </script>
+</body>
+
+</html>
