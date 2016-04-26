@@ -18,7 +18,7 @@ $ server.sh
 ```
 $ wget "localhost:8082/osmCache/osmXml?tile=zoom,xtile,ytile
 Example:
-$ wget "localhost:8082/osmCache/osmXml?tile=18/77196/98527
+$ wget "localhost:8082/osmCache/osmXml?tile=18,77196,98527
 ```
 
 ## Unit Tests

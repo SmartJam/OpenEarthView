@@ -84,7 +84,7 @@ Osm2X3dGround.prototype.init = function () {
 
 //    updateGroundView(lat, lon, rdist);
 //    updateGroundView();
-
+// <viewpoint onviewpointChanged="viewFunc(event);"></viewpoint>
     self.viewpoint.addEventListener("viewpointChanged", view_changed, false);
     curViewPoint = x3dElement.runtime.viewpoint();
     rotationCenter = curViewPoint._vf.centerOfRotation;

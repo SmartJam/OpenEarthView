@@ -85,23 +85,23 @@ function groundBlock(bound, url) {
 }
 
 
-function roofBlock(way) {
-    "use strict";
-    return {
-        "type": "Feature",
-        "properties": {
-            "id": +way.id,
-            "type": "roof",
-            "color": getRGB(way.color),
-            "roofShape": way.roofShape,
-            "height": way.osmBldPartHeight
-        },
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [way.nodes]
-        }
-    };
-}
+// function roofBlock(way) {
+//     "use strict";
+//     return {
+//         "type": "Feature",
+//         "properties": {
+//             "id": +way.id,
+//             "type": "roof",
+//             "color": getRGB(way.color),
+//             "roofShape": way.roofShape,
+//             "height": way.osmBldPartHeight
+//         },
+//         "geometry": {
+//             "type": "Polygon",
+//             "coordinates": [way.nodes]
+//         }
+//     };
+// }
 
 function geoBldPartBlock(way) {
     return {
@@ -114,7 +114,11 @@ function geoBldPartBlock(way) {
             'type': 'buildingPart',
             'minHeight': +way.minHeight,
             'minLevel': +way.bldMinLevel,
-            'name': way.name
+            'name': way.name,
+            'roof:shape': way.roofShape,
+            // 'roof:height': way.osmBldPartHeight
+            'roof:height': way.roofHeight,
+            'roof:material': way.roofMaterial
         },
         'geometry': {
             'type': 'Polygon',
@@ -133,7 +137,7 @@ function convert(options, onConvert) {
     var bounds;
     var blocks = [],
         geoBldParts = {},
-        roofs = {},
+        // roofs = {},
         nodeMap = {},
         onWay = false,
         onRelation = false;
@@ -204,9 +208,9 @@ function convert(options, onConvert) {
             if (attrs.ref in geoBldParts) {
                 var geoBld = getGeoBuilding(geoBlds, +relation.id);
                 geoBld.features[geoBld.features.length] = geoBldParts[attrs.ref];
-                if (roofs[attrs.ref] && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
-                    geoBld.features[geoBld.features.length] = roofs[attrs.ref];
-                }
+                // if (roofs[attrs.ref] && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
+                //     geoBld.features[geoBld.features.length] = roofs[attrs.ref];
+                // }
             }
         } else if (onRelation && name === 'tag') {
             switch (attrs.k) {
@@ -240,24 +244,24 @@ function convert(options, onConvert) {
     xmlStream.on('endElement', function(name) {
         if (name === 'way') {
             onWay = false;
-            if (way.roofShape) {
-                var roof = roofBlock(way);
-            }
+            // if (way.roofShape) {
+            //     var roof = roofBlock(way);
+            // }
             var geoBldPart = geoBldPartBlock(way);
             if (way.isBld) {
                 var geoBld = getGeoBuilding(geoBlds, +way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
-                if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
-                    geoBld.features[geoBld.features.length] = roof;
-                }
+                // if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
+                //     geoBld.features[geoBld.features.length] = roof;
+                // }
                 if (turf.inside(turf.centroid(geoBld), bounds)) {
                     blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
                 }
             } else {
                 geoBldParts[+way.id] = geoBldPart;
-                if (roof) {
-                    roofs[+way.id] = roof;
-                }
+                // if (roof) {
+                //     roofs[+way.id] = roof;
+                // }
             }
         } else if (name === 'relation') {
             // <tag k="type" v="building"/>
