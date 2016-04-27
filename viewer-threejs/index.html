@@ -18,15 +18,19 @@
 
 <body>
     <script src="node_modules/three/three.js"></script>
-    <script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
-    <script src="toolbox.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+    <!-- <script src="node_modules/three/examples/js/controls/TrackballControls.js"></script> -->
+    <!-- <script src="node_modules/three/examples/js/controls/MouseControls.js"></script> -->
+    <!-- <script src="node_modules/three/examples/js/controls/VRControls.js"></script> -->
+    <script src="js/toolbox.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script> -->
     <script>
         // START initialization //
         var R = 6378.137;
         var lat, lon, altitude;
-        var zoom;
-        var doQueue = [];
+        var lonOri, latOri;
+        var zoom = 0;
+        // var doQueue = [];
         var tileGroup;
         // var tiles = [];
 
@@ -35,13 +39,18 @@
         var defaultAlti = 150;
 
         var params = getSearchParameters();
-        lat = (params.lat) ? params.lat : defaultLat;
-        lon = (params.lon) ? params.lon : defaultLon;
+        lonOri = (params.lon) ? params.lon : defaultLon;
+        lon = lonOri;
+        latOri = (params.lat) ? params.lat : defaultLat;
+        lat = latOri;
         altitude = (params.alti) ? params.alti : defaultAlti;
-        zoom = Math.floor(Math.max(Math.min(Math.floor(28 - Math.log2(altitude)), 19), 1));
-        var xtile = long2tile(lon, zoom);
-        var ytile = lat2tile(lat, zoom);
-        var url = 'http://a.tile.openstreetmap.org/' + zoom + '/' + xtile + '/' + ytile + '.png';
+        // zoom = Math.floor(Math.max(Math.min(Math.floor(28 - Math.log2(altitude)), 19), 1));
+        // var xtile = long2tile(lon, zoom);
+        // var ytile = lat2tile(lat, zoom);
+        var url = 'http://a.tile.openstreetmap.org/' +
+            Math.floor(Math.max(Math.min(Math.floor(28 - Math.log2(altitude)), 19), 1)) + '/' +
+            long2tile(lon, zoom) + '/' +
+            lat2tile(lat, zoom) + '.png';
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000000);
 
@@ -50,6 +59,9 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         controls = new THREE.OrbitControls(camera, renderer.domElement);
+        // controls = new THREE.TrackballControls(camera);
+        // controls = new THREE.MouseControls(camera);
+        // controls = new THREE.VRControls(camera);
 
         document.body.appendChild(renderer.domElement);
 
@@ -77,40 +89,39 @@
         scene.add(yAxe);
         scene.add(zAxe);
 
+        document.addEventListener("keydown", onDocumentKeyDown, false);
         // ENDOF initialization //
 
         // var material = new THREE.MeshBasicMaterial({
         //     color: 0x00ff00
         // });
         updateScene({
-            'id': '' + zoom + '/' + xtile + '/' + ytile,
             'lon': lon,
             'lat': lat,
-            'alti': altitude,
-            'zoom': zoom,
-            'xtile': xtile,
-            'ytile': ytile
+            'alti': altitude
         });
-        // var texture = THREE.ImageUtils.loadTexture(url);
-        //
-        //
-        //
-        //
-        // // var texture = THREE.ImageUtils.loadTexture('crate.gif', {}, function() {
-        // //     renderer.render(scene);
-        // // });
-        // var material = new THREE.MeshBasicMaterial({
-        //         map: texture
-        //     })
-        //     // material = new THREE.MeshPhongMaterial({color: 0xCC0000});
-        // var geometry = new THREE.PlaneGeometry(100, 100)
-        // var mesh = new THREE.Mesh(geometry, material);
-        // scene.add(mesh);
 
-        // var cube = new THREE.Mesh(geometry, material);
-        // scene.add(cube);
+        camera.position.z = altitude;
 
-        camera.position.z = 5;
+        function onDocumentKeyDown(event) {
+            // Get the key code of the pressed key
+            var keyCode = event.which;
+
+            // 'F' - Toggle through the texture filters
+            if (keyCode == 70) {
+                console.log('F pressed!');
+                // console.log('altitude!', altitude);
+                // lat = lat + (camera.position.y / (1000 * R)) * 180 / Math.PI;
+                // lon = lon + (camera.position.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI;
+                // camera.position.x = 0;
+                // camera.position.y = 0;
+                updateScene({
+                    'lon': lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI,
+                    'lat': latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI,
+                    // 'dist': altitude
+                });
+            }
+        }
 
         var render = function() {
             // alti_ = camera.position.z;
@@ -122,13 +133,21 @@
             requestAnimationFrame(render);
             //////////////////////////////////////////////////////////////
             var oldZoom = zoom;
-            zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(camera.position.z)), 19), 1));
-            var newLat = lat + (camera.position.y / (1000 * R)) * 180 / Math.PI;
-            var newLon = lon + (camera.position.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI;
+            // zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(camera.position.z)), 19), 1));
+            var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
+            // console.log('dist:', dist);
+            zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(dist)), 19), 1));
+            // console.log('zoom:', zoom);
+
+            var newLon = lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI;
+            var newLat = latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI;
             // var oldXtile = xtile;
             // var oldYtile = ytile;
-            var newXtile = long2tile(newLon, zoom);
-            var newYtile = lat2tile(newLat, zoom);
+
+            if (zoom != oldZoom) {
+                console.log('zoom:', zoom);
+                console.log('oldZoom:', oldZoom);
+            }
             if (Math.abs(zoom - oldZoom) >= 1) {
                 // if (Math.abs(zoom - oldZoom) >= 1 ||
                 //     Math.abs(newXtile - xtile) >= 1 ||
@@ -138,46 +157,67 @@
                 // lon = newLon;
                 // lon += (camera.position.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI;
                 // lat += (camera.position.y / (1000 * R)) * 180 / Math.PI;
-                console.log('lon/lat/alti: ', newLon, newLat, camera.position.z);
-                doQueue.push({
+                console.log('lon/lat/dist: ', newLon, newLat, dist);
+                updateScene({
                     'lon': newLon,
                     'lat': newLat,
-                    'alti': camera.position.z,
-                    'zoom': zoom,
-                    'xtile': newXtile,
-                    'ytile': newYtile
+                    // 'alti': camera.position.z,
                 });
             }
-            if (doQueue.length > 0) {
-                // freeToUpdate = 0;
-                updateScene(doQueue.shift());
-                // freeToUpdate = 1;
-            }
+
+
+            // if (doQueue.length > 0) {
+            //     // freeToUpdate = 0;
+            //     updateScene(doQueue.shift());
+            //     // freeToUpdate = 1;
+            // }
 
             //////////////////////////////////////////////////////////////
 
             renderer.render(scene, camera);
         };
 
+
         render();
 
         function updateScene(position) {
-            var lon_ = position.lon;
-            var lat_ = position.lat;
-            var altitude_ = position.alti;
+            var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
+            console.log('dist:', dist);
+            controls.panLeft(controls.target.x, controls.object.matrix);
+            controls.panUp(-controls.target.y, controls.object.matrix);
+            controls.update();
+            lon = position.lon;
+            lat = position.lat;
+            lonOri = lon;
+            latOri = lat;
+            // var altitude = position.alti;
+            var zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(dist)), 19), 1));
+            var xtile = long2tile(position.lon, zoom);
+            var ytile = lat2tile(position.lat, zoom);
 
-            console.log("tile x/y: ", position.xtile, "/", position.ytile);
-            var lon1 = tile2long(position.xtile, position.zoom);
-            var lat1 = tile2lat(position.ytile, position.zoom);
-            var lon2 = tile2long(position.xtile + 1, position.zoom);
-            var lat2 = tile2lat(position.ytile + 1, position.zoom);
-            var xShift = measure(lat1, lon_, lat1, lon1);
-            var yShift = measure(lat_, lon1, lat1, lon1);
+            console.log('dist/lon/lat: ', dist, '/', position.lon, '/', position.lat);
+            // console.log('zoom/xtile/ytile: ', position.zoom, '/', position.xtile, '/', position.ytile);
+            var lon1 = tile2long(xtile, zoom);
+            var lat1 = tile2lat(ytile, zoom);
+            var lon2 = tile2long(xtile + 1, zoom);
+            var lat2 = tile2lat(ytile + 1, zoom);
+            var xShift = measure(lat1, lon, lat1, lon1);
+            var yShift = measure(lat, lon1, lat1, lon1);
             var width = measure(lat1, lon1, lat1, lon2);
             // var height = measure(lat, lon, latP, lon);
             console.log("width: ", width);
 
             scene.remove(tileGroup);
+
+            // camera.position.set(0,0, position.alti);
+            // camera.setPosition(0, 0, position.alti);
+            // camera.updateMatrix();
+            // camera.lookAt(0,0,0);
+
+            // camera.position.set(0, 0, position.alti);
+            // camera.up = new THREE.Vector3(0, 0, 0);
+            // camera.lookAt(new THREE.Vector3(0, 0, 0));
+            // camera.updateProjectionMatrix();
 
             var tiles = [];
             // var minXTile = Math.floor((position.xtile - 1) / 2) * 2;
@@ -195,9 +235,9 @@
             //     }
             // }
             tiles[tiles.length] = {
-                'zoom': position.zoom,
-                'xtile': position.xtile,
-                'ytile': position.ytile
+                'zoom': zoom,
+                'xtile': xtile,
+                'ytile': ytile
             };
 
             var loader = new THREE.TextureLoader();
