@@ -28,6 +28,8 @@
         // START initialization //
         var R = 6378.137;
         var lat, lon, altitude;
+        var xtile = 0;
+        var ytile = 0;
         var lonOri, latOri;
         var zoom = 0;
         // var doQueue = [];
@@ -141,17 +143,15 @@
 
             var newLon = lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI;
             var newLat = latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI;
+            var newXtile = long2tile(newLon, zoom);
+            var newYtile = lat2tile(newLat, zoom);
             // var oldXtile = xtile;
             // var oldYtile = ytile;
 
-            if (zoom != oldZoom) {
-                console.log('zoom:', zoom);
-                console.log('oldZoom:', oldZoom);
-            }
-            if (Math.abs(zoom - oldZoom) >= 1) {
-                // if (Math.abs(zoom - oldZoom) >= 1 ||
-                //     Math.abs(newXtile - xtile) >= 1 ||
-                //     Math.abs(newYtile - ytile) >= 1) {
+            // if (Math.abs(zoom - oldZoom) >= 1) {
+            if (Math.abs(zoom - oldZoom) >= 1 ||
+                Math.abs(newXtile - xtile) >= 1 ||
+                Math.abs(newYtile - ytile) >= 1) {
                 console.log('from ', oldZoom, 'to', zoom);
                 // lat = newLat;
                 // lon = newLon;
@@ -192,8 +192,8 @@
             latOri = lat;
             // var altitude = position.alti;
             var zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(dist)), 19), 1));
-            var xtile = long2tile(position.lon, zoom);
-            var ytile = lat2tile(position.lat, zoom);
+            xtile = long2tile(position.lon, zoom);
+            ytile = lat2tile(position.lat, zoom);
 
             console.log('dist/lon/lat: ', dist, '/', position.lon, '/', position.lat);
             // console.log('zoom/xtile/ytile: ', position.zoom, '/', position.xtile, '/', position.ytile);
