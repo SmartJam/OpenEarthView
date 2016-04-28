@@ -24,7 +24,7 @@ var log = require('loglevel');
 var querystring = require('querystring');
 var url = require('url');
 
-var CACHE_DIR = os.homedir() + '/.tile/cache'
+var CACHE_DIR = os.homedir() + '/.tilecache'
 var opt = require('node-getopt').create([
     ['c', 'cacheDir=ARG', 'Default cache dir is ' + CACHE_DIR],
     ['d', 'debug', 'print in debug level'],
@@ -68,15 +68,15 @@ var server = http.createServer(function(request, response) {
                         port: 80,
                         path: page,
                         method: 'GET'
-                    }, function(osmReadStream) {
+                    }, function(tileReadStream) {
                         console.log("pipe to :" + cacheFile)
                         fs.mkdirParentSync(path.dirname(cacheFile));
-                        osmReadStream.pipe(fs.createWriteStream(cacheFile), {
+                        tileReadStream.pipe(fs.createWriteStream(cacheFile), {
                             end: true
                         });
-                        osmReadStream.on('end', () => {
+                        tileReadStream.on('end', () => {
                             response.writeHead(200, {
-                                'Content-Type': 'text/xml'
+                                'Content-Type': 'image/png'
                             });
                             fs.createReadStream(cacheFile).pipe(response, {
                                 end: true
