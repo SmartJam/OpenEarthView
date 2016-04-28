@@ -63,12 +63,14 @@ var server = http.createServer(function(request, response) {
                     // and write it to cache file
                     var url = 'http://a.tile.openstreetmap.org' + page;
 
-                    var osmRequest = http.request({
+                    var tileRequest = http.request({
                         hostname: 'a.tile.openstreetmap.org',
                         port: 80,
                         path: page,
                         method: 'GET'
                     }, function(tileReadStream) {
+                        console.log(`STATUS: ${tileReadStream.statusCode}`);
+                        console.log(`HEADERS: ${JSON.stringify(tileReadStream.headers)}`);
                         console.log("pipe to :" + cacheFile)
                         fs.mkdirParentSync(path.dirname(cacheFile));
                         tileReadStream.pipe(fs.createWriteStream(cacheFile), {
@@ -76,22 +78,48 @@ var server = http.createServer(function(request, response) {
                         });
                         tileReadStream.on('end', () => {
                             response.writeHead(200, {
-                                'Content-Type': 'image/png'
+                                'content-type': 'image/png',
+                                'access-control-allow-origin': '*'
                             });
+                            // response.writeHead(200, tileReadStream.headers);
+
+                            // HEADERS: {
+                            //     "date": "Thu, 28 Apr 2016 20:47:31 GMT",
+                            //     "server": "Apache/2.4.7 (Ubuntu)",
+                            //     "access-control-allow-origin": "*",
+                            //     "etag": "\"ddb4dc9cfe30a8c9c7ef014e8135e59b\"",
+                            //     "content-length": "8708",
+                            //     "cache-control": "max-age=6964",
+                            //     "expires": "Thu, 28 Apr 2016 22:43:35 GMT",
+                            //     "content-type": "image/png",
+                            //     "age": "1279",
+                            //     "x-cache": "HIT from simurgh.openstreetmap.org",
+                            //     "x-cache-lookup": "HIT from simurgh.openstreetmap.org:3128",
+                            //     "via": "1.1 simurgh.openstreetmap.org:3128 (squid/2.7.STABLE9)",
+                            //     "connection": "close"
+                            // }
+
+
                             fs.createReadStream(cacheFile).pipe(response, {
                                 end: true
                             });
                         });
                     });
-                    osmRequest.on('error', function(e) {
+                    tileRequest.on('error', function(e) {
                         log.debug('problem with request: ' + e.message);
                     });
-                    osmRequest.end();
+                    tileRequest.end();
                 } else {
+                    log.debug('content-length:', stats.size);
                     response.writeHead(200, {
-                        'Content-Type': 'text/xml',
-                        'Content-Length': stats.size
+                        'content-type': 'image/png',
+                        'access-control-allow-origin': '*',
+                        'content-length': stats.size
                     });
+                    // response.writeHead(200, {
+                    //     'access-control-allow-origin': '*',
+                    //     'content-length': stats.size,
+                    // });
                     fs.createReadStream(cacheFile).pipe(response, {
                         end: true
                     });
