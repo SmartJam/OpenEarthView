@@ -23,7 +23,11 @@
     <script>
         // START initialization //
         var TILE_PROVIDER = 'http://a.tile.openstreetmap.org';
+        var MAX_TILEMESH = 100;
         var tileMeshes = {};
+        var tileMeshQueue = [];
+        var textures = {};
+        var textureQueue = [];
         // var TILE_PROVIDER = 'http://tilecache.openearthview.net';
         // var TILE_PROVIDER = 'http://www.localhost:8084';
         var R = 6378.137;
@@ -35,9 +39,14 @@
         // var doQueue = [];
         var tileGroup;
         // var tiles = [];
+        // Le louvre
+        // var defaultLon = 2.33517;
+        // var defaultLat = 48.86148;
+        // Empire State Building
+        var defaultLon = -73.98563684446108;
+        var defaultLat = 40.74865445610821;
 
-        var defaultLon = 2.33517;
-        var defaultLat = 48.86148;
+
         var defaultAlti = 150;
         var loader = new THREE.TextureLoader();
         loader.crossOrigin = '';
@@ -164,8 +173,28 @@
                         map: texture
                     })
                 );
+                tileMeshQueue.push(id);
+                if (tileMeshQueue.length > MAX_TILEMESH) {
+                    delete tileMeshes[tileMeshQueue.shift()];
+                }
             }
             return tileMeshes[id];
+        }
+
+        function textureFactory(zoom_, xtile_, ytile_) {
+            var id = 'tile_' + zoom_ + '_' + xtile_ + '_' + ytile_;
+            if (!(textures.hasOwnProperty(id))) {
+                var url = TILE_PROVIDER + '/' +
+                    zoom_ + '/' +
+                    ((zoom_ > 0) ? (xtile_ % Math.pow(2, zoom_)) : 0) + '/' +
+                    ((zoom_ > 0) ? (ytile_ % Math.pow(2, zoom_)) : 0) + '.png';
+                textures[id] = loader.load(url);
+                textureQueue.push(id);
+                if (textureQueue.length > MAX_TILEMESH) {
+                    delete textures[textureQueue.shift()];
+                }
+            }
+            return textures[id];
         }
 
         function updateScene(position) {
@@ -223,7 +252,31 @@
                 //     ((zoom > 0) ? (tile.ytile % Math.pow(2, zoom)) : 0) + '.png';
                 // console.log('url:', url);
 
-                var tileMesh = tileMeshFactory(zoom, tile.xtile, tile.ytile);
+                // var tileMesh = tileMeshFactory(zoom, tile.xtile, tile.ytile);
+
+
+                var lon1 = tile2long(xtile, zoom);
+                var lat1 = tile2lat(ytile, zoom);
+                var lon2 = tile2long(xtile + 1, zoom);
+                var lat2 = tile2lat(ytile + 1, zoom);
+                var width = measure(lat1, lon1, lat1, lon2);
+                // console.log('url:', url);
+                var texture = textureFactory(zoom, tile.xtile, tile.ytile);
+                tileMesh = new THREE.Mesh(
+                    new THREE.PlaneGeometry(width, width),
+                    new THREE.MeshBasicMaterial({
+                        map: texture
+                    })
+                );
+
+
+
+
+
+
+
+
+
                 // var texture = loader.load(url);
                 // var tileMesh = new THREE.Mesh(
                 //     new THREE.PlaneGeometry(width, width),
