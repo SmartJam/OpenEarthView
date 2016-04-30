@@ -23,13 +23,13 @@
     <script>
         // START initialization //
         var TILE_PROVIDER = 'http://a.tile.openstreetmap.org';
-        var MAX_TILEMESH = 100;
+        // var TILE_PROVIDER = 'http://tilecache.openearthview.net';
+        // var TILE_PROVIDER = 'http://localhost:8084';
+        var MAX_TILEMESH = 300;
         var tileMeshes = {};
         var tileMeshQueue = [];
         var textures = {};
         var textureQueue = [];
-        // var TILE_PROVIDER = 'http://tilecache.openearthview.net';
-        // var TILE_PROVIDER = 'http://www.localhost:8084';
         var R = 6378.137;
         var lat, lon, altitude;
         var xtile = 0;
@@ -37,14 +37,14 @@
         var lonOri, latOri;
         var zoom = 0;
         // var doQueue = [];
-        var tileGroup;
+        var tileGroup = [];
         // var tiles = [];
         // Le louvre
-        // var defaultLon = 2.33517;
-        // var defaultLat = 48.86148;
+        var defaultLon = 2.33517;
+        var defaultLat = 48.86148;
         // Empire State Building
-        var defaultLon = -73.98563684446108;
-        var defaultLat = 40.74865445610821;
+        // var defaultLon = -73.98563684446108;
+        // var defaultLat = 40.74865445610821;
 
 
         var defaultAlti = 150;
@@ -61,7 +61,7 @@
         // var xtile = long2tile(lon, zoom);
         // var ytile = lat2tile(lat, zoom);
         var url = 'http://a.tile.openstreetmap.org/' +
-            Math.floor(Math.max(Math.min(Math.floor(28 - Math.log2(altitude)), 19), 1)) + '/' +
+            Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(altitude)), 19), 1)) + '/' +
             long2tile(lon, zoom) + '/' +
             lat2tile(lat, zoom) + '.png';
         var scene = new THREE.Scene();
@@ -132,7 +132,7 @@
             //////////////////////////////////////////////////////////////
             var oldZoom = zoom;
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
-            zoom = Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(dist)), 19), 1));
+            zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
 
             var newLon = lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI;
             var newLat = latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI;
@@ -213,84 +213,62 @@
 
             console.log('dist/lon/lat: ', dist, '/', position.lon, '/', position.lat);
             console.log('zoom/xtile/ytile: ', zoom, '/', xtile, '/', ytile);
-            var lon1 = tile2long(xtile, zoom);
-            var lat1 = tile2lat(ytile, zoom);
-            var lon2 = tile2long(xtile + 1, zoom);
-            var lat2 = tile2lat(ytile + 1, zoom);
-            var width = measure(lat1, lon1, lat1, lon2);
-            var xShift = measure(lat1, lon, lat1, lon1);
-            var yShift = measure(lat, lon1, lat1, lon1);
-            // var height = measure(lat, lon, latP, lon);
-            console.log("width: ", width);
 
-            scene.remove(tileGroup);
-
-            var tiles = [];
-            var minXTile = Math.floor(xtile / 2) * 2;
-            var maxXTile = Math.floor(xtile / 2) * 2 + 1;
-            var minYTile = Math.floor(ytile / 2) * 2;
-            var maxYTile = Math.floor(ytile / 2) * 2 + 1;
-            console.log('minXTile/maxXTile/minYTile/maxYTile: ', minXTile, maxXTile, minYTile, maxYTile);
-            for (var atile = minXTile; atile <= maxXTile; atile++) {
-                for (var btile = minYTile; btile <= maxYTile; btile++) {
-                    console.log('tiles[', tiles.length, ']:', 'zoom:', zoom, '/xtile:', atile, '/ytile:', btile);
-                    tiles[tiles.length] = {
-                        'zoom': zoom,
-                        'xtile': atile,
-                        'ytile': btile
-                    };
+            var tiles = {};
+            var nextMinXtile, nextMaxXtile;
+            for (var zShift = 0; zShift < 5; zShift++) {
+                scene.remove(tileGroup[zShift]);
+                tileGroup[zShift] = new THREE.Object3D(); //create an empty container
+                var zoom_ = zoom - zShift;
+                if (zoom_ < 5 && zShift > 0) {
+                    continue;
                 }
+                var factor = Math.pow(2, zShift);
+                var xtile_ = Math.floor(xtile / factor);
+                var ytile_ = Math.floor(ytile / factor);
+
+                var lon1 = tile2long(xtile_, zoom_);
+                var lat1 = tile2lat(ytile_, zoom_);
+                var lon2 = tile2long(xtile_ + 1, zoom_);
+                var lat2 = tile2lat(ytile_ + 1, zoom_);
+                var width_ = measure(lat1, lon1, lat1, lon2);
+                // console.log("width_: ", width_);
+                var xShift_ = measure(lat1, lon, lat1, lon1);
+                var yShift_ = measure(lat, lon1, lat1, lon1);
+
+                var minXtile = Math.floor((xtile_ - 1) / 2) * 2;
+                var maxXtile = Math.floor((xtile_ + 1) / 2) * 2 + 1;
+                var minYtile = Math.floor((ytile_ - 1) / 2) * 2;
+                var maxYtile = Math.floor((ytile_ + 1) / 2) * 2 + 1;
+                // console.log('minXtile/maxXtile/minYtile/maxYtile: ', minXtile, maxXtile, minYtile, maxYtile);
+                var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
+                for (var atile = minXtile; atile <= maxXtile; atile++) {
+                    for (var btile = minYtile; btile <= maxYtile; btile++) {
+                        var id = 'z_' + zoom_ + '_' + atile + "_" + btile;
+                        var zoomNext = (zoom_ - 1);
+                        var xtileNext = Math.floor(atile / 2);
+                        var ytileNext = Math.floor(btile / 2);
+                        var idNext = 'z_' + zoomNext + '_' + xtileNext + "_" + ytileNext;
+                        tiles[idNext] = {};
+                        // console.log("tiles['" + idNext + "']: {}");
+                        if (!tiles.hasOwnProperty(id)) {
+                            var texture = textureFactory(zoom_, atile % modulus, btile % modulus);
+                            tileMesh = new THREE.Mesh(
+                                new THREE.PlaneGeometry(width_, width_),
+                                new THREE.MeshBasicMaterial({
+                                    map: texture
+                                })
+                            );
+                            tileMesh.position.set(
+                                (atile - xtile_) * width_, (ytile_ - btile) * width_, 0);
+                            tileGroup[zShift].position.set(
+                                (-xShift_ + width_ / 2), (yShift_ - width_ / 2), 0);
+                            tileGroup[zShift].add(tileMesh);
+                        }
+                    }
+                }
+                scene.add(tileGroup[zShift]);
             }
-
-            tileGroup = new THREE.Object3D(); //create an empty container
-            var modulus = (zoom > 0) ? Math.pow(2, zoom) : 0;
-            for (var i = 0; i < tiles.length; i++) {
-                var tile = tiles[i];
-                // var url = TILE_PROVIDER + '/' +
-                //     tile.zoom + '/' +
-                //     ((zoom > 0) ? (tile.xtile % Math.pow(2, zoom)) : 0) + '/' +
-                //     ((zoom > 0) ? (tile.ytile % Math.pow(2, zoom)) : 0) + '.png';
-                // console.log('url:', url);
-
-                // var tileMesh = tileMeshFactory(zoom, tile.xtile, tile.ytile);
-
-
-                var lon1 = tile2long(xtile, zoom);
-                var lat1 = tile2lat(ytile, zoom);
-                var lon2 = tile2long(xtile + 1, zoom);
-                var lat2 = tile2lat(ytile + 1, zoom);
-                var width = measure(lat1, lon1, lat1, lon2);
-                // console.log('url:', url);
-                var texture = textureFactory(zoom, tile.xtile, tile.ytile);
-                tileMesh = new THREE.Mesh(
-                    new THREE.PlaneGeometry(width, width),
-                    new THREE.MeshBasicMaterial({
-                        map: texture
-                    })
-                );
-
-
-
-
-
-
-
-
-
-                // var texture = loader.load(url);
-                // var tileMesh = new THREE.Mesh(
-                //     new THREE.PlaneGeometry(width, width),
-                //     new THREE.MeshBasicMaterial({
-                //         map: texture
-                //     })
-                // );
-                tileMesh.position.set(
-                    (tile.xtile - xtile) * width, (ytile - tile.ytile) * width, 0);
-                tileGroup.position.set(
-                    (-xShift + width / 2), (yShift - width / 2), 0);
-                tileGroup.add(tileMesh);
-            }
-            scene.add(tileGroup);
         }
     </script>
 </body>
