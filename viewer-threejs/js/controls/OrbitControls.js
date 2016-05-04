@@ -246,7 +246,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	var EPS = 0.000001;
 
 	// current position in spherical coordinates
-	var spherical = new THREE.Spherical();
+		var spherical = new THREE.Spherical();
 	var sphericalDelta = new THREE.Spherical();
 
 	var scale = 1;
@@ -280,6 +280,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	function rotateLeft( angle ) {
 
 		sphericalDelta.theta -= angle;
+		// sphericalDelta.phi -= angle;
 
 	}
 
