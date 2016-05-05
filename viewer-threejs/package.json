@@ -1,0 +1,17 @@
+{
+    "name": "oev-viewer-threejs",
+    "description": "Open Earth View project - three.js viewer",
+    "version": "0.0.1",
+    "dependencies": {
+        "three": ""
+    },
+    "main": "./index.html",
+    "author": "Clement IGONET <clement@igonet.fr>",
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "git@git.framasoft.org:pizaninja/OpenEarthView.git"
+    },
+    "devDependencies": {},
+    "license": "LGPL-3.0"
+}
