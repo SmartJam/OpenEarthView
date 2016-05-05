@@ -66,6 +66,9 @@
             lat2tile(lat, zoom) + '.png';
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000000);
+        // var myWidth = 500;
+        // var camera = new THREE.OrthographicCamera(myWidth / -2, myWidth / 2, myWidth / 2, myWidth / -2, 0.1, 100000000);
+
         camera.up.set(0, 0, 1);
         var renderer = new THREE.WebGLRenderer();
 
@@ -119,17 +122,40 @@
             // 'F' - Toggle through the texture filters
             if (keyCode == 70) {
                 console.log('F pressed!');
+                controls.target.set(0, 0, 0);
                 updateScene({
                     'lon': lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI,
                     'lat': latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI,
                 });
+
+                // var oldZoom = zoom;
+                // var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
+                // zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
+                //
+                // var newLon = lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI;
+                // var newLat = latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI;
+                // var newXtile = long2tile(newLon, zoom);
+                // var newYtile = lat2tile(newLat, zoom);
+                // if (Math.abs(zoom - oldZoom) >= 1 ||
+                //     Math.abs(newXtile - xtile) >= 1 ||
+                //     Math.abs(newXtile - xtile) >= 1 ||
+                //     Math.abs(newYtile - ytile) >= 1) {
+                //     if (zoom > 1) {
+                //         console.log('from ', oldZoom, 'to', zoom);
+                //         console.log('lon/lat/dist: ', newLon, newLat, dist);
+                //         updateScene({
+                //             'lon': newLon,
+                //             'lat': newLat,
+                //         });
+                //     }
+                // }
             }
         }
         // ENDOF initialization //
 
         var render = function() {
             requestAnimationFrame(render);
-            //////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
             zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
@@ -204,9 +230,11 @@
             // Relocate a a origin to camera position
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
             console.log('dist:', dist);
-            controls.panLeft(controls.target.x, controls.object.matrix);
-            controls.panUp(-controls.target.y, controls.object.matrix);
+            var theta = controls.getAzimuthalAngle();
+            controls.panLeft(controls.target.x * Math.cos(theta) + controls.target.y * Math.sin(theta), controls.object.matrix);
+            controls.panUp(-controls.target.y * Math.cos(theta) + controls.target.x * Math.sin(theta), controls.object.matrix);
             controls.update();
+            controls.target.set(0, 0, 0);
             lon = position.lon;
             lat = position.lat;
             lonOri = lon;
