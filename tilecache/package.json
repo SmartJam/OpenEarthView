@@ -1,7 +1,7 @@
 {
-    "name": "osmcache",
-    "description": "Open Earth View project - Open Street Map cache",
-    "version": "0.0.3",
+    "name": "tilecache",
+    "description": "Open Earth View project - Tile cache",
+    "version": "0.0.1",
     "devDependencies": {
         "pkgfiles": "2.3.0"
     },

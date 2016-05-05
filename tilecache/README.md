@@ -1,5 +1,5 @@
 # Intro
-This module aims to put Open Street Map XML data in local cache.
+This module aims to put Tile data in local cache.
 
 # Installation
 ```
@@ -16,9 +16,10 @@ $ server.sh
 
 ## Requests:
 ```
-$ wget "localhost:8082/osmCache/osmXml?tile=zoom,xtile,ytile
+$ wget "http://localhost:8084/zoom/xtile/ytile.png"
+
 Example:
-$ wget "localhost:8082/osmCache/osmXml?tile=18,77196,98527
+$ wget "http://localhost:8084/18/77196/98527.png"
 ```
 
 ## Unit Tests

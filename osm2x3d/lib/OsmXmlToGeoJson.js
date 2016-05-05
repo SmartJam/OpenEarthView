@@ -43,19 +43,19 @@ function getGeoBuilding(geoBlds, id) {
             "type": "FeatureCollection",
             "features": [],
             properties: {
-                "id": id,
+                "id": +id,
                 "type": "building"
             }
         };
-        geoBlds[id] = geoBld;
+        geoBlds[+id] = geoBld;
     }
-    return geoBlds[id];
+    return geoBlds[+id];
 }
 
 function removeBuilding(geoBlds, id) {
     "use strict";
-    if (geoBlds.hasOwnProperty(id)) {
-        delete geoBlds[id];
+    if (geoBlds.hasOwnProperty(+id)) {
+        delete geoBlds[+id];
     }
 }
 
@@ -63,6 +63,9 @@ function groundBlock(bound, url) {
     "use strict";
     var bounds = {
         'type': 'Feature',
+        'properties': {
+            'type': 'bounds'
+        },
         'geometry': {
             'type': 'Polygon',
             'coordinates': [
@@ -73,9 +76,6 @@ function groundBlock(bound, url) {
                     [+bound.minlon, +bound.maxlat]
                 ]
             ]
-        },
-        'properties': {
-            'type': 'bounds'
         }
     };
     if (url) {
@@ -85,40 +85,44 @@ function groundBlock(bound, url) {
 }
 
 
-function roofBlock(way) {
-    "use strict";
-    return {
-        "type": "Feature",
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [way.nodes]
-        },
-        "properties": {
-            "id": way.id,
-            "type": "roof",
-            "color": getRGB(way.color),
-            "roofShape": way.roofShape,
-            "height": way.osmBldPartHeight
-        }
-    };
-}
+// function roofBlock(way) {
+//     "use strict";
+//     return {
+//         "type": "Feature",
+//         "properties": {
+//             "id": +way.id,
+//             "type": "roof",
+//             "color": getRGB(way.color),
+//             "roofShape": way.roofShape,
+//             "height": way.osmBldPartHeight
+//         },
+//         "geometry": {
+//             "type": "Polygon",
+//             "coordinates": [way.nodes]
+//         }
+//     };
+// }
 
 function geoBldPartBlock(way) {
     return {
         'type': 'Feature',
+        'properties': {
+            'id': +way.id,
+            'height': +way.osmBldPartHeight,
+            'levels': +way.bldLevels,
+            'color': getRGB(way.color),
+            'type': 'buildingPart',
+            'minHeight': +way.minHeight,
+            'minLevel': +way.bldMinLevel,
+            'name': way.name,
+            'roof:shape': way.roofShape,
+            // 'roof:height': way.osmBldPartHeight
+            'roof:height': way.roofHeight,
+            'roof:material': way.roofMaterial
+        },
         'geometry': {
             'type': 'Polygon',
             'coordinates': [way.nodes]
-        },
-        'properties': {
-            'id': way.id,
-            'type': 'buildingPart',
-            'minHeight': way.minHeight,
-            'minLevel': way.bldMinLevel,
-            'name': way.name,
-            'color': getRGB(way.color),
-            'levels': way.bldLevels,
-            'height': way.osmBldPartHeight
         }
     };
 }
@@ -133,7 +137,7 @@ function convert(options, onConvert) {
     var bounds;
     var blocks = [],
         geoBldParts = {},
-        roofs = {},
+        // roofs = {},
         nodeMap = {},
         onWay = false,
         onRelation = false;
@@ -145,14 +149,14 @@ function convert(options, onConvert) {
             bounds = groundBlock(attrs, tile);
             blocks[blocks.length] = bounds;
         } else if (name === 'node') {
-            var id = attrs.id;
+            var id = +attrs.id;
             var lat = attrs.lat;
             var lon = attrs.lon;
-            nodeMap[id] = [+lon, +lat];
+            nodeMap[+id] = [+lon, +lat];
         } else if (name === 'way') {
             way = {
                 nodes: [],
-                id: attrs.id,
+                id: +attrs.id,
                 isBld: false,
                 minHeight: 0,
                 bldMinLevel: 0
@@ -170,16 +174,16 @@ function convert(options, onConvert) {
                     way.isBld = true;
                     break;
                 case 'building:levels':
-                    way.bldLevels = attrs.v;
+                    way.bldLevels = +attrs.v;
                     break;
                 case 'building:min_level':
-                    way.bldMinLevel = attrs.v;
+                    way.bldMinLevel = +attrs.v;
                     break;
                 case 'height':
-                    way.osmBldPartHeight = heightToMeter(attrs.v);
+                    way.osmBldPartHeight = +heightToMeter(attrs.v);
                     break;
                 case 'min_height':
-                    way.minHeight = heightToMeter(attrs.v);
+                    way.minHeight = +heightToMeter(attrs.v);
                     break;
                 case 'name':
                     way.name = attrs.v;
@@ -196,17 +200,17 @@ function convert(options, onConvert) {
             }
         } else if (name === 'relation') {
             relation = {
-                id: attrs.id,
+                id: +attrs.id,
                 isBld: false,
             };
             onRelation = true;
         } else if (onRelation && name === 'member' && attrs.type === 'way') {
             if (attrs.ref in geoBldParts) {
-                var geoBld = getGeoBuilding(geoBlds, relation.id);
+                var geoBld = getGeoBuilding(geoBlds, +relation.id);
                 geoBld.features[geoBld.features.length] = geoBldParts[attrs.ref];
-                if (roofs[attrs.ref] && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
-                    geoBld.features[geoBld.features.length] = roofs[attrs.ref];
-                }
+                // if (roofs[attrs.ref] && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
+                //     geoBld.features[geoBld.features.length] = roofs[attrs.ref];
+                // }
             }
         } else if (onRelation && name === 'tag') {
             switch (attrs.k) {
@@ -240,29 +244,29 @@ function convert(options, onConvert) {
     xmlStream.on('endElement', function(name) {
         if (name === 'way') {
             onWay = false;
-            if (way.roofShape) {
-                var roof = roofBlock(way);
-            }
+            // if (way.roofShape) {
+            //     var roof = roofBlock(way);
+            // }
             var geoBldPart = geoBldPartBlock(way);
             if (way.isBld) {
-                var geoBld = getGeoBuilding(geoBlds, way.id);
+                var geoBld = getGeoBuilding(geoBlds, +way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
-                if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
-                    geoBld.features[geoBld.features.length] = roof;
-                }
+                // if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
+                //     geoBld.features[geoBld.features.length] = roof;
+                // }
                 if (turf.inside(turf.centroid(geoBld), bounds)) {
                     blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
                 }
             } else {
-                geoBldParts[way.id] = geoBldPart;
-                if (roof) {
-                    roofs[way.id] = roof;
-                }
+                geoBldParts[+way.id] = geoBldPart;
+                // if (roof) {
+                //     roofs[+way.id] = roof;
+                // }
             }
         } else if (name === 'relation') {
             // <tag k="type" v="building"/>
             if (!relation.isBld) {
-                removeBuilding(geoBlds, relation.id);
+                removeBuilding(geoBlds, +relation.id);
                 log.debug("relation is not a building.");
             } else {
                 log.debug("relation is a building.");

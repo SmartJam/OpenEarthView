@@ -37,8 +37,8 @@ $ web_server.sh
 
 ## Requests:
 ```
-$ wget "localhost:8081/3dbox?format=x3djson&xtile=77196&ytile=98527&zoom=18" -O x3djson.json
-$ wget "localhost:8081/3dbox?format=geojson&xtile=154394&ytile=197054&zoom=19" -O ESB19_geojson.json
+$ wget "localhost:8081/3dtile?format=x3djson&xtile=77196&ytile=98527&zoom=18" -O x3djson.json
+$ wget "localhost:8081/3dtile?format=geojson&xtile=154394&ytile=197054&zoom=19" -O ESB19_geojson.json
 ```
 
 ## Automated tests
