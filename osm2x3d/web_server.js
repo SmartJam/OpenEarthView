@@ -28,7 +28,7 @@ if (opt.options.debug) {
 var server = http.createServer(function(request, response) {
     var page = url.parse(request.url).pathname;
     log.debug("page:" + page);
-    if (page != '/3dbox') {
+    if (page != '/3dtile') {
         response.writeHead(404, {
             "Content-Type": "text/html"
         });
