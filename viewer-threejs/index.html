@@ -50,6 +50,8 @@
         var defaultAlti = 150;
         var loader = new THREE.TextureLoader();
         loader.crossOrigin = '';
+        var jsonLoader = new THREE.ObjectLoader();
+        jsonLoader.setCrossOrigin('');
 
         var params = getSearchParameters();
         lonOri = (params.lon) ? params.lon : defaultLon;
@@ -101,9 +103,9 @@
         var zAxe = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 200, 16), zMaterial);
         zAxe.position.set(0, 0, 100);
         zAxe.rotation.set(Math.PI / 2, 0, 0);
-        scene.add(xAxe);
-        scene.add(yAxe);
-        scene.add(zAxe);
+        // scene.add(xAxe);
+        // scene.add(yAxe);
+        // scene.add(zAxe);
 
         document.addEventListener("keydown", onDocumentKeyDown, false);
 
@@ -244,6 +246,21 @@
 
             console.log('dist/lon/lat: ', dist, '/', position.lon, '/', position.lat);
             console.log('zoom/xtile/ytile: ', zoom, '/', xtile, '/', ytile);
+            // // TODO test add object loaded
+            // var jsonLoader = new THREE.ObjectLoader();
+            // jsonLoader.setCrossOrigin('');
+            //
+            // // wget "localhost:8081/3dtile?format=threejs&xtile=154394&ytile=197054&zoom=19" -O ESB19_threejs.json
+            // // 'json/cube.json',
+            //
+            //
+            // jsonLoader.load(
+            //     'http://localhost:8081/3dtile?format=threejs&xtile=154394&ytile=197054&zoom=19',
+            //     function(obj) {
+            //         // obj.rotateX(Math.PI / 2);
+            //         scene.add(obj);
+            //     }
+            // );
 
             var tiles = {};
             var nextMinXtile, nextMaxXtile;
@@ -267,15 +284,34 @@
                 var xShift_ = measure(lat1, lon, lat1, lon1);
                 var yShift_ = measure(lat, lon1, lat1, lon1);
 
-                var deviation = 1;
-                // var deviation = (zShift) % 2;
-                // var deviation = 0;
-                // var deviation = 0;
+                // var deviation = 1;
+                // // var deviation = (zShift) % 2;
+                // // var deviation = 0;
+                // // var deviation = 0;
+                // var minXtile = Math.floor((xtile_ - deviation) / 2) * 2;
+                // var maxXtile = Math.floor((xtile_ + deviation) / 2) * 2 + 1;
+                // var minYtile = Math.floor((ytile_ - deviation) / 2) * 2;
+                // var maxYtile = Math.floor((ytile_ + deviation) / 2) * 2 + 1;
 
-                var minXtile = Math.floor((xtile_ - deviation) / 2) * 2;
-                var maxXtile = Math.floor((xtile_ + deviation) / 2) * 2 + 1;
-                var minYtile = Math.floor((ytile_ - deviation) / 2) * 2;
-                var maxYtile = Math.floor((ytile_ + deviation) / 2) * 2 + 1;
+
+
+                if (zShift == 0) {
+                    var minXtile = Math.floor((xtile_) / 2) * 2;
+                    var maxXtile = Math.floor((xtile_) / 2) * 2 + 1;
+                    var minYtile = Math.floor((ytile_) / 2) * 2;
+                    var maxYtile = Math.floor((ytile_) / 2) * 2 + 1;
+                // } else if (zShift == 1) {
+                //     var minXtile = Math.floor((xtile_ - 1) / 4) * 4;
+                //     var maxXtile = Math.floor((xtile_ + 1) / 4) * 4 + 3;
+                //     var minYtile = Math.floor((ytile_ - 1) / 4) * 4;
+                //     var maxYtile = Math.floor((ytile_ + 1) / 4) * 4 + 3;
+                } else {
+                    var minXtile = Math.floor((xtile_ - 1) / 2) * 2;
+                    var maxXtile = Math.floor((xtile_ + 1) / 2) * 2 + 1;
+                    var minYtile = Math.floor((ytile_ - 1) / 2) * 2;
+                    var maxYtile = Math.floor((ytile_ + 1) / 2) * 2 + 1;
+                }
+
                 // console.log('minXtile/maxXtile/minYtile/maxYtile: ', minXtile, maxXtile, minYtile, maxYtile);
                 var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
                 for (var atile = minXtile; atile <= maxXtile; atile++) {
@@ -286,13 +322,13 @@
                         // var ytileNext = Math.floor(btile / 2);
                         var idNext = 'z_' + (zoom_ - 1) + '_' + Math.floor(atile / 2) + "_" + Math.floor(btile / 2);
                         tiles[idNext] = {};
-                        // var idNextNext = 'z_' + (zoom_ - 2) + '_' + Math.floor(atile / 4) + "_" + Math.floor(btile / 4);
-                        // tiles[idNextNext] = {};
+                        var idNextNext = 'z_' + (zoom_ - 2) + '_' + Math.floor(atile / 4) + "_" + Math.floor(btile / 4);
+                        tiles[idNextNext] = {};
                         // console.log("tiles['" + idNext + "']: {}");
                         if (!tiles.hasOwnProperty(id)) {
                             var texture = textureFactory(zoom_, atile % modulus, btile % modulus);
                             tileMesh = new THREE.Mesh(
-                                new THREE.PlaneGeometry(width_, width_),
+                                new THREE.PlaneGeometry(width_ * 996 / 1000, width_ * 996 / 1000),
                                 new THREE.MeshBasicMaterial({
                                     map: texture
                                 })
@@ -302,6 +338,20 @@
                             tileGroup[zShift].position.set(
                                 (-xShift_ + width_ / 2), (yShift_ - width_ / 2), 0);
                             tileGroup[zShift].add(tileMesh);
+
+                            if (zoom_ == 19) {
+                                (function(myTile, myZoom, myAtile, myBtile) {
+                                    var jsonUrl = 'http://localhost:8081/3dtile?format=threejs&xtile=' + myAtile + '&ytile=' + myBtile + '&zoom=' + myZoom;
+                                    console.log('jsonUrl:', jsonUrl);
+                                    jsonLoader.load(
+                                        // 'http://localhost:8081/3dtile?format=threejs&xtile=154394&ytile=197054&zoom=19',
+                                        jsonUrl,
+                                        function(obj) {
+                                            myTile.add(obj);
+                                        }
+                                    );
+                                })(tileMesh, zoom_, atile, btile);
+                            }
                         }
                     }
                 }
