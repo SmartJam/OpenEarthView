@@ -38,6 +38,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	// Range is 0 to Math.PI radians.
 	this.minPolarAngle = 0; // radians
 	this.maxPolarAngle = 1.5; // radians
+	// this.maxPolarAngle = 1.7; // radians
 
 	// How far you can orbit horizontally, upper and lower limits.
 	// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
@@ -76,7 +77,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
 	// Mouse buttons
-	this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
+	// this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
+	this.mouseButtons = { PAN: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, ORBIT: THREE.MOUSE.RIGHT };
 
 	// for reset
 	this.target0 = this.target.clone();
@@ -287,11 +289,15 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
+	this.rotateLeft = rotateLeft;
+
 	function rotateUp( angle ) {
 
 		sphericalDelta.phi -= angle;
 
 	}
+
+  this.rotateUp = rotateUp;
 
 	var panLeft = function() {
 
@@ -316,8 +322,26 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		return function panUp( distance, objectMatrix ) {
 
-			v.setFromMatrixColumn( objectMatrix, 1 ); // get Y column of objectMatrix
-			v.multiplyScalar( distance );
+			// v.setFromMatrixColumn( objectMatrix, 1 ); // get Y column of objectMatrix
+			// v.multiplyScalar( distance );
+
+
+      // get elements from the Z-column of matrix
+			// v.set( te[ 4 ], te[ 5 ], 0 );
+			// v.set(
+			// 	te[4] * Math.cos(spherical.phi) + te[7] * Math.sin(spherical.phi),
+    	//   te[5] * Math.sin(spherical.phi) - te[8] * Math.cos(spherical.phi),
+			// 	0);
+			// v.set(
+			// 	te[4] * Math.sin(spherical.theta),
+			// 	te[5] * Math.cos(spherical.theta),
+			// 	0);
+			// v.set( te[ 7 ], te[ 8 ], 0);
+			// v.set( -te[ 8 ] * 2, 0, -te[ 10 ] * 2 );
+
+			var te = objectMatrix.elements;
+			v.set(te[4], te[5],	0);
+			v.multiplyScalar( distance * (1 + te[6]));
 
 			panOffset.add( v );
 
