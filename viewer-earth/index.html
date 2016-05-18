@@ -84,13 +84,13 @@
 
         document.body.appendChild(renderer.domElement);
 
-        var earth = new THREE.SphereGeometry(5000, 64, 64);
+        var earth = new THREE.SphereGeometry(R * 1000, 64, 64);
         // var material = new THREE.MeshPhongMaterial();
         var material = new THREE.MeshBasicMaterial();
         material.map = THREE.ImageUtils.loadTexture('images/earth_map.jpg');
 
         var sphere = new THREE.Mesh(earth, material);
-        sphere.position.set(0, 0, -5000);
+        sphere.position.set(0, 0, -R * 1000);
         scene.add(sphere);
 
         document.addEventListener("keydown", onDocumentKeyDown, false);

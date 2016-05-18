@@ -262,9 +262,9 @@ THREE.OrbitControls = function(object, domElement) {
 
     var panLeft = function() {
         return function panLeft(distance) {
-            var lonDelta = Math.cos(spherical.theta) * (distance / (R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
+            var lonDelta = Math.cos(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
             longitude -= lonDelta;
-            var latDelta = -Math.sin(spherical.theta) * (distance / R) * 180 / Math.PI;
+            var latDelta = -Math.sin(spherical.theta) * (distance / (R * 1000)) * 180 / Math.PI;
             if (latitude + latDelta < 80 && latitude + latDelta > -80) {
                 latitude += latDelta;
                 console.log('latitude:', latitude)
@@ -283,12 +283,12 @@ THREE.OrbitControls = function(object, domElement) {
     var panUp = function() {
         // var v = new THREE.Vector3();
         return function panUp(distance) {
-            var lonDelta = Math.sin(spherical.theta) * (distance / (R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
+            var lonDelta = Math.sin(spherical.theta) * (distance / (1000 * R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
             longitude -= lonDelta;
-            var latDelta = Math.cos(spherical.theta) * (distance / R) * 180 / Math.PI;
+            var latDelta = Math.cos(spherical.theta) * (distance / (1000 * R)) * 180 / Math.PI;
             if (latitude + latDelta < 80 && latitude + latDelta > -80) {
                 latitude += latDelta;
-                console.log('latitude:', latitude)
+                console.log('latitude:', latitude);
             }
         };
     }();
