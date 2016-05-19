@@ -31,7 +31,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
-THREE.OrbitControls = function(object, domElement) {
+THREE.EarthControls = function(object, domElement) {
     this.object = object;
     this.domElement = (domElement !== undefined) ? domElement : document;
     // Set to false to disable this control
@@ -73,8 +73,10 @@ THREE.OrbitControls = function(object, domElement) {
     this.enablePan = true;
     this.keyPanSpeed = 7.0; // pixels moved per arrow key push
 
-    this.LONGITUDE_ORI = 2.33517;
-    this.LATITUDE_ORI = 48.86148;
+    // this.LONGITUDE_ORI = 2.33517;
+    // this.LATITUDE_ORI = 48.86148;
+    this.LONGITUDE_ORI = 0;
+    this.LATITUDE_ORI = 0.00001;
 
     // Set to true to automatically rotate around the target
     // If auto-rotate is enabled, you must call controls.update() in your animation loop
@@ -109,6 +111,7 @@ THREE.OrbitControls = function(object, domElement) {
     this.getAzimuthalAngle = function() {
         return spherical.theta;
     };
+
     this.reset = function() {
         scope.target.copy(scope.target0);
         scope.object.position.copy(scope.position0);
@@ -267,7 +270,7 @@ THREE.OrbitControls = function(object, domElement) {
             var latDelta = -Math.sin(spherical.theta) * (distance / (R * 1000)) * 180 / Math.PI;
             if (latitude + latDelta < 80 && latitude + latDelta > -80) {
                 latitude += latDelta;
-                console.log('latitude:', latitude)
+                // console.log('latitude:', latitude)
             }
         };
     }();
@@ -288,7 +291,6 @@ THREE.OrbitControls = function(object, domElement) {
             var latDelta = Math.cos(spherical.theta) * (distance / (1000 * R)) * 180 / Math.PI;
             if (latitude + latDelta < 80 && latitude + latDelta > -80) {
                 latitude += latDelta;
-                console.log('latitude:', latitude);
             }
         };
     }();
@@ -318,7 +320,7 @@ THREE.OrbitControls = function(object, domElement) {
                 panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
             } else {
                 // camera neither orthographic nor perspective
-                console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
+                console.warn('WARNING: EarthControls.js encountered an unknown camera type - pan disabled.');
                 scope.enablePan = false;
             }
         };
@@ -338,7 +340,7 @@ THREE.OrbitControls = function(object, domElement) {
 
         } else {
 
-            console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
+            console.warn('WARNING: EarthControls.js encountered an unknown camera type - dolly/zoom disabled.');
             scope.enableZoom = false;
 
         }
@@ -359,7 +361,7 @@ THREE.OrbitControls = function(object, domElement) {
 
         } else {
 
-            console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
+            console.warn('WARNING: EarthControls.js encountered an unknown camera type - dolly/zoom disabled.');
             scope.enableZoom = false;
 
         }
@@ -801,74 +803,74 @@ THREE.OrbitControls = function(object, domElement) {
 
 };
 
-THREE.OrbitControls.prototype = Object.create(THREE.EventDispatcher.prototype);
-THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;
+THREE.EarthControls.prototype = Object.create(THREE.EventDispatcher.prototype);
+THREE.EarthControls.prototype.constructor = THREE.EarthControls;
 
-Object.defineProperties(THREE.OrbitControls.prototype, {
+Object.defineProperties(THREE.EarthControls.prototype, {
     center: {
         get: function() {
-            console.warn('THREE.OrbitControls: .center has been renamed to .target');
+            console.warn('THREE.EarthControls: .center has been renamed to .target');
             return this.target;
         }
     },
     // backward compatibility
     noZoom: {
         get: function() {
-            console.warn('THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
+            console.warn('THREE.EarthControls: .noZoom has been deprecated. Use .enableZoom instead.');
             return !this.enableZoom;
         },
         set: function(value) {
-            console.warn('THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
+            console.warn('THREE.EarthControls: .noZoom has been deprecated. Use .enableZoom instead.');
             this.enableZoom = !value;
         }
     },
     noRotate: {
         get: function() {
-            console.warn('THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.');
+            console.warn('THREE.EarthControls: .noRotate has been deprecated. Use .enableRotate instead.');
             return !this.enableRotate;
         },
         set: function(value) {
-            console.warn('THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.');
+            console.warn('THREE.EarthControls: .noRotate has been deprecated. Use .enableRotate instead.');
             this.enableRotate = !value;
         }
     },
     noPan: {
         get: function() {
-            console.warn('THREE.OrbitControls: .noPan has been deprecated. Use .enablePan instead.');
+            console.warn('THREE.EarthControls: .noPan has been deprecated. Use .enablePan instead.');
             return !this.enablePan;
         },
         set: function(value) {
-            console.warn('THREE.OrbitControls: .noPan has been deprecated. Use .enablePan instead.');
+            console.warn('THREE.EarthControls: .noPan has been deprecated. Use .enablePan instead.');
             this.enablePan = !value;
         }
     },
     noKeys: {
         get: function() {
-            console.warn('THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.');
+            console.warn('THREE.EarthControls: .noKeys has been deprecated. Use .enableKeys instead.');
             return !this.enableKeys;
         },
         set: function(value) {
-            console.warn('THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.');
+            console.warn('THREE.EarthControls: .noKeys has been deprecated. Use .enableKeys instead.');
             this.enableKeys = !value;
         }
     },
     staticMoving: {
         get: function() {
-            console.warn('THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.');
+            console.warn('THREE.EarthControls: .staticMoving has been deprecated. Use .enableDamping instead.');
             return !this.constraint.enableDamping;
         },
         set: function(value) {
-            console.warn('THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.');
+            console.warn('THREE.EarthControls: .staticMoving has been deprecated. Use .enableDamping instead.');
             this.constraint.enableDamping = !value;
         }
     },
     dynamicDampingFactor: {
         get: function() {
-            console.warn('THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
+            console.warn('THREE.EarthControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
             return this.constraint.dampingFactor;
         },
         set: function(value) {
-            console.warn('THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
+            console.warn('THREE.EarthControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
             this.constraint.dampingFactor = value;
         }
     }
