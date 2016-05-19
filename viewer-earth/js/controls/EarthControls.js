@@ -73,10 +73,10 @@ THREE.EarthControls = function(object, domElement) {
     this.enablePan = true;
     this.keyPanSpeed = 7.0; // pixels moved per arrow key push
 
-    // this.LONGITUDE_ORI = 2.33517;
-    // this.LATITUDE_ORI = 48.86148;
-    this.LONGITUDE_ORI = 0;
-    this.LATITUDE_ORI = 0.00001;
+    this.LONGITUDE_ORI = 2.33517;
+    this.LATITUDE_ORI = 48.86148;
+    // this.LONGITUDE_ORI = 0;
+    // this.LATITUDE_ORI = 0.00001;
 
     // Set to true to automatically rotate around the target
     // If auto-rotate is enabled, you must call controls.update() in your animation loop

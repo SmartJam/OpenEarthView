@@ -47,7 +47,7 @@
     <script src="js/toolbox.js"></script>
     <script>
         var TILE_PROVIDER = 'http://a.tile.openstreetmap.org';
-        var ZOOM_SHIFT_SIZE = 2
+        var ZOOM_SHIFT_SIZE = 2;
         var MAX_TILEMESH = 500;
         var tileMeshes = {};
         var tileMeshQueue = [];
@@ -86,6 +86,11 @@
 
         document.body.appendChild(renderer.domElement);
 
+        var earth = new THREE.Object3D(); //create an empty container
+        earth.position.set(0, 0, -R * 1000);
+        scene.add(earth);
+
+
         var sphere = new THREE.SphereGeometry(R * 1000, 64, 64);
         // var material = new THREE.MeshPhongMaterial();
         var material = new THREE.MeshBasicMaterial();
@@ -95,32 +100,30 @@
         material.map.offset.x = -0.75;
 
         var globe = new THREE.Mesh(sphere, material);
-
-        var earth = new THREE.Object3D(); //create an empty container
-        earth.position.set(0, 0, -R * 1000);
-        scene.add(earth);
         earth.add(globe);
 
 
 
-        var tileRot = new THREE.Object3D(); //create an empty container
-        var tileMesh = new THREE.Mesh();
-        earth.add(tileRot);
-        tileRot.add(tileMesh);
-        tileMesh.geometry = new THREE.PlaneGeometry(R * 2000, R * 2000);
-        tileMesh.position.set(0, 0, R * 1000);
-        tileRot.rotation.set(0, 0, 0);
+
+        // var tileRot = new THREE.Object3D(); //create an empty container
+        // var tileMesh = new THREE.Mesh();
+        // earth.add(tileRot);
+        // tileRot.add(tileMesh);
+        // tileMesh.geometry = new THREE.PlaneGeometry(R * 2000, R * 2000);
+        // tileMesh.position.set(0, 0, R * 1000);
+        // LONGITUDE_ORI = 2.33517;
+        // LATITUDE_ORI = 48.86148;
         // tileRot.rotation.set(
-        // controls.getLatitude() * Math.PI / 180,
-        // (90 - controls.getLongitude()) * Math.PI / 180, 0);
-        (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
-            var onLoaded = function(texture) {
-                yourTileMesh.material = new THREE.MeshBasicMaterial({
-                    map: texture
-                });
-            };
-            textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
-        })(tileMesh, 0, 0, 0);
+        //     -LATITUDE_ORI * Math.PI / 360,
+        //     (-LONGITUDE_ORI) * Math.PI / 180, 0);
+        // (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
+        //     var onLoaded = function(texture) {
+        //         yourTileMesh.material = new THREE.MeshBasicMaterial({
+        //             map: texture
+        //         });
+        //     };
+        //     textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+        // })(tileMesh, 0, 0, 0);
 
 
 
@@ -154,6 +157,9 @@
                 //     'lon': lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI,
                 //     'lat': latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI,
                 // });
+                var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
+                zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
+
                 updateScene({
                     'lon': controls.getLongitude(),
                     'lat': controls.getLatitude(),
@@ -195,11 +201,11 @@
             var tiles = {};
             var nextMinXtile, nextMaxXtile;
             for (var zShift = 0; zShift < ZOOM_SHIFT_SIZE && (zoom - zShift > 0); zShift++) {
-                scene.remove(tileGroup[zShift]);
+                earth.remove(tileGroup[zShift]);
                 tileGroup[zShift] = new THREE.Object3D(); //create an empty container
-                scene.add(tileGroup[zShift]);
+                earth.add(tileGroup[zShift]);
                 var zoom_ = zoom - zShift;
-                if (zoom_ < 5 && zShift > 0) {
+                if (zoom_ < 0 && zShift > 0) {
                     continue;
                 }
                 var factor = Math.pow(2, zShift);
@@ -211,8 +217,8 @@
                 var lon2 = tile2long(xtile_ + 1, zoom_);
                 var lat2 = tile2lat(ytile_ + 1, zoom_);
                 var width_ = measure(lat1, lon1, lat1, lon2);
-                var xShift_ = measure(lat1, lon, lat1, lon1);
-                var yShift_ = measure(lat, lon1, lat1, lon1);
+                // var xShift_ = measure(lat1, position.lon, lat1, lon1);
+                // var yShift_ = measure(position.lat, lon1, lat1, lon1);
 
                 if (zShift == 0) {
                     var minXtile = Math.floor((xtile_) / 2) * 2;
@@ -227,6 +233,15 @@
                 }
 
                 var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
+                console.log('tile:', JSON.stringify({
+                    'zoom_': zoom_,
+                    'width_': width_,
+                    'xtile': xtile_,
+                    'ytile_': ytile_,
+                    'lon': lon,
+                    'lat': lat
+                }));
+
                 for (var atile = minXtile; atile <= maxXtile; atile++) {
                     for (var btile = minYtile; btile <= maxYtile; btile++) {
                         var id = 'z_' + zoom_ + '_' + atile + "_" + btile;
@@ -235,13 +250,45 @@
                         var idNextNext = 'z_' + (zoom_ - 2) + '_' + Math.floor(atile / 4) + "_" + Math.floor(btile / 4);
                         tiles[idNextNext] = {};
                         if (!tiles.hasOwnProperty(id)) {
+                            // var tileMesh = new THREE.Mesh();
+                            // tileGroup[zShift].add(tileMesh);
+                            // tileMesh.geometry = new THREE.PlaneGeometry(width_ * 996 / 1000, width_ * 996 / 1000);
+                            // tileMesh.position.set(
+                            //     (atile - xtile_) * width_, (ytile_ - btile) * width_, 0);
+                            // tileGroup[zShift].position.set(
+                            //     (-xShift_ + width_ / 2), (yShift_ - width_ / 2), R * 1000);
+                            // (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
+                            //     var onLoaded = function(texture) {
+                            //         yourTileMesh.material = new THREE.MeshBasicMaterial({
+                            //             map: texture
+                            //         });
+                            //     };
+                            //     textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+                            // })(tileMesh, zoom_, atile % modulus, btile % modulus);
+
+                            var lon = tile2long(atile, zoom_);
+                            var lat1 = tile2lat(btile, zoom_);
+                            var lat2 = tile2lat(btile+1, zoom_);
+                            var lat = (lat1 + lat2) /2
+                            // console.log('tile:', JSON.stringify({
+                            //     'zoom_': zoom_,
+                            //     'width_': width_,
+                            //     'atile': atile,
+                            //     'btile': btile,
+                            //     'lon': lon,
+                            //     'lat': lat
+                            // }));
+                            var tileRot = new THREE.Object3D(); //create an empty container
+                            // tileRot.rotation.set(-lat * Math.PI / 180, (lon) * Math.PI / 180, 0);
+                            tileRot.position.set(0, R * 1000 * Math.sin(lat * Math.PI / 180), 0);
+                            tileRot.rotation.set(0, (lon) * Math.PI / 180, 0);
+
+                            tileGroup[zShift].add(tileRot);
+
                             var tileMesh = new THREE.Mesh();
-                            tileGroup[zShift].add(tileMesh);
-                            tileMesh.geometry = new THREE.PlaneGeometry(width_ * 996 / 1000, width_ * 996 / 1000);
-                            tileMesh.position.set(
-                                (atile - xtile_) * width_, (ytile_ - btile) * width_, 0);
-                            tileGroup[zShift].position.set(
-                                (-xShift_ + width_ / 2), (yShift_ - width_ / 2), R * 1000);
+                            tileMesh.geometry = new THREE.PlaneGeometry(width_, width_);
+                            tileMesh.position.set(width_ / 2, 0, R * 1000 * Math.cos(lat * Math.PI / 180 ));
+                            tileMesh.rotation.set(-lat * Math.PI / 180, 0, 0);
                             (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
                                 var onLoaded = function(texture) {
                                     yourTileMesh.material = new THREE.MeshBasicMaterial({
@@ -250,22 +297,25 @@
                                 };
                                 textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
                             })(tileMesh, zoom_, atile % modulus, btile % modulus);
-                            if (zoom_ == 19) {
-                                console.log('width_:', width_);
-                                console.log('loading...');
-                                (function(myTile, zoom, xtile, ytile) {
-                                    var objectScene = 'http://localhost:8081/3dtile?format=objectscene&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
-                                    console.log('objectScene:', objectScene);
-                                    objectLoader.load(
-                                        // 'http://localhost:8081/3dtile?format=jsonOSf4&xtile=154394&ytile=197054&zoom=19',
-                                        objectScene,
-                                        function(obj) {
-                                            console.log('Object added', JSON.stringify(obj));
-                                            myTile.add(obj);
-                                        }
-                                    );
-                                })(tileMesh, zoom_, atile, btile);
-                            }
+
+                            tileRot.add(tileMesh);
+
+                            // if (zoom_ == 19) {
+                            //     console.log('width_:', width_);
+                            //     console.log('loading...');
+                            //     (function(myTile, zoom, xtile, ytile) {
+                            //         var objectScene = 'http://localhost:8081/3dtile?format=objectscene&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
+                            //         console.log('objectScene:', objectScene);
+                            //         objectLoader.load(
+                            //             // 'http://localhost:8081/3dtile?format=jsonOSf4&xtile=154394&ytile=197054&zoom=19',
+                            //             objectScene,
+                            //             function(obj) {
+                            //                 console.log('Object added', JSON.stringify(obj));
+                            //                 myTile.add(obj);
+                            //             }
+                            //         );
+                            //     })(tileMesh, zoom_, atile, btile);
+                            // }
                         }
                     }
                 }
