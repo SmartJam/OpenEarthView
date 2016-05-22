@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <!--
+    Open Earth View - viewer-threejs
+    The MIT License (MIT)
+    Copyright (c) 2016 Clément Igonet
+
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the Software
+    is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+    OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    -->
+    <title>Open Earth View - viewer-earth</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <script src="node_modules/three/three.js"></script>
+    <script src="js/controls/EarthControls.js"></script>
+    <script src="js/loaders/GeojsonLoader.js"></script>
+    <!-- <script src="node_modules/three/src/loaders/JSONLoader.js"></script> -->
+    <script src="js/toolbox.js"></script>
+    <script>
+        var TILE_PROVIDER = 'http://a.tile.openstreetmap.org';
+        var ZOOM_SHIFT_SIZE = 2;
+        var MAX_TILEMESH = 500;
+        var tileMeshes = {};
+        var tileMeshQueue = [];
+        var textures = {};
+        var textureQueue = [];
+        var R = 6378.137;
+        var xtile = 0;
+        var ytile = 0;
+        // var lonOri, latOri;
+        var zoom = 0;
+        var tileGroup = [];
+
+        var defaultAlti = 1000000;
+        var textureLoader = new THREE.TextureLoader();
+        textureLoader.crossOrigin = '';
+        var objectLoader = new THREE.ObjectLoader();
+
+        var params = getSearchParameters();
+
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000000);
+        camera.up.set(0, 0, 1);
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        var controls = new THREE.EarthControls(camera, renderer.domElement);
+
+        // var lonStamp = controls.LONGITUDE_ORI;
+        // var latStamp = controls.LATITUDE_ORI;
+        var lonStamp = 0;
+        var latStamp = 0;
+        var altitude = (params.alti) ? params.alti : defaultAlti;
+        // var url = 'http://a.tile.openstreetmap.org/' +
+        //     Math.floor(Math.max(Math.min(Math.floor(26 - Math.log2(altitude)), 19), 1)) + '/' +
+        //     long2tile(lon, zoom) + '/' +
+        //     lat2tile(lat, zoom) + '.png';
+        var scene = new THREE.Scene();
+
+        document.body.appendChild(renderer.domElement);
+
+        var earth = new THREE.Object3D(); //create an empty container
+        earth.position.set(0, 0, -R * 1000);
+        scene.add(earth);
+
+
+        var sphere = new THREE.SphereGeometry(R * 1000, 64, 64);
+        // var material = new THREE.MeshPhongMaterial();
+        var material = new THREE.MeshBasicMaterial();
+        material.map = THREE.ImageUtils.loadTexture('images/earth_map.jpg');
+        // material.map.offset.x = 2048;
+        material.map.wrapS = THREE.RepeatWrapping; // You do not need to set `.wrapT` in this case
+        material.map.offset.x = -0.75;
+
+        var globe = new THREE.Mesh(sphere, material);
+        earth.add(globe);
+
+
+
+
+        // var tileRot = new THREE.Object3D(); //create an empty container
+        // var tileMesh = new THREE.Mesh();
+        // earth.add(tileRot);
+        // tileRot.add(tileMesh);
+        // tileMesh.geometry = new THREE.PlaneGeometry(R * 2000, R * 2000);
+        // tileMesh.position.set(0, 0, R * 1000);
+        // LONGITUDE_ORI = 2.33517;
+        // LATITUDE_ORI = 48.86148;
+        // tileRot.rotation.set(
+        //     -LATITUDE_ORI * Math.PI / 360,
+        //     (-LONGITUDE_ORI) * Math.PI / 180, 0);
+        // (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
+        //     var onLoaded = function(texture) {
+        //         yourTileMesh.material = new THREE.MeshBasicMaterial({
+        //             map: texture
+        //         });
+        //     };
+        //     textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+        // })(tileMesh, 0, 0, 0);
+
+
+
+
+        document.addEventListener("keydown", onDocumentKeyDown, false);
+
+        // sphere.rotation.set(
+        //     controls.getLatitude() * Math.PI / 180,
+        //     (90 - controls.getLongitude()) * Math.PI / 180, 0);
+
+        // updateScene({
+        //     'lon': controls.getLongitude(),
+        //     'lat': controls.getLatitude(),
+        //     'alti': altitude
+        // });
+
+        camera.position.z = altitude;
+        camera.position.z = altitude;
+
+        function onDocumentKeyDown(event) {
+            var keyCode = event.which;
+
+            // 'F' - Toggle through the texture filters
+            if (keyCode == 70) {
+                console.log('F pressed!');
+                // controls.resetPolarAngle();
+
+                // controls.update();
+                // controls.target.set(0, 0, 0);
+                // updateScene({
+                //     'lon': lonOri + (controls.target.x / (1000 * R * Math.cos(lat * Math.PI / 180))) * 180 / Math.PI,
+                //     'lat': latOri + (controls.target.y / (1000 * R)) * 180 / Math.PI,
+                // });
+                var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
+                zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
+
+                updateScene({
+                    'lon': controls.getLongitude(),
+                    'lat': controls.getLatitude(),
+                    'alti': altitude
+                });
+            }
+        }
+        // ENDOF initialization //
+
+        var render = function() {
+            requestAnimationFrame(render);
+            ////////////////////////////////////////////////////////////
+            if (lonStamp != controls.getLongitude() || latStamp != controls.getLatitude()) {
+                lonStamp = controls.getLongitude();
+                latStamp = controls.getLatitude();
+                earth.rotation.set(
+                    controls.getLatitude() * Math.PI / 180,
+                    (-controls.getLongitude()) * Math.PI / 180, 0);
+
+                // updateScene({
+                //     'lon': controls.getLongitude(),
+                //     'lat': controls.getLatitude(),
+                //     'alti': altitude
+                // });
+                // sphere.rotation.set(0, -0.1, 0);
+                // console.log('controls.latitude:', controls.getLatitude());
+            }
+            ////////////////////////////////////////////////////////////
+            renderer.render(scene, camera);
+        };
+
+        render();
+
+        function updateScene(position) {
+            console.log('updateScene !');
+            xtile = long2tile(position.lon, zoom);
+            ytile = lat2tile(position.lat, zoom);
+
+            var tiles = {};
+            var nextMinXtile, nextMaxXtile;
+            for (var zShift = 0; zShift < ZOOM_SHIFT_SIZE && (zoom - zShift > 0); zShift++) {
+                earth.remove(tileGroup[zShift]);
+                tileGroup[zShift] = new THREE.Object3D(); //create an empty container
+                earth.add(tileGroup[zShift]);
+                var zoom_ = zoom - zShift;
+                if (zoom_ < 0 && zShift > 0) {
+                    continue;
+                }
+                var factor = Math.pow(2, zShift);
+                var xtile_ = Math.floor(xtile / factor);
+                var ytile_ = Math.floor(ytile / factor);
+
+                var lon1 = tile2long(xtile_, zoom_);
+                var lat1 = tile2lat(ytile_, zoom_);
+                var lon2 = tile2long(xtile_ + 1, zoom_);
+                var lat2 = tile2lat(ytile_ + 1, zoom_);
+                var width_ = measure(lat1, lon1, lat1, lon2);
+                // var xShift_ = measure(lat1, position.lon, lat1, lon1);
+                // var yShift_ = measure(position.lat, lon1, lat1, lon1);
+
+                if (zShift == 0) {
+                    var minXtile = Math.floor((xtile_) / 2) * 2;
+                    var maxXtile = Math.floor((xtile_) / 2) * 2 + 1;
+                    var minYtile = Math.floor((ytile_) / 2) * 2;
+                    var maxYtile = Math.floor((ytile_) / 2) * 2 + 1;
+                } else {
+                    var minXtile = Math.floor((xtile_ - 1) / 2) * 2;
+                    var maxXtile = Math.floor((xtile_ + 1) / 2) * 2 + 1;
+                    var minYtile = Math.floor((ytile_ - 1) / 2) * 2;
+                    var maxYtile = Math.floor((ytile_ + 1) / 2) * 2 + 1;
+                }
+
+                var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
+                console.log('tile:', JSON.stringify({
+                    'zoom_': zoom_,
+                    'width_': width_,
+                    'xtile': xtile_,
+                    'ytile_': ytile_,
+                    'lon': lon,
+                    'lat': lat
+                }));
+
+                for (var atile = minXtile; atile <= maxXtile; atile++) {
+                    for (var btile = minYtile; btile <= maxYtile; btile++) {
+                        var id = 'z_' + zoom_ + '_' + atile + "_" + btile;
+                        var idNext = 'z_' + (zoom_ - 1) + '_' + Math.floor(atile / 2) + "_" + Math.floor(btile / 2);
+                        tiles[idNext] = {};
+                        var idNextNext = 'z_' + (zoom_ - 2) + '_' + Math.floor(atile / 4) + "_" + Math.floor(btile / 4);
+                        tiles[idNextNext] = {};
+                        if (!tiles.hasOwnProperty(id)) {
+                            // var tileMesh = new THREE.Mesh();
+                            // tileGroup[zShift].add(tileMesh);
+                            // tileMesh.geometry = new THREE.PlaneGeometry(width_ * 996 / 1000, width_ * 996 / 1000);
+                            // tileMesh.position.set(
+                            //     (atile - xtile_) * width_, (ytile_ - btile) * width_, 0);
+                            // tileGroup[zShift].position.set(
+                            //     (-xShift_ + width_ / 2), (yShift_ - width_ / 2), R * 1000);
+                            // (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
+                            //     var onLoaded = function(texture) {
+                            //         yourTileMesh.material = new THREE.MeshBasicMaterial({
+                            //             map: texture
+                            //         });
+                            //     };
+                            //     textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+                            // })(tileMesh, zoom_, atile % modulus, btile % modulus);
+
+                            var lon = tile2long(atile, zoom_);
+                            var lat1 = tile2lat(btile, zoom_);
+                            var lat2 = tile2lat(btile+1, zoom_);
+                            var lat = (lat1 + lat2) /2
+                            // console.log('tile:', JSON.stringify({
+                            //     'zoom_': zoom_,
+                            //     'width_': width_,
+                            //     'atile': atile,
+                            //     'btile': btile,
+                            //     'lon': lon,
+                            //     'lat': lat
+                            // }));
+                            var tileRot = new THREE.Object3D(); //create an empty container
+                            // tileRot.rotation.set(-lat * Math.PI / 180, (lon) * Math.PI / 180, 0);
+                            tileRot.position.set(0, R * 1000 * Math.sin(lat * Math.PI / 180), 0);
+                            tileRot.rotation.set(0, (lon) * Math.PI / 180, 0);
+
+                            tileGroup[zShift].add(tileRot);
+
+                            var tileMesh = new THREE.Mesh();
+                            tileMesh.geometry = new THREE.PlaneGeometry(width_, width_);
+                            tileMesh.position.set(width_ / 2, 0, R * 1000 * Math.cos(lat * Math.PI / 180 ));
+                            tileMesh.rotation.set(-lat * Math.PI / 180, 0, 0);
+                            (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
+                                var onLoaded = function(texture) {
+                                    yourTileMesh.material = new THREE.MeshBasicMaterial({
+                                        map: texture
+                                    });
+                                };
+                                textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+                            })(tileMesh, zoom_, atile % modulus, btile % modulus);
+
+                            tileRot.add(tileMesh);
+
+                            // if (zoom_ == 19) {
+                            //     console.log('width_:', width_);
+                            //     console.log('loading...');
+                            //     (function(myTile, zoom, xtile, ytile) {
+                            //         var objectScene = 'http://localhost:8081/3dtile?format=objectscene&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
+                            //         console.log('objectScene:', objectScene);
+                            //         objectLoader.load(
+                            //             // 'http://localhost:8081/3dtile?format=jsonOSf4&xtile=154394&ytile=197054&zoom=19',
+                            //             objectScene,
+                            //             function(obj) {
+                            //                 console.log('Object added', JSON.stringify(obj));
+                            //                 myTile.add(obj);
+                            //             }
+                            //         );
+                            //     })(tileMesh, zoom_, atile, btile);
+                            // }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
