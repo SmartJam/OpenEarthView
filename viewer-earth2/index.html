@@ -300,22 +300,22 @@
                                 textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
                             })(tileMesh, zoom_, atile % modulus, btile % modulus);
                         }
-                        if (zoom_ == 19) {
-                            // console.log('width_:', width_);
-                            console.log('loading...');
-                            (function(myTile, zoom, xtile, ytile) {
-                                var geojson = 'http://localhost:8081/3dtile?format=geojson&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
-                                console.log('geojson:', geojson);
-                                jsonLoader.load(
-                                    // 'http://localhost:8081/3dtile?format=jsonOSf4&xtile=154394&ytile=197054&zoom=19',
-                                    geojson,
-                                    function(obj) {
-                                        console.log('Object added', JSON.stringify(obj));
-                                        // myTile.add(obj);
-                                    }
-                                );
-                            })(tileMesh, zoom_, atile, btile);
-                        }
+                        // if (zoom_ == 19) {
+                        //     // console.log('width_:', width_);
+                        //     console.log('loading...');
+                        //     (function(myTile, zoom, xtile, ytile) {
+                        //         var geojson = 'http://localhost:8081/3dtile?format=geojson&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
+                        //         console.log('geojson:', geojson);
+                        //         jsonLoader.load(
+                        //             // 'http://localhost:8081/3dtile?format=jsonOSf4&xtile=154394&ytile=197054&zoom=19',
+                        //             geojson,
+                        //             function(obj) {
+                        //                 console.log('Object added', JSON.stringify(obj));
+                        //                 // myTile.add(obj);
+                        //             }
+                        //         );
+                        //     })(tileMesh, zoom_, atile, btile);
+                        // }
                     }
                 }
             }
