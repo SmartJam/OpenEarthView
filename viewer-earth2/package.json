@@ -1,0 +1,17 @@
+{
+    "name": "open-earth-view-viewer-earth2",
+    "description": "Open Earth View project - Earth viewer 2",
+    "version": "0.0.1",
+    "dependencies": {
+        "three": ""
+    },
+    "main": "./index.html",
+    "author": "Clement IGONET <clement@igonet.fr>",
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "git@git.framasoft.org:pizaninja/OpenEarthView.git"
+    },
+    "devDependencies": {},
+    "license": "MIT"
+}
