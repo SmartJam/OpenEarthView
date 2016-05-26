@@ -1,9 +1,32 @@
 // TOOLBOX //
+/**
+Open Earth View - viewer-threejs
+The MIT License (MIT)
+Copyright (c) 2016 Clément Igonet
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
 var geoTiles = {};
 var geoTileQueue = [];
 
-getTileMesh = function(r, zoom, ytile) {
-    var id = 'tile_' + zoom + '_' + ytile;
+getTileMesh = function(r, zoom, ytile, power) {
+    var id = 'tile_' + zoom + '_' + ytile + '_' + factor;
     if (!(geoTiles.hasOwnProperty(id))) {
         geoTiles[id] = new THREE.Geometry();
         var myGeometry = geoTiles[id];
@@ -11,12 +34,6 @@ getTileMesh = function(r, zoom, ytile) {
         if (geoTileQueue.length > MAX_TILEMESH) {
             delete geoTiles[geoTileQueue.shift()];
         }
-
-        var lon1 = tile2long(0, zoom);
-        var lat1 = tile2lat(ytile, zoom);
-        var lon2 = tile2long(1, zoom);
-        var lat2 = tile2lat(ytile + 1, zoom);
-
         /*************************
          *            ^ Y         *
          *            |           *
@@ -34,50 +51,75 @@ getTileMesh = function(r, zoom, ytile) {
          *                          *
          *      A          D        *
          ***************************/
+        var lonStart = tile2long(0, zoom);
+        var latStart = tile2lat(ytile, zoom);
+        var lonEnd = tile2long(1, zoom);
+        var latEnd = tile2lat(ytile + 1, zoom);
+        var factor = Math.pow(2, power);
+        var lonStep = (lonEnd - lonStart) / factor;
+        var latStep = (latEnd - latStart) / factor;
+        for (var u = 0; u < factor; u++) {
+            for (var v = 0; v < factor; v++) {
 
-        var rUp = r * 1000 * Math.cos(lat1 * Math.PI / 180);
-        var rDown = r * 1000 * Math.cos(lat2 * Math.PI / 180);
+                var lon1 = lonStart + lonStep * u;
+                var lat1 = latStart + latStep * v;
+                var lon2 = lonStart + lonStep * (u + 1);
+                var lat2 = latStart + latStep * (v + 1);
 
-        var Ax = rDown * Math.sin(lon1 * Math.PI / 180);
-        var Ay = r * 1000 * Math.sin(lat2 * Math.PI / 180);
-        var Az = rDown * Math.cos(lon1 * Math.PI / 180);
+                var rUp = r * 1000 * Math.cos(lat1 * Math.PI / 180);
+                var rDown = r * 1000 * Math.cos(lat2 * Math.PI / 180);
 
-        var Bx = rUp * Math.sin(lon1 * Math.PI / 180);
-        var By = r * 1000 * Math.sin(lat1 * Math.PI / 180);
-        var Bz = rUp * Math.cos(lon1 * Math.PI / 180);
+                var Ax = rDown * Math.sin(lon1 * Math.PI / 180);
+                var Ay = r * 1000 * Math.sin(lat2 * Math.PI / 180);
+                var Az = rDown * Math.cos(lon1 * Math.PI / 180);
 
-        var Cx = rUp * Math.sin(lon2 * Math.PI / 180);
-        var Cy = r * 1000 * Math.sin(lat1 * Math.PI / 180);
-        var Cz = rUp * Math.cos(lon2 * Math.PI / 180);
+                var Bx = rUp * Math.sin(lon1 * Math.PI / 180);
+                var By = r * 1000 * Math.sin(lat1 * Math.PI / 180);
+                var Bz = rUp * Math.cos(lon1 * Math.PI / 180);
 
-        var Dx = rDown * Math.sin(lon2 * Math.PI / 180);
-        var Dy = r * 1000 * Math.sin(lat2 * Math.PI / 180);
-        var Dz = rDown * Math.cos(lon2 * Math.PI / 180);
+                var Cx = rUp * Math.sin(lon2 * Math.PI / 180);
+                var Cy = r * 1000 * Math.sin(lat1 * Math.PI / 180);
+                var Cz = rUp * Math.cos(lon2 * Math.PI / 180);
 
+                var Dx = rDown * Math.sin(lon2 * Math.PI / 180);
+                var Dy = r * 1000 * Math.sin(lat2 * Math.PI / 180);
+                var Dz = rDown * Math.cos(lon2 * Math.PI / 180);
 
-        myGeometry.vertices.push(
-            new THREE.Vector3(Ax, Ay, Az),
-            new THREE.Vector3(Bx, By, Bz),
-            new THREE.Vector3(Cx, Cy, Cz),
-            new THREE.Vector3(Dx, Dy, Dz)
-        );
-        myGeometry.faces.push(new THREE.Face3(0, 2, 1));
-        myGeometry.faces.push(new THREE.Face3(0, 3, 2));
+                myGeometry.vertices.push(
+                    new THREE.Vector3(Ax, Ay, Az),
+                    new THREE.Vector3(Bx, By, Bz),
+                    new THREE.Vector3(Cx, Cy, Cz),
+                    new THREE.Vector3(Dx, Dy, Dz)
+                );
 
-        myGeometry.faceVertexUvs[0].push([
-            new THREE.Vector2(0.0, 0.0),
-            new THREE.Vector2(1.0, 1.0),
-            new THREE.Vector2(0.0, 1.0)
-        ]);
-        myGeometry.faceVertexUvs[0].push([
-            new THREE.Vector2(0.0, 0.0),
-            new THREE.Vector2(1.0, 0.0),
-            new THREE.Vector2(1.0, 1.0)
-        ]);
+                var iStep = (factor - v - 1) + u * factor;
+                myGeometry.faces.push(new THREE.Face3(
+                    4 * iStep,
+                    4 * iStep + 2,
+                    4 * iStep + 1));
+                myGeometry.faces.push(new THREE.Face3(
+                    4 * iStep,
+                    4 * iStep + 3,
+                    4 * iStep + 2));
+
+                myGeometry.faceVertexUvs[0].push([
+                    new THREE.Vector2((0.0 + u) / factor, (0.0 + v) / factor),
+                    new THREE.Vector2((1.0 + u) / factor, (1.0 + v) / factor),
+                    new THREE.Vector2((0.0 + u) / factor, (1.0 + v) / factor)
+                ]);
+                myGeometry.faceVertexUvs[0].push([
+                    new THREE.Vector2((0.0 + u) / factor, (0.0 + v) / factor),
+                    new THREE.Vector2((1.0 + u) / factor, (0.0 + v) / factor),
+                    new THREE.Vector2((1.0 + u) / factor, (1.0 + v) / factor)
+                ]);
+            }
+        }
         myGeometry.uvsNeedUpdate = true;
     }
     return new THREE.Mesh(geoTiles[id]);
 }
+
+
 
 assignUVs = function(geometry) {
 
@@ -110,25 +152,6 @@ assignUVs = function(geometry) {
 
 }
 
-// var texturedMaterials = {};
-// var textureMaterialQueue = [];
-// var texturedMaterialFactory = function(zoom, xtile, ytile) {
-//     var id = 'tile_' + zoom + '_' + xtile + '_' + ytile;
-//     if (!(texturedMaterials.hasOwnProperty(id))) {
-//         var url = TILE_PROVIDER + '/' + zoom + '/' + xtile + '/' + ytile + '.png';
-//         var material = new THREE.MeshBasicMaterial();
-//         textureLoader.load(url, function(texture) {
-//             material.map = texture;
-//         });
-//         texturedMaterials[id] = new THREE.MeshFaceMaterial([material]);
-//         textureMaterialQueue.push(id);
-//         if (textureMaterialQueue.length > MAX_TILEMESH) {
-//             delete texturedMaterials[textureMaterialQueue.shift()];
-//         }
-//     }
-//     return texturedMaterials[id];
-// }
-
 var textures = {};
 var textureQueue = [];
 
@@ -152,12 +175,6 @@ function textureFactory(zoom_, xtile_, ytile_, onLoaded) {
                 }
                 onLoaded(texture);
             }
-            // function(xhr) {
-            //     console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-            // },
-            // function(xhr) {
-            //     console.log('An error happened');
-            // }
         );
     } else {
         onLoaded(textures[id]);
