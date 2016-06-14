@@ -127,7 +127,7 @@ var server = http.createServer(function(request, response) {
 server.listen(8082);
 
 function tile2long(x, z) {
-    return (x / Math.pow(2, z) * 360 - 180);
+    return (x / Math.pow(2, z) * 360) % 360 - 180;
 }
 
 function tile2lat(y, z) {
