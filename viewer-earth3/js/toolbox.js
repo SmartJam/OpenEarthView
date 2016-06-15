@@ -155,30 +155,91 @@ assignUVs = function(geometry) {
 var textures = {};
 var textureQueue = [];
 
-function textureFactory(zoom_, xtile_, ytile_, onLoaded) {
-    var id = 'tile_' + zoom_ + '_' + xtile_ + '_' + ytile_;
+function textureFactory(zoom, xtile, ytile, onLoaded) {
+    var id = 'tile' + zoom + '_' + xtile + '_' + ytile;
     // textures[id] = {};
     if (!(textures.hasOwnProperty(id))) {
-        var url = TILE_PROVIDER + '/' +
-            zoom_ + '/' +
-            ((zoom_ > 0) ? (xtile_ % Math.pow(2, zoom_)) : 0) + '/' +
-            ((zoom_ > 0) ? (ytile_ % Math.pow(2, zoom_)) : 0) + '.png';
-        textureLoader.load(url,
-            function(texture) {
-                // var material = new THREE.MeshBasicMaterial({
-                //     map: texture
-                // });
-                textures[id] = texture;
-                textureQueue.push(id);
-                if (textureQueue.length > MAX_TILEMESH) {
-                    delete textures[textureQueue.shift()];
+        serverRandom = TILE_PROVIDER01_RANDOM[
+            Math.floor(Math.random() * TILE_PROVIDER01_RANDOM.length)];
+        var url = 'http://' + serverRandom + '' + TILE_PROVIDER01 + '/' +
+            zoom + '/' +
+            ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0) + '/' +
+            ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0) + '.' + TILE_PROVIDER01_FILE_EXT;
+
+        // var url = 'http://mt1.google.com/vt/lyrs=m@110&hl=pl&' +
+        //     'x=' + ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0) + '&' +
+        //     'y=' + ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0) + '&' +
+        //     'z=' + zoom;
+        http: //mt1.google.com/vt/lyrs=m@110&hl=pl&x=4574&y=2697&z=13
+
+            textureLoader.load(url,
+                function(texture) {
+                    // var material = new THREE.MeshBasicMaterial({
+                    //     map: texture
+                    // });
+                    textures[id] = texture;
+                    // textureQueue.push(id);
+                    // if (textureQueue.length > MAX_TILEMESH) {
+                    //     delete textures[textureQueue.shift()];
+                    // }
+                    onLoaded(texture);
                 }
-                onLoaded(texture);
-            }
-        );
+            );
     } else {
         onLoaded(textures[id]);
     }
+}
+
+var materials = {};
+var materialQueue = [];
+//
+function tileMaterialFactory(zoom, xtile, ytile) {
+    var id = 'tile' + zoom + '_' + xtile + '_' + ytile;
+    if (!(materials.hasOwnProperty(id))) {
+        if (zoom < 12) {
+            serverRandom = TILE_PROVIDER01_RANDOM[
+                Math.floor(Math.random() * TILE_PROVIDER01_RANDOM.length)];
+            var url = 'http://' + serverRandom + '' + TILE_PROVIDER01 + '/' +
+                zoom + '/' +
+                ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0) + '/' +
+                ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0) + '.' + TILE_PROVIDER01_FILE_EXT;
+        } else {
+            serverRandom = TILE_PROVIDER02_RANDOM[
+                Math.floor(Math.random() * TILE_PROVIDER02_RANDOM.length)];
+            var url = 'http://' + serverRandom + '' + TILE_PROVIDER02 + '/' +
+                zoom + '/' +
+                ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0) + '/' +
+                ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0) + '.' + TILE_PROVIDER02_FILE_EXT;
+        }
+        var material = new THREE.MeshBasicMaterial();
+        materials[id] = material;
+
+        // (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
+        //     var onLoaded = function(texture) {
+        //         yourTileMesh.material = new THREE.MeshBasicMaterial({
+        //             map: texture
+        //         });
+        //     };
+        //     textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+        // })(tileMesh, zoom_, atile % modulus, btile % modulus); // if (zoom_ == 19) {
+        console.log('Waiting for:', url);
+        (function(url, material) {
+            textureLoader.load(url,
+                function(texture) {
+                    if (material !== undefined) {
+                        material.map = texture;
+                        material.needsUpdate = true;
+                    }
+                    // console.log('texture loaded:', url);
+                    // materialQueue.push(id);
+                    // if (materialQueue.length > MAX_TILEMESH) {
+                    //     delete materials[materialQueue.shift()];
+                    // }
+                }
+            );
+        })(url, material)
+    }
+    return materials[id];
 }
 
 function getSearchParameters() {
@@ -195,7 +256,7 @@ function lat2tile(lat, zoom) {
 }
 
 function tile2long(x, z) {
-    return (x / Math.pow(2, z) * 360 - 180);
+    return ((x / Math.pow(2, z) * 360 - 180) + 540) % 360 - 180;
 }
 
 function tile2lat(y, z) {

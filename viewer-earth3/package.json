@@ -1,9 +1,10 @@
 {
-    "name": "open-earth-view-viewer-earth2",
+    "name": "open-earth-view-viewer-earth3",
     "description": "Open Earth View project - Earth viewer 3",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "dependencies": {
-        "three": ""
+        "three": "",
+        "turf-centroid": ""
     },
     "main": "./index.html",
     "author": "Clement IGONET <clement@igonet.fr>",
