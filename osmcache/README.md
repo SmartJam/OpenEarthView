@@ -9,7 +9,7 @@ $ npm install
 # Web server
 To start the web server:
 ```
-$ server.sh
+$ osmcache.sh
 ```
 
 # Test
