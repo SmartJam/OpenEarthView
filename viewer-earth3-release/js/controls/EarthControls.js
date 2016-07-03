@@ -31,8 +31,9 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
-THREE.EarthControls = function(object, domElement) {
+THREE.EarthControls = function(object, domElement, render) {
     this.object = object;
+    this.render = render;
     this.domElement = (domElement !== undefined) ? domElement : document;
     // Set to false to disable this control
     this.enabled = true;
@@ -73,10 +74,15 @@ THREE.EarthControls = function(object, domElement) {
     this.enablePan = true;
     this.keyPanSpeed = 7.0; // pixels moved per arrow key push
 
+    // Le louvre
     this.LONGITUDE_ORI = 2.33517;
     this.LATITUDE_ORI = 48.86148;
     // this.LONGITUDE_ORI = 0;
     // this.LATITUDE_ORI = 0.00001;
+
+    // ESB
+    // this.LONGITUDE_ORI = -73.98468017578125;
+    // this.LATITUDE_ORI = 40.7477771608207;
 
     // Set to true to automatically rotate around the target
     // If auto-rotate is enabled, you must call controls.update() in your animation loop
@@ -119,6 +125,7 @@ THREE.EarthControls = function(object, domElement) {
         scope.object.updateProjectionMatrix();
         scope.dispatchEvent(changeEvent);
         scope.update();
+        scope.render();
         state = STATE.NONE;
     };
     // this method is exposed, but perhaps it would be better if we can make it private...
@@ -272,8 +279,8 @@ THREE.EarthControls = function(object, domElement) {
                 latitude += latDelta;
                 // console.log('latitude:', latitude)
             }
-            latitude = (latitude + 90) % 180 - 90;
-            longitude = (longitude + 360) % 360;
+            // latitude = (latitude + 90) % 180 - 90;
+            longitude = (longitude + 540) % 360 - 180;
         };
     }();
     this.getLongitude = function() {
@@ -294,7 +301,7 @@ THREE.EarthControls = function(object, domElement) {
             if (latitude + latDelta < 80 && latitude + latDelta > -80) {
                 latitude += latDelta;
             }
-            latitude = (latitude + 90) % 180 - 90;
+            // latitude = (latitude + 90) % 180 - 90;
             longitude = (longitude + 360) % 360;
         };
     }();
@@ -418,6 +425,7 @@ THREE.EarthControls = function(object, domElement) {
         rotateStart.copy(rotateEnd);
 
         scope.update();
+        scope.render();
 
     }
 
@@ -442,6 +450,7 @@ THREE.EarthControls = function(object, domElement) {
         dollyStart.copy(dollyEnd);
 
         scope.update();
+        scope.render();
 
     }
 
@@ -458,6 +467,7 @@ THREE.EarthControls = function(object, domElement) {
         panStart.copy(panEnd);
 
         scope.update();
+        scope.render();
 
     }
 
@@ -498,6 +508,7 @@ THREE.EarthControls = function(object, domElement) {
         }
 
         scope.update();
+        scope.render();
 
     }
 
@@ -507,18 +518,22 @@ THREE.EarthControls = function(object, domElement) {
             case scope.keys.UP:
                 pan(0, scope.keyPanSpeed);
                 scope.update();
+                scope.render();
                 break;
             case scope.keys.BOTTOM:
                 pan(0, -scope.keyPanSpeed);
                 scope.update();
+                scope.render();
                 break;
             case scope.keys.LEFT:
                 pan(scope.keyPanSpeed, 0);
                 scope.update();
+                scope.render();
                 break;
             case scope.keys.RIGHT:
                 pan(-scope.keyPanSpeed, 0);
                 scope.update();
+                scope.render();
                 break;
         }
     }
@@ -559,6 +574,7 @@ THREE.EarthControls = function(object, domElement) {
         rotateStart.copy(rotateEnd);
 
         scope.update();
+        scope.render();
 
     }
 
@@ -588,6 +604,7 @@ THREE.EarthControls = function(object, domElement) {
         dollyStart.copy(dollyEnd);
 
         scope.update();
+        scope.render();
 
     }
 
@@ -604,6 +621,7 @@ THREE.EarthControls = function(object, domElement) {
         panStart.copy(panEnd);
 
         scope.update();
+        scope.render();
 
     }
 
@@ -730,7 +748,7 @@ THREE.EarthControls = function(object, domElement) {
     function onTouchStart(event) {
         if (scope.enabled === false) return;
         switch (event.touches.length) {
-            case 1: // one-fingered touch: rotate
+            case 3: // one-fingered touch: rotate
                 if (scope.enableRotate === false) return;
                 handleTouchStartRotate(event);
                 state = STATE.TOUCH_ROTATE;
@@ -740,7 +758,7 @@ THREE.EarthControls = function(object, domElement) {
                 handleTouchStartDolly(event);
                 state = STATE.TOUCH_DOLLY;
                 break;
-            case 3: // three-fingered touch: pan
+            case 1: // three-fingered touch: pan
                 if (scope.enablePan === false) return;
                 handleTouchStartPan(event);
                 state = STATE.TOUCH_PAN;
@@ -758,7 +776,7 @@ THREE.EarthControls = function(object, domElement) {
         event.preventDefault();
         event.stopPropagation();
         switch (event.touches.length) {
-            case 1: // one-fingered touch: rotate
+            case 3: // one-fingered touch: rotate
                 if (scope.enableRotate === false) return;
                 if (state !== STATE.TOUCH_ROTATE) return; // is this needed?...
                 handleTouchMoveRotate(event);
@@ -768,7 +786,7 @@ THREE.EarthControls = function(object, domElement) {
                 if (state !== STATE.TOUCH_DOLLY) return; // is this needed?...
                 handleTouchMoveDolly(event);
                 break;
-            case 3: // three-fingered touch: pan
+            case 1: // three-fingered touch: pan
                 if (scope.enablePan === false) return;
                 if (state !== STATE.TOUCH_PAN) return; // is this needed?...
                 handleTouchMovePan(event);
