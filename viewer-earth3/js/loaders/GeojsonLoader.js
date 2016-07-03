@@ -38,10 +38,12 @@ THREE.GeojsonLoader.prototype = {
     crossOrigin: undefined,
 
     load: function(url, onLoad, onProgress, onError) {
+      // console.log('Loading: ', url);
         var scope = this;
         var loader = new THREE.XHRLoader(scope.manager);
         loader.load(url, function(text) {
             onLoad(scope.parse(JSON.parse(text)));
+            // console.log('Loaded: ', url);
         }, onProgress, onError);
     },
 
@@ -51,7 +53,8 @@ THREE.GeojsonLoader.prototype = {
 
     parse: function(json) {
 
-        console.log(JSON.stringify(json));
+        // console.log(JSON.stringify(json));
+
         // json: [{
         //     "type": "Feature",
         //     "properties": {
@@ -134,6 +137,9 @@ THREE.GeojsonLoader.prototype = {
                                 var feature = geojson.features[ftrIdx];
                                 var prop = feature.properties;
                                 switch (prop.type) {
+                                    // case 'building':
+                                    //
+                                    //     break;
                                     case 'buildingPart':
                                         // console.log('feature:', JSON.stringify(feature));
                                         // feature.properties.minHeight
@@ -141,10 +147,11 @@ THREE.GeojsonLoader.prototype = {
                                             prop.minHeight : 0;
                                         var roofHeight = (prop.hasOwnProperty('roof:height')) ?
                                             prop['roof:height'] : 0;
-                                        var height = (prop.hasOwnProperty('height')) ?
-                                            (prop.height - roofHeight) : 0;
+                                        var height = (prop.hasOwnProperty('height') && prop.height != null) ?
+                                            (prop.height - roofHeight) : 20;
                                         var color = (prop.hasOwnProperty('color')) ?
-                                            prop.color : 0xAAAAAA;
+                                            // prop.color : 0xAAAAAA;
+                                            prop.color : 0xffffff;
                                         var coords = feature.geometry.coordinates;
                                         if (prop.hasOwnProperty('roof:shape')) {
                                             switch (prop['roof:shape']) {
@@ -188,7 +195,8 @@ THREE.GeojsonLoader.prototype = {
 
                                             // assignUVs(geometry);
 
-                                            var material = new THREE.MeshBasicMaterial({
+                                            var material = new THREE.MeshPhongMaterial({
+                                                // var material = new THREE.MeshLambertMaterial({
                                                 color: color,
                                                 transparent: true,
                                                 opacity: 0.9
@@ -215,6 +223,9 @@ THREE.GeojsonLoader.prototype = {
                                             // });
 
                                             var mesh = new THREE.Mesh(geometry, material);
+                                            // mesh.castShadow = true;
+                                            // mesh.receiveShadow = false;
+
                                             mesh.position.z = minHeight;
                                             tile.add(mesh);
                                         }

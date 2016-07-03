@@ -45,21 +45,11 @@
     <script src="js/controls/EarthControls.js"></script>
     <script src="js/loaders/GeojsonLoader.js"></script>
 
-    <!-- <script src="node_modules/three/src/loaders/JSONLoader.js"></script> -->
     <script src="js/toolbox.js"></script>
     <script>
-        // var TILE_PROVIDER01 = '.mqcdn.com/tiles/1.0.0/osm';
-        // var TILE_PROVIDER01_RANDOM=['otile1', 'otile2', 'otile3', 'otile4']
-        // var TILE_PROVIDER01_FILE_EXT = 'jpg';
-        // var TILE_PROVIDER01 = '.stamen.com/terrain-background'
-        // var TILE_PROVIDER01_RANDOM = ['tile']
-        // var TILE_PROVIDER01_FILE_EXT = 'jpg';
         var TILE_PROVIDER01 = '.tile.openstreetmap.org';
         var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
         var TILE_PROVIDER01_FILE_EXT = 'png';
-        // var TILE_PROVIDER02 = '.mqcdn.com/tiles/1.0.0/osm';
-        // var TILE_PROVIDER02_RANDOM=['otile1', 'otile2', 'otile3', 'otile4']
-        // var TILE_PROVIDER02_FILE_EXT = 'jpg';
         var ZOOM_SHIFT_SIZE = 4;
         var ZOOM_MIN = 1;
         var MAX_TILEMESH = 400;
@@ -70,15 +60,13 @@
         var R = 6378.137;
         var xtile = 0;
         var ytile = 0;
-        // var lonOri, latOri;
         var zoom = 0;
         var tileGroups;
         var tileGroup = [];
 
-        // var defaultAlti = 3000000;
         var defaultAlti = 150;
-        // var defaultAlti = 3000;
         var textureLoader = new THREE.TextureLoader();
+        // var currentIds = {};
         textureLoader.crossOrigin = '';
         var geojsonLoader = new THREE.GeojsonLoader();
 
@@ -88,6 +76,19 @@
         camera.up.set(0, 0, 1);
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        renderer.shadowMapEnabled = true;
+        renderer.shadowMapSoft = false;
+
+        renderer.shadowCameraNear = 3;
+        renderer.shadowCameraFar = camera.far;
+        renderer.shadowCameraFov = 50;
+
+        renderer.shadowMapBias = 0.0039;
+        renderer.shadowMapDarkness = 0.5;
+        renderer.shadowMapWidth = 1024;
+        renderer.shadowMapHeight = 1024;
+
         var goRender = function() {
             render();
         };
@@ -104,71 +105,35 @@
         earth.position.set(0, 0, -R * 1000);
         scene.add(earth);
 
+        var light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(10000, 15000, 20000);
+        scene.add(light);
+
         var sphere = new THREE.SphereGeometry(R * 995, 64, 64);
-        // var material = new THREE.MeshPhongMaterial();
-        var material = new THREE.MeshBasicMaterial();
-        material.map = THREE.ImageUtils.loadTexture('images/earth_map.jpg');
-        // material.map.offset.x = 2048;
-        material.map.wrapS = THREE.RepeatWrapping; // You do not need to set `.wrapT` in this case
-        material.map.offset.x = -0.75;
-
-        var globe = new THREE.Mesh(sphere, material);
-        // earth.add(globe);
-
-        // // blue
-        // var xMaterial = new THREE.MeshBasicMaterial({
-        //     color: 0x0000FF
-        // });
-        // // yellow
-        // var yMaterial = new THREE.MeshBasicMaterial({
-        //     color: 0xFFFF00
-        // });
-        // // red
-        // var zMaterial = new THREE.MeshBasicMaterial({
-        //     color: 0xFF0000
-        // });
-        // var len = R * 2000;
-        // var r = 50;
-        // var xAxe = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len), xMaterial);
-        // var yAxe = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len), yMaterial);
-        // var zAxe = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len), zMaterial);
-        // xAxe.position.set(len / 2, 0, 0);
-        // xAxe.rotation.set(0, 0, Math.PI / 2);
-        // yAxe.position.set(0, len / 2, 0);
-        // zAxe.position.set(0, 0, len / 2);
-        // zAxe.rotation.set(Math.PI / 2, 0, 0);
 
         document.addEventListener("keydown", onDocumentKeyDown, false);
-        // document.addEventListener("mousemove", function() {
-        //     render();
-        // }, false);
-        // document.addEventListener("click", function() {
-        //     render();
-        // }, false);
 
         camera.position.z = altitude;
         camera.position.z = altitude;
 
         function onDocumentKeyDown(event) {
             var keyCode = event.which;
-            // render();
-
-            // 'F' - Toggle through the texture filters
             if (keyCode == 70) {
                 console.log('F pressed!');
-                // render();
-
-                // var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
-                // zoom = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
-                //
-                // updateScene({
-                //     'lon': controls.getLongitude(),
-                //     'lat': controls.getLatitude(),
-                //     'alti': altitude
-                // });
             }
         }
         // ENDOF initialization //
+
+        window.addEventListener( 'resize', onWindowResize, false );
+
+        function onWindowResize(){
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            render();
+        }
 
         var render = function() {
             // requestAnimationFrame(render);
@@ -225,22 +190,10 @@
             earth.add(tileGroups);
             var oriGround = new THREE.Object3D();
             if (zoom >= ZOOM_FLAT) {
-                // if (zoom >= 13) {
                 xtileOri = long2tile(position.lon, ZOOM_FLAT);
                 ytileOri = lat2tile(position.lat, ZOOM_FLAT);
-                // var lonOri = (tile2long(xtileOri, ZOOM_FLAT) + tile2long(xtileOri + 1, ZOOM_FLAT)) / 2;
-                // var latOri = (tile2lat(ytileOri, ZOOM_FLAT) + tile2lat(ytileOri + 1, ZOOM_FLAT)) / 2;
                 var lonOri = tile2long(xtileOri, ZOOM_FLAT);
                 var latOri = tile2lat(ytileOri, ZOOM_FLAT);
-                // console.log({
-                //     'zoom': zoom,
-                //     'position.lon': position.lon,
-                //     'position.lat': position.lat,
-                //     'xtileOri': xtileOri,
-                //     'ytileOri': ytileOri
-                // });
-                // var lonOri = position.lon;
-                // var latOri = position.lat;
 
                 // 3 - ground position
                 oriGround.position.set(0, 0, R * 1000);
@@ -254,26 +207,9 @@
                 oriLonRot.add(oriLatRot);
 
                 tileGroups.add(oriLonRot);
-
-                // oriGround.add(xAxe);
-                // oriGround.add(yAxe);
-                // oriGround.add(zAxe);
-
-                // var xRefAxe = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 100), xMaterial);
-                // xRefAxe.position.set(0.5, 0, 0);
-                // xRefAxe.rotation.set(0, 0, Math.PI / 2);
-                // var yRefAxe = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 100), yMaterial);
-                // yRefAxe.position.set(0, 0.50, 0);
-                // var zRefAxe = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 100), zMaterial);
-                // zRefAxe.position.set(0, 0, 0.50);
-                // zRefAxe.rotation.set(Math.PI / 2, 0, 0);
-
-                // earth.add(yRefAxe);
-
-                // earth.add(zRefAxe);
             }
 
-            // earth.add(xRefAxe);
+            var currentIds = {};
             for (var zoom_ = Math.max(zoom, ZOOM_MIN); zoom_ > Math.max(zoom - ZOOM_SHIFT_SIZE, ZOOM_MIN); zoom_--) {
                 var zShift = zoom - zoom_;
                 tileGroup[zShift] = new THREE.Object3D(); //create an empty container
@@ -314,7 +250,6 @@
                             tiles[idNext] = {};
                         }
                         if (!tiles.hasOwnProperty(id)) {
-                            // if (zoom_ < ZOOM_FLAT || atile < xtile_ || btile < ytile_) {
                             if (zoom_ < ZOOM_FLAT) {
                                 var tileMesh;
                                 var tileEarth = new THREE.Object3D(); //create an empty container
@@ -322,17 +257,8 @@
                                 tileGroup[zShift].add(tileEarth);
                                 tileMesh = getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
                                 tileEarth.add(tileMesh);
-                                // tileMesh.material = tileMaterialFactory(zoom_, ((atile % modulus) + modulus) % modulus, ((btile % modulus) + modulus) % modulus);
-
                             } else {
-                                // // if (zoom_ > 20) {
                                 var tileShape = new THREE.Shape();
-                                // var xA = -widthDown / 2 + (xtile_ - atile) * widthUp;
-                                // var xB = -widthUp / 2 + (xtile_ - atile) * widthUp;
-                                // var xC = widthUp / 2 + (xtile_ - atile) * widthUp;
-                                // var xD = widthDown / 2 + (xtile_ - atile) * widthUp;
-                                // var yA = -widthSide / 2 + (ytile_ - btile) * widthUp;
-                                // var yB = widthSide / 2 + (ytile_ - btile) * widthUp;
 
                                 var xTileShift = (atile - xtile_) + (xtile_ % Math.pow(2, zoom_ - ZOOM_FLAT));
                                 var yTileShift = (btile - ytile_) + (ytile_ % Math.pow(2, zoom_ - ZOOM_FLAT));
@@ -358,41 +284,12 @@
                                 tileSupport.add(tileMesh)
                                 oriGround.add(tileSupport);
 
-                                if (zoom_ >= 18) {
-                                    // console.log(JSON.stringify({
-                                    //     'zoom': zoom
-                                    // }));
-                                    // console.log('width_:', width_);
-                                    // console.log('loading...');
+                                if (zoom_ >= 19) {
                                     (function(earth, myTile, zoom, xtile, ytile) {
-                                        // console.log(JSON.stringify({
-                                        //     'lon1': lon1
-                                        // }));
                                         var geojson = 'http://localhost:8081/3dtile?format=geojson&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
-                                        // var geojson = 'http://www.openstreetmap.org/api/0.6/map?bbox=' + lon1 + ',' + lat2 + ',' + lon2 + ',' + lat1;
-                                        // var myPath = "/api/0.6/map?bbox=" +
-                                        //     tile2long(+xtile, zoom) + "," +
-                                        //     tile2lat(+ytile + 1, zoom) + "," +
-                                        //     tile2long(+xtile + 1, zoom) + "," +
-                                        //     tile2lat(+ytile, zoom);
-                                        // console.log("myPath: " + myPath);
-                                        // var osmRequest = http.request({
-                                        //     hostname: 'www.openstreetmap.org',
-
-                                        // console.log('geojson:', geojson);
                                         geojsonLoader.load(
-                                            // 'http://localhost:8081/3dtile?format=jsonOSf4&xtile=154394&ytile=197054&zoom=19',
                                             geojson,
                                             function(obj) {
-                                                // console.log('Object added:', JSON.stringify(obj));
-                                                // myTile.add(obj);
-                                                // console.log('obj:', JSON.stringify(obj));
-                                                // var geometry = new THREE.BoxGeometry(50, 50, 50);
-                                                // var material = new THREE.MeshBasicMaterial({
-                                                //     color: 0x00ff00
-                                                // });
-                                                // var cube = new THREE.Mesh(geometry, material);
-                                                // myTile.add(cube);
                                                 myTile.add(obj);
                                                 render();
                                             }
@@ -409,10 +306,14 @@
                                 };
                                 textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
                             })(tileMesh, zoom_, atile % modulus, btile % modulus);
+                            var id = 'tile' + zoom_ + '_' +(atile % modulus) + '_' + (btile % modulus);
+                            currentIds[id] = {};
+                            // console.log('currentIds: ', JSON.stringify(currentIds));
                         }
                     }
                 }
             }
+            cancelOtherRequests(currentIds);
         }
     </script>
 </body>
