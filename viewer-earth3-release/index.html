@@ -124,14 +124,14 @@
         }
         // ENDOF initialization //
 
-        window.addEventListener( 'resize', onWindowResize, false );
+        window.addEventListener('resize', onWindowResize, false);
 
-        function onWindowResize(){
+        function onWindowResize() {
 
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
 
-            renderer.setSize( window.innerWidth, window.innerHeight );
+            renderer.setSize(window.innerWidth, window.innerHeight);
             render();
         }
 
@@ -284,6 +284,9 @@
                                 oriGround.add(tileSupport);
                             }
                             (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
+                                yourTileMesh.material = new THREE.MeshBasicMaterial({
+                                    color: 0xCCCCCC
+                                });
                                 var onLoaded = function(texture) {
                                     yourTileMesh.material = new THREE.MeshBasicMaterial({
                                         map: texture
@@ -292,7 +295,7 @@
                                 };
                                 textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
                             })(tileMesh, zoom_, atile % modulus, btile % modulus);
-                            var id = 'tile' + zoom_ + '_' +(atile % modulus) + '_' + (btile % modulus);
+                            var id = 'tile' + zoom_ + '_' + (atile % modulus) + '_' + (btile % modulus);
                             currentIds[id] = {};
                         }
                     }
