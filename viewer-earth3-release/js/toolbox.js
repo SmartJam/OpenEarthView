@@ -120,8 +120,6 @@ getTileMesh = function(r, zoom, ytile, power) {
     return new THREE.Mesh(geoTiles[id]);
 }
 
-
-
 assignUVs = function(geometry) {
 
     geometry.computeBoundingBox();
@@ -150,7 +148,6 @@ assignUVs = function(geometry) {
 }
 
 var textures = {};
-var textureQueue = [];
 var textureRequests = {};
 var textureAliveRequests = {};
 var textureAliveRequestsCount = 0;
@@ -165,7 +162,7 @@ function loadNextTexture() {
         textureAliveRequestsCount = textureAliveRequestsCount + (textureAliveRequests.hasOwnProperty(id) ? 0 : 1);
         textureAliveRequests[id] = textureRequests[id];
         var url = textureAliveRequests[id].url;
-        delete textureRequests[id]
+        delete textureRequests[id];
         textureRequestsCount--;
         (function(url, id) {
             textureAliveRequests[id].request = textureLoader.load(url,
@@ -179,13 +176,13 @@ function loadNextTexture() {
                     loadNextTexture();
                 }
             );
-        })(url, id)
+        })(url, id);
     }
 }
 
 function textureFactory(zoom, xtile, ytile, onLoaded) {
     var id = 'tile' + zoom + '_' + xtile + '_' + ytile;
-    if ((textures.hasOwnProperty(id))) {
+    if (textures.hasOwnProperty(id)) {
         onLoaded(textures[id]);
     } else {
         var serverRandom = TILE_PROVIDER01_RANDOM[
@@ -209,6 +206,15 @@ function cancelOtherRequests(currentIds) {
         if (!currentIds.hasOwnProperty(id)) {
             delete textureRequests[id];
             textureRequestsCount--;
+        }
+    }
+    for (var id in textureAliveRequests) {
+        if (!currentIds.hasOwnProperty(id)) {
+            // if (textureAliveRequests[id].request.hasOwnProperty('abort')) {
+            //     textureAliveRequests[id].request.abort();
+            // }
+            // delete textureAliveRequests[id];
+            // textureAliveRequestsCount--;
         }
     }
     loadNextTexture();
