@@ -136,6 +136,7 @@
         }
 
         var render = function() {
+            // requestAnimationFrame(render);
             ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
             var dist = new THREE.Vector3().copy(controls.object.position).sub(controls.target).length();
@@ -178,6 +179,8 @@
         render();
 
         function updateScene(position) {
+            console.log('position.lon:', position.lon);
+            console.log('position.lat:', position.lat);
             xtile = long2tile(position.lon, zoom);
             ytile = lat2tile(position.lat, zoom);
 
@@ -282,18 +285,37 @@
                                 tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
                                 tileSupport.add(tileMesh)
                                 oriGround.add(tileSupport);
+                                if (zoom_ >= 17) {
+                                    var defaultColor =
+                                        ((13 * zoom) % 256) * 65536 +
+                                        ((53 * (atile % modulus)) % 256) * 256 +
+                                        ((97 * (btile % modulus)) % 256);
+                                    (function(earth, myTile, zoom, xtile, ytile, defaultColor) {
+                                        var geojson = 'http://www.openearthview.net/3dtile.php?format=geojson&zoom=' + zoom + '&xtile=' + xtile + '&ytile=' + ytile;
+                                        geojsonLoader.load(
+                                            geojson,
+                                            function(obj) {
+                                                myTile.add(obj);
+                                                render();
+                                            },
+                                            function() {},
+                                            function() {},
+                                            defaultColor);
+                                    })(earth, tileSupport, zoom_, (atile % modulus), (btile % modulus), defaultColor);
+                                }
                             }
                             (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
-                                yourTileMesh.material = new THREE.MeshBasicMaterial({
-                                    color: 0xCCCCCC
-                                });
-                                var onLoaded = function(texture) {
-                                    yourTileMesh.material = new THREE.MeshBasicMaterial({
-                                        map: texture
-                                    });
-                                    render();
-                                };
-                                textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+                                textureFactory(
+                                    yourZoom,
+                                    yourXtile,
+                                    yourYtile,
+                                    function(texture) {
+                                        yourTileMesh.material = new THREE.MeshBasicMaterial({
+                                            map: texture
+                                        });
+                                        render();
+                                    }
+                                );
                             })(tileMesh, zoom_, atile % modulus, btile % modulus);
                             var id = 'tile' + zoom_ + '_' + (atile % modulus) + '_' + (btile % modulus);
                             currentIds[id] = {};
