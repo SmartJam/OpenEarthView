@@ -147,6 +147,8 @@ assignUVs = function(geometry) {
     geometry.uvsNeedUpdate = true;
 }
 
+var textureLoader = new THREE.TextureLoader();
+textureLoader.crossOrigin = '';
 var textures = {};
 var textureRequests = {};
 var textureAliveRequests = {};
@@ -174,6 +176,15 @@ function loadNextTexture() {
                         textureAliveRequestsCount--;
                     }
                     loadNextTexture();
+                },
+                function() {},
+                function() {
+                    if (textureAliveRequests.hasOwnProperty(id)) {
+                        // textureAliveRequests[id].onLoaded(texture);
+                        delete textureAliveRequests[id];
+                        textureAliveRequestsCount--;
+                    }
+                    loadNextTexture();
                 }
             );
         })(url, id);
@@ -194,9 +205,9 @@ function textureFactory(zoom, xtile, ytile, onLoaded) {
 
         textureRequestsCount = textureRequestsCount + (textureRequests.hasOwnProperty(id) ? 0 : 1);
         textureRequests[id] = {
-                url: url,
-                onLoaded: onLoaded
-            }
+            url: url,
+            onLoaded: onLoaded
+        }
         loadNextTexture();
     }
 }

@@ -84,13 +84,19 @@ THREE.GeojsonLoader.prototype = {
                     function(geojson) {
                         geojsons[url] = geojson;
                         if (geojsonAliveRequests.hasOwnProperty(url)) {
-                            geojsonAliveRequests[url].onLoad(
-                                scope.parse(JSON.parse(geojson), defaultColor));
+                            onLoad(scope.parse(JSON.parse(geojson), defaultColor));
                             delete geojsonAliveRequests[url];
                             geojsonAliveRequestsCount--;
                         }
                         scope.loadNextGeojson();
-                    }, onProgress, onError);
+                    }, onProgress,
+                    function(geojson) {
+                        if (geojsonAliveRequests.hasOwnProperty(url)) {
+                            delete geojsonAliveRequests[url];
+                            geojsonAliveRequestsCount--;
+                        }
+                        scope.loadNextGeojson();
+                    });
             })(url, onLoad, onProgress, onError, defaultColor);
         }
     },
