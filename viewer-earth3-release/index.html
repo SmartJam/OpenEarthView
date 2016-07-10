@@ -89,10 +89,10 @@
         renderer.shadowMapWidth = 1024;
         renderer.shadowMapHeight = 1024;
 
-        var goRender = function() {
-            render();
+        var goUpdateSceneLazy = function() {
+            updateSceneLazy();
         };
-        var controls = new THREE.EarthControls(camera, renderer.domElement, goRender);
+        var controls = new THREE.EarthControls(camera, renderer.domElement, goUpdateSceneLazy);
 
         var lonStamp = 0;
         var latStamp = 0;
@@ -134,8 +134,11 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             render();
         }
-
         var render = function() {
+            renderer.render(scene, camera);
+        }
+
+        var updateSceneLazy = function() {
             // requestAnimationFrame(render);
             ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
@@ -176,7 +179,7 @@
             renderer.render(scene, camera);
         };
 
-        render();
+        updateSceneLazy();
 
         function updateScene(position) {
             console.log('position.lon:', position.lon);
