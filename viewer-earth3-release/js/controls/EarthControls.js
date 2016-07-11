@@ -31,7 +31,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
-THREE.EarthControls = function(object, domElement, render) {
+THREE.EarthControls = function(object, domElement, render, coord) {
     this.object = object;
     this.render = render;
     this.domElement = (domElement !== undefined) ? domElement : document;
@@ -245,6 +245,10 @@ THREE.EarthControls = function(object, domElement, render) {
     // var panOffset = new THREE.Vector3();
     var longitude = this.LONGITUDE_ORI;
     var latitude = this.LATITUDE_ORI;
+    if (coord !== null) {
+        longitude = (coord.hasOwnProperty('longitude')) ? coord.longitude : longitude;
+        latitude = (coord.hasOwnProperty('latitude')) ? coord.latitude : latitude;
+    }
     var R = 6378.137;
 
     var zoomChanged = false;

@@ -37,7 +37,7 @@ var geojsonRequests = {};
 var geojsonAliveRequests = {};
 var geojsonAliveRequestsCount = 0;
 var geojsonRequestsCount = 0;
-var MAX_GEOJSON_REQUEST = 10;
+var MAX_GEOJSON_REQUEST = 1;
 
 THREE.GeojsonLoader.prototype = {
 
