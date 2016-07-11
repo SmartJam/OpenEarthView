@@ -1,3 +1,27 @@
+/**
+Open Earth View - osm2x3d
+The MIT License (MIT)
+Copyright (c) 2016 Clément Igonet
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 var util = require('util');
 var stream = require('stream');
 var RGBColor = require('rgbcolor');
@@ -218,6 +242,7 @@ function convert(options, onConvert) {
                     relation.name = attrs.v;
                     break;
                 case 'building:part':
+                    relation.isBldPart = (attrs.v === 'yes');
                     relation.isBld = (attrs.v === 'yes');
                     break;
                 case 'building':
@@ -248,17 +273,49 @@ function convert(options, onConvert) {
             //     var roof = roofBlock(way);
             // }
             var geoBldPart = geoBldPartBlock(way);
-            if (way.isBld) {
+            if (way.isBld && !way.isBldPart) {
                 var geoBld = getGeoBuilding(geoBlds, +way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
                 // if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
                 //     geoBld.features[geoBld.features.length] = roof;
                 // }
+                // if (turf.inside(turf.centroid(geoBld), bounds)) {
+                // geoBld: {
+                //     "type": "FeatureCollection",
+                //     "features": [{
+                //         "type": "Feature",
+                //         "properties": {
+                //             "id": 249680748,
+                //             "height": 30,
+                //             "levels": 8,
+                //             "color": "rgb(240,240,240)",
+                //             "type": "buildingPart",
+                //             "minHeight": 0,
+                //             "minLevel": 0,
+                //             "name": "Siège de l'UNESCO"
+                //         },
+                // if (geoBld.features[0].properties.id == "249680748") {
                 if (turf.inside(turf.centroid(geoBld), bounds)) {
+                    // if (way.isBldPart || turf.inside(turf.centroid(geoBld), bounds)) {
                     blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                    // }
                 }
+                //
+                // }
+                // console.log('In bounds!');
+                // console.log('bounds:', JSON.stringify(bounds));
+                // console.log('geoBld:', JSON.stringify(geoBld));
+                // } else {
+                //     console.log('Out of bounds!');
+                //     console.log('bounds:', JSON.stringify(bounds));
+                //     console.log('geoBld:', JSON.stringify(geoBld));
+                // }
             } else {
+                // if (turf.inside(turf.centroid(geoBldPart), bounds)) {
+
                 geoBldParts[+way.id] = geoBldPart;
+
+                // }
                 // if (roof) {
                 //     roofs[+way.id] = roof;
                 // }
