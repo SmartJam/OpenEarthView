@@ -57,6 +57,9 @@
         var tileMeshes = {};
         var tileMeshQueue = [];
 
+        // UNESCO
+        this.LONGITUDE_ORI = 2.3057599523656336;
+        this.LATITUDE_ORI = 48.849568465379264;
         var R = 6378.137;
         var xtile = 0;
         var ytile = 0;
@@ -89,7 +92,13 @@
         var goUpdateSceneLazy = function() {
             updateSceneLazy();
         };
-        var controls = new THREE.EarthControls(camera, renderer.domElement, goUpdateSceneLazy);
+        var controls = new THREE.EarthControls(
+            camera,
+            renderer.domElement,
+            goUpdateSceneLazy, {
+                longitude: LONGITUDE_ORI,
+                latitude: LATITUDE_ORI
+            });
 
         var lonStamp = 0;
         var latStamp = 0;
@@ -285,7 +294,7 @@
                                 tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
                                 tileSupport.add(tileMesh)
                                 oriGround.add(tileSupport);
-                                if (zoom_ >= 17) {
+                                if (zoom >= 18 && zoom_ >= zoom) {
                                     var defaultColor =
                                         ((13 * zoom) % 256) * 65536 +
                                         ((53 * (atile % modulus)) % 256) * 256 +
