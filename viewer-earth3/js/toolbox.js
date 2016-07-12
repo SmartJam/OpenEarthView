@@ -120,8 +120,6 @@ getTileMesh = function(r, zoom, ytile, power) {
     return new THREE.Mesh(geoTiles[id]);
 }
 
-
-
 assignUVs = function(geometry) {
 
     geometry.computeBoundingBox();
@@ -149,8 +147,9 @@ assignUVs = function(geometry) {
     geometry.uvsNeedUpdate = true;
 }
 
+var textureLoader = new THREE.TextureLoader();
+textureLoader.crossOrigin = '';
 var textures = {};
-var textureQueue = [];
 var textureRequests = {};
 var textureAliveRequests = {};
 var textureAliveRequestsCount = 0;
@@ -165,7 +164,7 @@ function loadNextTexture() {
         textureAliveRequestsCount = textureAliveRequestsCount + (textureAliveRequests.hasOwnProperty(id) ? 0 : 1);
         textureAliveRequests[id] = textureRequests[id];
         var url = textureAliveRequests[id].url;
-        delete textureRequests[id]
+        delete textureRequests[id];
         textureRequestsCount--;
         (function(url, id) {
             textureAliveRequests[id].request = textureLoader.load(url,
@@ -177,15 +176,24 @@ function loadNextTexture() {
                         textureAliveRequestsCount--;
                     }
                     loadNextTexture();
+                },
+                function() {},
+                function() {
+                    if (textureAliveRequests.hasOwnProperty(id)) {
+                        // textureAliveRequests[id].onLoaded(texture);
+                        delete textureAliveRequests[id];
+                        textureAliveRequestsCount--;
+                    }
+                    loadNextTexture();
                 }
             );
-        })(url, id)
+        })(url, id);
     }
 }
 
 function textureFactory(zoom, xtile, ytile, onLoaded) {
     var id = 'tile' + zoom + '_' + xtile + '_' + ytile;
-    if ((textures.hasOwnProperty(id))) {
+    if (textures.hasOwnProperty(id)) {
         onLoaded(textures[id]);
     } else {
         var serverRandom = TILE_PROVIDER01_RANDOM[
@@ -197,9 +205,9 @@ function textureFactory(zoom, xtile, ytile, onLoaded) {
 
         textureRequestsCount = textureRequestsCount + (textureRequests.hasOwnProperty(id) ? 0 : 1);
         textureRequests[id] = {
-                url: url,
-                onLoaded: onLoaded
-            }
+            url: url,
+            onLoaded: onLoaded
+        }
         loadNextTexture();
     }
 }

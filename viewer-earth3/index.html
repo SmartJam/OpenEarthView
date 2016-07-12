@@ -57,6 +57,15 @@
         var tileMeshes = {};
         var tileMeshQueue = [];
 
+        // // UNESCO
+        // this.LONGITUDE_ORI = 2.3057599523656336;
+        // this.LATITUDE_ORI = 48.849568465379264;
+
+        // LOUVRE
+        this.LONGITUDE_ORI = 2.3364709900972684;
+        this.LATITUDE_ORI = 48.86045538042749;
+
+
         var R = 6378.137;
         var xtile = 0;
         var ytile = 0;
@@ -65,9 +74,6 @@
         var tileGroup = [];
 
         var defaultAlti = 150;
-        var textureLoader = new THREE.TextureLoader();
-        // var currentIds = {};
-        textureLoader.crossOrigin = '';
         var geojsonLoader = new THREE.GeojsonLoader();
 
         var params = getSearchParameters();
@@ -89,10 +95,16 @@
         renderer.shadowMapWidth = 1024;
         renderer.shadowMapHeight = 1024;
 
-        var goRender = function() {
-            render();
+        var goUpdateSceneLazy = function() {
+            updateSceneLazy();
         };
-        var controls = new THREE.EarthControls(camera, renderer.domElement, goRender);
+        var controls = new THREE.EarthControls(
+            camera,
+            renderer.domElement,
+            goUpdateSceneLazy, {
+                longitude: LONGITUDE_ORI,
+                latitude: LATITUDE_ORI
+            });
 
         var lonStamp = 0;
         var latStamp = 0;
@@ -124,18 +136,21 @@
         }
         // ENDOF initialization //
 
-        window.addEventListener( 'resize', onWindowResize, false );
+        window.addEventListener('resize', onWindowResize, false);
 
-        function onWindowResize(){
+        function onWindowResize() {
 
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
 
-            renderer.setSize( window.innerWidth, window.innerHeight );
+            renderer.setSize(window.innerWidth, window.innerHeight);
             render();
         }
-
         var render = function() {
+            renderer.render(scene, camera);
+        }
+
+        var updateSceneLazy = function() {
             // requestAnimationFrame(render);
             ////////////////////////////////////////////////////////////
             var oldZoom = zoom;
@@ -176,9 +191,11 @@
             renderer.render(scene, camera);
         };
 
-        render();
+        updateSceneLazy();
 
         function updateScene(position) {
+            console.log('position.lon:', position.lon);
+            console.log('position.lat:', position.lat);
             xtile = long2tile(position.lon, zoom);
             ytile = lat2tile(position.lat, zoom);
 
@@ -283,30 +300,45 @@
                                 tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
                                 tileSupport.add(tileMesh)
                                 oriGround.add(tileSupport);
+                                // if (zoom_ >= 19 && atile == xtile_ && btile == ytile) {
+                                if (zoom >= 17 && zoom_ >= zoom) {
+                                    // var rColor = ((53 * (atile % modulus)) % 256).toString(16);
+                                    // console.log('rColor:', rColor);
 
-                                if (zoom_ >= 19) {
-                                    (function(earth, myTile, zoom, xtile, ytile) {
-                                        var geojson = 'http://localhost:8081/3dtile?format=geojson&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
+                                    var defaultColor =
+                                        ((13 * zoom) % 256) * 65536 +
+                                        ((53 * (atile % modulus)) % 256) * 256 +
+                                        ((97 * (btile % modulus)) % 256);
+                                    // var defaultColor = 0xeeeeee;
+                                    // console.log('Define defaultColor:', defaultColor);
+                                    (function(earth, myTile, zoom, xtile, ytile, defaultColor) {
+                                        var url = 'http://localhost:8081/3dtile?format=geojson&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
                                         geojsonLoader.load(
-                                            geojson,
+                                            url,
                                             function(obj) {
                                                 myTile.add(obj);
                                                 render();
-                                            }
-                                        );
-                                    })(earth, tileSupport, zoom_, atile, btile);
+                                            },
+                                            function() {},
+                                            function() {},
+                                            defaultColor);
+                                    })(earth, tileSupport, zoom_, (atile % modulus), (btile % modulus), defaultColor);
                                 }
                             }
                             (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
-                                var onLoaded = function(texture) {
-                                    yourTileMesh.material = new THREE.MeshBasicMaterial({
-                                        map: texture
-                                    });
-                                    render();
-                                };
-                                textureFactory(yourZoom, yourXtile, yourYtile, onLoaded);
+                                textureFactory(
+                                    yourZoom,
+                                    yourXtile,
+                                    yourYtile,
+                                    function(texture) {
+                                        yourTileMesh.material = new THREE.MeshBasicMaterial({
+                                            map: texture
+                                        });
+                                        render();
+                                    }
+                                );
                             })(tileMesh, zoom_, atile % modulus, btile % modulus);
-                            var id = 'tile' + zoom_ + '_' +(atile % modulus) + '_' + (btile % modulus);
+                            var id = 'tile' + zoom_ + '_' + (atile % modulus) + '_' + (btile % modulus);
                             currentIds[id] = {};
                             // console.log('currentIds: ', JSON.stringify(currentIds));
                         }
