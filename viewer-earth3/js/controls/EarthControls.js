@@ -31,7 +31,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
-THREE.EarthControls = function(object, domElement, render) {
+THREE.EarthControls = function(object, domElement, render, coord) {
     this.object = object;
     this.render = render;
     this.domElement = (domElement !== undefined) ? domElement : document;
@@ -74,15 +74,24 @@ THREE.EarthControls = function(object, domElement, render) {
     this.enablePan = true;
     this.keyPanSpeed = 7.0; // pixels moved per arrow key push
 
-    // Le louvre
-    this.LONGITUDE_ORI = 2.33517;
-    this.LATITUDE_ORI = 48.86148;
+    // // Le louvre
+    // this.LONGITUDE_ORI = 2.33517;
+    // this.LATITUDE_ORI = 48.86148;
+
+    // UNESCO
+    // this.LONGITUDE_ORI = 2.3057599523656336;
+    // this.LATITUDE_ORI = 48.849568465379264;
+
     // this.LONGITUDE_ORI = 0;
     // this.LATITUDE_ORI = 0.00001;
 
-    // ESB
+    // // ESB
     // this.LONGITUDE_ORI = -73.98468017578125;
     // this.LATITUDE_ORI = 40.7477771608207;
+
+    // COLISEO
+    this.LONGITUDE_ORI = 12.492148216478085;
+    this.LATITUDE_ORI = 41.89015670900311;
 
     // Set to true to automatically rotate around the target
     // If auto-rotate is enabled, you must call controls.update() in your animation loop
@@ -236,6 +245,10 @@ THREE.EarthControls = function(object, domElement, render) {
     // var panOffset = new THREE.Vector3();
     var longitude = this.LONGITUDE_ORI;
     var latitude = this.LATITUDE_ORI;
+    if (coord !== null) {
+        longitude = (coord.hasOwnProperty('longitude')) ? coord.longitude : longitude;
+        latitude = (coord.hasOwnProperty('latitude')) ? coord.latitude : latitude;
+    }
     var R = 6378.137;
 
     var zoomChanged = false;

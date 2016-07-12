@@ -32,26 +32,86 @@ THREE.GeojsonLoader = function(manager) {
 
 var R = 6378.137;
 
+var geojsons = {};
+var geojsonRequests = {};
+var geojsonAliveRequests = {};
+var geojsonAliveRequestsCount = 0;
+var geojsonRequestsCount = 0;
+var MAX_GEOJSON_REQUEST = 1;
+
 THREE.GeojsonLoader.prototype = {
 
     constructor: THREE.GeojsonLoader,
     crossOrigin: undefined,
 
-    load: function(url, onLoad, onProgress, onError) {
-      // console.log('Loading: ', url);
+    load: function(url, onLoad, onProgress, onError, defaultColor) {
+        // console.log('Loading: ', url);
         var scope = this;
         var loader = new THREE.XHRLoader(scope.manager);
-        loader.load(url, function(text) {
-            onLoad(scope.parse(JSON.parse(text)));
-            // console.log('Loaded: ', url);
-        }, onProgress, onError);
+        if (geojsons.hasOwnProperty(url)) {
+            onLoad(scope.parse(JSON.parse(geojsons[url]), defaultColor));
+        } else {
+            geojsonRequestsCount = geojsonRequestsCount +
+                (geojsonRequests.hasOwnProperty(url) ? 0 : 1);
+            geojsonRequests[url] = {
+                onLoad: onLoad,
+                onProgress: onProgress,
+                onError: onError,
+                defaultColor: defaultColor
+            }
+            scope.loadNextGeojson();
+        }
+        // loader.load(url, function(text) {
+        //     // console.log('defaultColor:', defaultColor);
+        //     onLoad(scope.parse(JSON.parse(text), defaultColor));
+        //     // console.log('Loaded: ', url);
+        // }, onProgress, onError);
     },
 
+    loadNextGeojson: function() {
+        var scope = this;
+        var loader = new THREE.XHRLoader(scope.manager);
+        while (geojsonAliveRequestsCount < MAX_GEOJSON_REQUEST && geojsonRequestsCount > 0) {
+            var urls = Object.keys(geojsonRequests);
+            var url = urls[urls.length - 1];
+            geojsonAliveRequestsCount = geojsonAliveRequestsCount +
+                (geojsonAliveRequests.hasOwnProperty(url) ? 0 : 1);
+            geojsonAliveRequests[url] = geojsonRequests[url];
+            var onLoad = geojsonAliveRequests[url].onLoad;
+            var onProgress = geojsonAliveRequests[url].onProgress;
+            var onError = geojsonAliveRequests[url].onError;
+            var defaultColor = geojsonAliveRequests[url].defaultColor;
+            delete geojsonRequests[url];
+            geojsonRequestsCount--;
+            (function(url, onLoad, onProgress, onError, defaultColor) {
+                loader.load(
+                    url,
+                    function(geojson) {
+                        // console.log('geojson:', geojson);
+                        geojsons[url] = geojson;
+                        if (geojsonAliveRequests.hasOwnProperty(url)) {
+                            onLoad(scope.parse(JSON.parse(geojson), defaultColor));
+                            delete geojsonAliveRequests[url];
+                            geojsonAliveRequestsCount--;
+                        }
+                        scope.loadNextGeojson();
+                    }, onProgress,
+                    function(geojson) {
+                        if (geojsonAliveRequests.hasOwnProperty(url)) {
+                            delete geojsonAliveRequests[url];
+                            geojsonAliveRequestsCount--;
+                        }
+                        scope.loadNextGeojson();
+                    });
+            })(url, onLoad, onProgress, onError, defaultColor);
+        }
+    },
     setCrossOrigin: function(value) {
         this.crossOrigin = value;
     },
 
-    parse: function(json) {
+    parse: function(json, defaultColor) {
+        // console.log('defaultColor:', defaultColor);
 
         // console.log(JSON.stringify(json));
 
@@ -83,6 +143,8 @@ THREE.GeojsonLoader.prototype = {
         } else {
             geojsons = [json];
         }
+
+        // console.log('geojsons:', JSON.stringify(geojsons));
 
         var lonOri, latOri;
         for (var geoIdx = 0; geoIdx < geojsons.length; geoIdx++) {
@@ -149,39 +211,116 @@ THREE.GeojsonLoader.prototype = {
                                             prop['roof:height'] : 0;
                                         var height = (prop.hasOwnProperty('height') && prop.height != null) ?
                                             (prop.height - roofHeight) : 20;
+
+                                        // console.log('defaultColor:', defaultColor);
+
+                                        // prop.color : 0xAAAAAA;
+                                        // prop.color : defaultColor;
                                         var color = (prop.hasOwnProperty('color')) ?
-                                            // prop.color : 0xAAAAAA;
-                                            prop.color : 0xffffff;
+                                            prop.color : defaultColor;
+                                        //     prop.color : defaultColor;
+                                        // var color = defaultColor;
+                                        // var color = 0xf71d2a;
+                                        // console.log('color:', color);
                                         var coords = feature.geometry.coordinates;
                                         if (prop.hasOwnProperty('roof:shape')) {
                                             switch (prop['roof:shape']) {
                                                 case 'pyramidal':
                                                     var centroidPt = turf.centroid(geojson);
+                                                    // console.log('centroidPt:', JSON.stringify(centroidPt));
+
+                                                    var roofGeometry = new THREE.Geometry();
+                                                    for (var blndIdx = 0; blndIdx < coords.length; blndIdx++) {
+                                                        var coord = coords[blndIdx];
+
+                                                        var x1, y1;
+                                                        // var shapePts = [];
+                                                        roofGeometry.vertices = [];
+
+                                                        for (var crdIdx = 0; crdIdx < coord.length; crdIdx++) {
+                                                            var crd = coord[crdIdx];
+                                                            var x = ((crd[0] - lonOri) / Math.abs(lonOri - crd[0])) * measure(latOri, lonOri, latOri, crd[0]);
+                                                            var y = ((crd[1] - latOri) / Math.abs(latOri - crd[1])) * measure(latOri, lonOri, crd[1], lonOri);
+                                                            roofGeometry.vertices.push(new THREE.Vector3(x, y, 0));
+                                                        }
+                                                        var centroidX = ((centroidPt.geometry.coordinates[0] - lonOri) / Math.abs(lonOri - centroidPt.geometry.coordinates[0])) * measure(latOri, lonOri, latOri, centroidPt.geometry.coordinates[0]);
+                                                        var centroidY = ((centroidPt.geometry.coordinates[1] - latOri) / Math.abs(latOri - centroidPt.geometry.coordinates[1])) * measure(latOri, lonOri, centroidPt.geometry.coordinates[1], lonOri);
+                                                        console.log('roofGeometry.vertices[', roofGeometry.vertices.length - 1, ']:',
+                                                            'THREE.Vector3(',
+                                                            centroidX, ',',
+                                                            centroidY, ',',
+                                                            roofHeight, ')');
+                                                        roofGeometry.vertices.push(new THREE.Vector3(
+                                                            centroidX,
+                                                            centroidY,
+                                                            roofHeight));
+
+                                                        roofGeometry.faces = [];
+                                                        for (var crdIdx = 0; crdIdx < coord.length; crdIdx++) {
+                                                            console.log('roofGeometry.faces[', roofGeometry.faces.length, ']:',
+                                                                'THREE.Face3(',
+                                                                ((crdIdx + 1) % (roofGeometry.vertices.length - 2)), ',',
+                                                                crdIdx, ',',
+                                                                (roofGeometry.vertices.length - 1), ')');
+                                                            roofGeometry.faces.push(
+                                                                new THREE.Face3(
+                                                                    (crdIdx + 1) % (roofGeometry.vertices.length - 2),
+                                                                    crdIdx,
+                                                                    roofGeometry.vertices.length - 1));
+                                                        }
+
+                                                        var roofMaterial = new THREE.MeshPhongMaterial({
+                                                            // var material = new THREE.MeshLambertMaterial({
+                                                            color: 0xFFFF00,
+                                                            transparent: false,
+                                                            opacity: 0.9
+                                                        });
+
+                                                        var roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
+
+                                                        roofMesh.position.z = minHeight;
+                                                        tile.add(roofMesh);
+                                                        // assignUVs(roofMesh);
+                                                    }
                                                     break;
                                             }
                                         }
                                         for (var blndIdx = 0; blndIdx < coords.length; blndIdx++) {
                                             var coord = coords[blndIdx];
-                                            var shape = new THREE.Shape();
+                                            // var shape = new THREE.Shape();
                                             var x1, y1;
+                                            var shapePts = [];
+
+                                            // californiaPts.push( new THREE.Vector2 ( 610, 320 ) );
+                                            // shapePts.push(new THREE.Vector2(0, 0));
                                             for (var crdIdx = 0; crdIdx < coord.length; crdIdx++) {
                                                 var crd = coord[crdIdx];
-                                                var x = measure(latOri, lonOri, latOri, crd[0]);
-                                                var y = -measure(latOri, lonOri, crd[1], lonOri);
-                                                switch (crdIdx) {
-                                                    case 0:
-                                                        shape.moveTo(x, y);
-                                                        break;
-                                                    default:
-                                                        shape.lineTo(x, y);
-                                                        // console.log('shape.lineTo(', x, y, ');');
-                                                }
+                                                // console.log('latOri:', latOri);
+                                                var x = ((crd[0] - lonOri) / Math.abs(lonOri - crd[0])) * measure(latOri, lonOri, latOri, crd[0]);
+                                                var y = ((crd[1] - latOri) / Math.abs(latOri - crd[1])) * measure(latOri, lonOri, crd[1], lonOri);
+                                                shapePts.push(new THREE.Vector2(x, y));
+                                                // switch (crdIdx) {
+                                                //     case 0:
+                                                //         shape.moveTo(x, y);
+                                                //         break;
+                                                //     default:
+                                                //         shape.lineTo(x, y);
+                                                //         // console.log('shape.lineTo(', x, y, ');');
+                                                // }
                                             }
                                             // shape.lineTo(x1, y1);
                                             // console.log('shape.lineTo(', x1, y1, ');');
 
                                             // var geometry = new THREE.ShapeGeometry(shape);
-
+                                            var shape = new THREE.Shape(shapePts);
+                                            // var extrudeSettings = {
+                                            //     amount: 8,
+                                            //     bevelEnabled: true,
+                                            //     bevelSegments: 2,
+                                            //     steps: 2,
+                                            //     bevelSize: 1,
+                                            //     bevelThickness: 1
+                                            // };
                                             var extrudeSettings = {
                                                 amount: height,
                                                 bevelEnabled: true,
@@ -190,17 +329,17 @@ THREE.GeojsonLoader.prototype = {
                                                 bevelSize: 1,
                                                 bevelThickness: 1
                                             };
+
+
                                             var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-
-
-                                            // assignUVs(geometry);
 
                                             var material = new THREE.MeshPhongMaterial({
                                                 // var material = new THREE.MeshLambertMaterial({
                                                 color: color,
-                                                transparent: true,
+                                                transparent: false,
                                                 opacity: 0.9
                                             });
+                                            // material.side = THREE.DoubleSide;
 
                                             // var material = new THREE.ShaderMaterial({
                                             //
@@ -223,11 +362,23 @@ THREE.GeojsonLoader.prototype = {
                                             // });
 
                                             var mesh = new THREE.Mesh(geometry, material);
+                                            // var mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
+                                            //     color: color
+                                            // }));
+                                            // mesh.position.set(x, y, z - 75);
+                                            // mesh.rotation.set(rx, ry, rz);
+                                            // mesh.scale.set(s, s, s);
+                                            // group.add(mesh);
+                                            // assignUVs(geometry);
+
+
+
                                             // mesh.castShadow = true;
                                             // mesh.receiveShadow = false;
 
                                             mesh.position.z = minHeight;
                                             tile.add(mesh);
+                                            assignUVs(geometry);
                                         }
                                         break;
                                 }
