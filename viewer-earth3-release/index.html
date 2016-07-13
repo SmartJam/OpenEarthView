@@ -301,7 +301,7 @@
                                         ((97 * (btile % modulus)) % 256);
                                     var lod = Math.max(0, zoom_ - 14);
                                     (function(earth, myTile, zoom, xtile, ytile, lod, defaultColor) {
-                                        var url = 'http://localhost:8081/3dtile?format=geojson&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
+                                        var url = 'http://www.openearthview.net/3dtile.php?format=geojson&zoom=' + zoom + '&xtile=' + xtile + '&ytile=' + ytile;
                                         geojsonLoader.load(
                                             url,
                                             function(obj) {
