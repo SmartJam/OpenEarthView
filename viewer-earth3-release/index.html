@@ -294,23 +294,25 @@
                                 tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
                                 tileSupport.add(tileMesh)
                                 oriGround.add(tileSupport);
-                                if (zoom >= 18 && zoom_ >= zoom) {
+                                if (zoom >= 18 && zoom_ >= zoom - 1) {
                                     var defaultColor =
                                         ((13 * zoom) % 256) * 65536 +
                                         ((53 * (atile % modulus)) % 256) * 256 +
                                         ((97 * (btile % modulus)) % 256);
-                                    (function(earth, myTile, zoom, xtile, ytile, defaultColor) {
-                                        var geojson = 'http://www.openearthview.net/3dtile.php?format=geojson&zoom=' + zoom + '&xtile=' + xtile + '&ytile=' + ytile;
+                                    var lod = Math.max(0, zoom_ - 14);
+                                    (function(earth, myTile, zoom, xtile, ytile, lod, defaultColor) {
+                                        var url = 'http://localhost:8081/3dtile?format=geojson&xtile=' + xtile + '&ytile=' + ytile + '&zoom=' + zoom;
                                         geojsonLoader.load(
-                                            geojson,
+                                            url,
                                             function(obj) {
                                                 myTile.add(obj);
                                                 render();
                                             },
                                             function() {},
                                             function() {},
+                                            lod,
                                             defaultColor);
-                                    })(earth, tileSupport, zoom_, (atile % modulus), (btile % modulus), defaultColor);
+                                    })(earth, tileSupport, zoom_, (atile % modulus), (btile % modulus), lod, defaultColor);
                                 }
                             }
                             (function(yourTileMesh, yourZoom, yourXtile, yourYtile) {
