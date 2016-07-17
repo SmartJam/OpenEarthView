@@ -1,0 +1,27 @@
+{
+    "name": "open-earth-view-viewer-earth3",
+    "authors": [
+        "Clément Igonet <clement@igonet.fr>"
+    ],
+    "description": "Open Earth View project - Earth viewer 3",
+    "main": "index.html",
+    "moduleType": [
+        "none"
+    ],
+    "keywords": [
+        "threejs",
+        "3D",
+        "osm"
+    ],
+    "license": "MIT",
+    "homepage": "http://wiki.openstreetmap.org/wiki/Open_Earth_View",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components"
+    ],
+    "dependencies": {
+        "three.js": "",
+        "turf": ""
+    }
+}
