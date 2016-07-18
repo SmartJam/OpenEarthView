@@ -1,0 +1,2 @@
+var OpenEarthViewLayers = {};
+OpenEarthView.Layer = {};

@@ -5,25 +5,20 @@
 //         "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
 //     ]));
 
-
-
-OpenEarthView.Layer.OSM = function(name, urls) {
-    this.name = (name !== undefined) ? name : 'OpenStreetMap';
+OpenEarthView.Layer.Building = function(name, urls) {
+    this.name = (name !== undefined) ? name : 'OpenEarthView';
     if (OpenEarthViewLayers.hasOwnProperty(name)) {
         console.err('Cannot register this already existing layer !');
         return;
     }
     OpenEarthViewLayers[name] = (urls !== undefined) ? urls : [
-        "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-        "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-        "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+        'http://localhost:8081/3dtile?format=geojson&xtile=${x}&ytile=${y}&zoom=${z}'
     ];
 };
 
-OpenEarthView.Layer.OSM.prototype = {
-    constructor: OpenEarthView.Layer.OSM,
-    type: 'tile',
-    opacity: 1,
+OpenEarthView.Layer.Building.prototype = {
+    constructor: OpenEarthView.Layer.Building,
+    type: 'building',
     getName: function() {
         return this.name
     },
@@ -42,5 +37,6 @@ OpenEarthView.Layer.OSM.prototype = {
         var url = urlRandom.replace('${z}', zoom);
         var url = url.replace('${x}', xtile);
         return url.replace('${y}', ytile);
+        // return url;
     }
 }

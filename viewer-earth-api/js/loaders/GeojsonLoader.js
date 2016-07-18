@@ -120,6 +120,7 @@ THREE.GeojsonLoader.prototype = {
         var latOri = feature.latOri;
         var roofHeight = feature.roofHeight;
         var minHeight = feature.minHeight;
+        var lod = feature.lod;
         var roofMesh = new THREE.Mesh();
         switch (prop['roof:shape']) {
             case 'pyramidal':
@@ -157,18 +158,24 @@ THREE.GeojsonLoader.prototype = {
                         //     ((crdIdx + 1) % (roofGeometry.vertices.length - 2)), ',',
                         //     crdIdx, ',',
                         //     (roofGeometry.vertices.length - 1), ')');
-                        roofGeometry.faces.push(
-                            new THREE.Face3(
-                                (crdIdx + 1) % (roofGeometry.vertices.length - 2),
-                                crdIdx,
-                                roofGeometry.vertices.length - 1));
+                        var face = new THREE.Face3(
+                            (crdIdx + 1) % (roofGeometry.vertices.length - 2),
+                            crdIdx,
+                            roofGeometry.vertices.length - 1);
+                        // face.color = new THREE.Color(0xffaa00);;
+                        roofGeometry.faces.push(face);
+                        roofGeometry.computeFaceNormals();
+                        // roofGeometry.computeVertexNormals();
                     }
 
                     var roofMaterial = new THREE.MeshPhongMaterial({
-                        color: 0xFFFF00,
+                        color: 0xffffff,
                         transparent: false,
-                        opacity: 0.9
+                        opacity: 0.4
                     });
+                    if (lod == 5) {
+                        roofMaterial.transparent = true;
+                    }
 
                     roofMesh.geometry = roofGeometry;
                     roofMesh.material = roofMaterial;
@@ -264,6 +271,7 @@ THREE.GeojsonLoader.prototype = {
                                                     feature.latOri = latOri;
                                                     feature.roofHeight = roofHeight;
                                                     feature.minHeight = minHeight;
+                                                    feature.lod = lod;
                                                     tile.add(scope.roofMesh(feature));
                                                     break;
                                             }
@@ -283,7 +291,7 @@ THREE.GeojsonLoader.prototype = {
                                             var shape = new THREE.Shape(shapePts);
                                             var extrudeSettings = {
                                                 amount: height,
-                                                bevelEnabled: true,
+                                                bevelEnabled: false,
                                                 bevelSegments: 1,
                                                 steps: 1,
                                                 bevelSize: 2,
