@@ -6,8 +6,8 @@
         "pkgfiles": "2.3.0"
     },
     "dependencies": {
-        "loglevel": "",
-        "node-getopt": ""
+        "loglevel": "1.4.0",
+        "node-getopt": "0.2.3"
     },
     "main": "./server.js",
     "scripts": {
