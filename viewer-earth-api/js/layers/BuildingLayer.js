@@ -22,7 +22,7 @@ OpenEarthView.Layer.Building.prototype = {
     getName: function() {
         return this.name
     },
-    getUrl: function(zoom, xtile, ytile) {
+    getUrl: function(zoom, xtile, ytile, factor) {
         var scope = this;
         var urls = OpenEarthViewLayers[scope.name];
         var urlRandom = urls[
@@ -34,7 +34,8 @@ OpenEarthView.Layer.Building.prototype = {
         //         // console.log("Match!");
         //         return p1 + zoom + p2 + xtile + p3 + ytile + p4;
         //     });
-        var url = urlRandom.replace('${z}', zoom);
+        var url = urlRandom.replace('${f}', factor);
+        var url = url.replace('${z}', zoom);
         var url = url.replace('${x}', xtile);
         return url.replace('${y}', ytile);
         // return url;

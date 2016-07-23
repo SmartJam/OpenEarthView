@@ -78,6 +78,7 @@ THREE.GeojsonLoader.prototype = {
             var url = urls[urls.length - 1];
             geojsonAliveRequestsCount = geojsonAliveRequestsCount +
                 (geojsonAliveRequests.hasOwnProperty(url) ? 0 : 1);
+            console.log('geojsonAliveRequestsCount:', geojsonAliveRequestsCount);
             geojsonAliveRequests[url] = geojsonRequests[url];
             var onLoad = geojsonAliveRequests[url].onLoad;
             var onProgress = geojsonAliveRequests[url].onProgress;
@@ -93,9 +94,10 @@ THREE.GeojsonLoader.prototype = {
                         // console.log('geojson:', geojson);
                         geojsons[url] = geojson;
                         if (geojsonAliveRequests.hasOwnProperty(url)) {
-                            onLoad(scope.parse(JSON.parse(geojson), lod, defaultColor));
                             delete geojsonAliveRequests[url];
                             geojsonAliveRequestsCount--;
+                            console.log('geojsonAliveRequestsCount:', geojsonAliveRequestsCount);
+                            onLoad(scope.parse(JSON.parse(geojson), lod, defaultColor));
                         }
                         scope.loadNextGeojson();
                     }, onProgress,
@@ -103,6 +105,7 @@ THREE.GeojsonLoader.prototype = {
                         if (geojsonAliveRequests.hasOwnProperty(url)) {
                             delete geojsonAliveRequests[url];
                             geojsonAliveRequestsCount--;
+                            console.log('geojsonAliveRequestsCount:', geojsonAliveRequestsCount);
                         }
                         scope.loadNextGeojson();
                     });
@@ -232,7 +235,7 @@ THREE.GeojsonLoader.prototype = {
                                 });
                                 var mesh = new THREE.Line(points, material);
                                 mesh.position.z = 1;
-                                // tile.add(mesh);
+                                tile.add(mesh);
                             }
                             break;
                     }
@@ -278,6 +281,9 @@ THREE.GeojsonLoader.prototype = {
                                         }
                                         for (var blndIdx = 0; blndIdx < coords.length; blndIdx++) {
                                             var coord = coords[blndIdx];
+                                            if (coord.length <= 2) {
+                                                continue;
+                                            }
                                             var x1, y1;
                                             var shapePts = [];
 
@@ -297,7 +303,7 @@ THREE.GeojsonLoader.prototype = {
                                                 bevelSize: 2,
                                                 bevelThickness: 1
                                             };
-
+                                            // console.log('shapePts.length:', shapePts.length);
                                             var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 
                                             var material = new THREE.MeshPhongMaterial({

@@ -238,8 +238,8 @@ OpenEarthView.World = function(domElement) {
 
 
     function updateScene(position) {
-        // console.log('position.lon:', position.lon);
-        // console.log('position.lat:', position.lat);
+        console.log('position.lon:', position.lon);
+        console.log('position.lat:', position.lat);
         scope.xtile = toolbox.long2tile(position.lon, scope.zoom);
         scope.ytile = toolbox.lat2tile(position.lat, scope.zoom);
 
@@ -271,6 +271,11 @@ OpenEarthView.World = function(domElement) {
         }
 
         var currentIds = {};
+        console.log('position:', JSON.stringify({
+          zoom: scope.zoom,
+          xtile: scope.xtile,
+          ytile: scope.ytile
+        }));
         for (var zoom_ = Math.max(scope.zoom, scope.ZOOM_MIN); zoom_ > Math.max(scope.zoom - scope.ZOOM_SHIFT_SIZE, scope.ZOOM_MIN); zoom_--) {
             var zShift = scope.zoom - zoom_;
             scope.tileGroup[zShift] = new THREE.Object3D(); //create an empty container
@@ -377,7 +382,8 @@ OpenEarthView.World = function(domElement) {
                                     currentIds[id] = {};
                                     break;
                                 case 'building':
-                                    if (scope.zoom >= 18 && zoom_ >= scope.zoom - 1) {
+                                    // if (scope.zoom === 19 && atile === 265544 && btile ===180362) {
+                                    if (scope.zoom >= 17 && zoom_ >= scope.zoom - 1) {
                                         var defaultColor =
                                             ((13 * scope.zoom) % 256) * 65536 +
                                             ((53 * (atile % modulus)) % 256) * 256 +
@@ -385,7 +391,7 @@ OpenEarthView.World = function(domElement) {
                                         var lod = Math.max(0, zoom_ - 14);
                                         (function(myTile, zoom, xtile, ytile, lod, defaultColor) {
                                             var url = scope.layers[layerIdx].getUrl(
-                                                zoom, xtile, ytile);
+                                                zoom, xtile, ytile, zoom_ - 16);
                                             scope.geojsonLoader.load(
                                                 url,
                                                 function(obj) {
