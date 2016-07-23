@@ -29,7 +29,7 @@ var sax = require("sax");
 var turf = require('turf');
 var log = require('loglevel');
 
-log.setLevel("debug");
+log.setLevel("warn");
 
 function getRGB(osmColor) {
     if (osmColor) {
@@ -42,7 +42,7 @@ function getRGB(osmColor) {
             return color.toRGB();
         }
     }
-    return "rgb(240,240,240)";
+    return undefined;
 }
 
 function heightToMeter(height) {
@@ -169,14 +169,18 @@ function convert(options, onConvert) {
         onRelation = false;
     var way = {};
     var relation = {};
+    bounds = groundBlock(
+        options.bounds,
+        ((options && options.tile) ? options.tile : null));
+    blocks[blocks.length] = bounds;
     xmlStream.on('opentag', function(node) {
         var name = node.name,
             attrs = node.attributes;
-        if (name === 'bounds') {
-            var tile = ((options && options.tile) ? options.tile : null);
-            bounds = groundBlock(attrs, tile);
-            blocks[blocks.length] = bounds;
-        } else if (name === 'node') {
+        // if (name === 'bounds') {
+        //     var tile = ((options && options.tile) ? options.tile : null);
+        //     bounds = groundBlock(attrs, tile);
+        //     blocks[blocks.length] = bounds;
+        if (name === 'node') {
             var id = +attrs.id;
             var lat = attrs.lat;
             var lon = attrs.lon;
@@ -246,14 +250,17 @@ function convert(options, onConvert) {
                     relation.name = attrs.v;
                     break;
                 case 'building:part':
-                    relation.isBldPart = (attrs.v === 'yes');
-                    relation.isBld = (attrs.v === 'yes');
+                    log.debug('relation ' + relation.id + ' is a buildingPart');
+                    relation.isBldPart = true;
+                    relation.isBld = true;
                     break;
                 case 'building':
-                    relation.isBld = (attrs.v === 'yes');
+                    relation.isBld = true;
+                    log.debug('relation ' + relation.id + ' is a building');
+                    log.debug('relation:' + JSON.stringify(relation));
                     break;
                 case 'type':
-                    relation.isBld = (attrs.v === 'building');
+                    relation.isBld = (attrs.v === 'building') ? true : relation.isBld;
                     break;
                 case 'height':
                     relation.osmBldPartHeight = heightToMeter(attrs.v);
@@ -277,7 +284,7 @@ function convert(options, onConvert) {
             //     var roof = roofBlock(way);
             // }
             var geoBldPart = geoBldPartBlock(way);
-            if (way.isBld && !way.isBldPart) {
+            if (way.isBld) {
                 var geoBld = getGeoBuilding(geoBlds, +way.id);
                 geoBld.features[geoBld.features.length] = geoBldPart;
                 // if (roof && options.loD > 1 && options.geoJsonExtended && options.geoJsonExtended == true) {
@@ -300,9 +307,13 @@ function convert(options, onConvert) {
                 //         },
                 // if (geoBld.features[0].properties.id == "249680748") {
                 if (turf.inside(turf.centroid(geoBld), bounds)) {
+                    log.debug('building ' + way.id + ' is inside bounds.');
+
                     // if (way.isBldPart || turf.inside(turf.centroid(geoBld), bounds)) {
                     blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
                     // }
+                } else {
+                    log.debug('building ' + way.id + ' is not inside bounds.');
                 }
                 //
                 // }
@@ -315,38 +326,44 @@ function convert(options, onConvert) {
                 //     console.log('geoBld:', JSON.stringify(geoBld));
                 // }
             } else {
-                // if (turf.inside(turf.centroid(geoBldPart), bounds)) {
-
-                geoBldParts[+way.id] = geoBldPart;
-
-                // }
+                if (turf.inside(turf.centroid(geoBldPart), bounds)) {
+                    log.debug('way ' + way.id + ' is inside bounds.');
+                    geoBldParts[+way.id] = geoBldPart;
+                } else {
+                    log.debug('way ' + way.id + ' is not inside bounds.');
+                }
                 // if (roof) {
                 //     roofs[+way.id] = roof;
                 // }
             }
         } else if (name === 'relation') {
+            log.debug('relation:' + JSON.stringify(relation));
             // <tag k="type" v="building"/>
             if (!relation.isBld) {
                 removeBuilding(geoBlds, +relation.id);
-                log.debug("relation is not a building.");
+                log.debug('relation ' + relation.id + ' is not a building.');
             } else {
-                log.debug("relation is a building.");
+                log.debug('relation ' + relation.id + ' is a building.');
                 var geoBld = getGeoBuilding(geoBlds, relation.id);
-                if (relation.osmBldPartHeight !== undefined) {
-                    geoBld.properties.name = relation.name;
-                    for (var i = 0; i < geoBld.features.length; i++) {
-                        var geoBldPart = geoBld.features[i];
-                        if (geoBldPart.properties.height !== undefined) {
-                            geoBldPart.properties.height = relation.osmBldPartHeight;
-                        }
-                        if (geoBldPart.properties.minHeight === undefined) {
-                            geoBldPart.properties.minHeight = relation.minHeight;
-                        }
+                // if (relation.osmBldPartHeight !== undefined) {
+                relation.osmBldPartHeight = (relation.osmBldPartHeight !== undefined) ? relation.osmBldPartHeight : 10;
+                geoBld.properties.name = relation.name;
+                for (var i = 0; i < geoBld.features.length; i++) {
+                    var geoBldPart = geoBld.features[i];
+                    // geoBldPart.properties.height = (relation.osmBldPartHeight !== undefined) ? relation.osmBldPartHeight : 10;
+                    if (geoBldPart.properties.height === undefined) {
+                        geoBldPart.properties.height = relation.osmBldPartHeight;
+                    }
+                    // geoBldPart.properties.minHeight = (relation.minHeight !== undefined) ? relation.minHeight : 0;
+                    if (geoBldPart.properties.minHeight === undefined) {
+                        geoBldPart.properties.minHeight = relation.minHeight;
                     }
                 }
-                if (turf.inside(turf.centroid(geoBld), bounds)) {
-                    blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
-                }
+                // }
+                // if (turf.inside(turf.centroid(geoBld), bounds)) {
+                blocks[blocks.length] = JSON.parse(JSON.stringify(geoBld));
+                // }
+                log.debug('Add block:' + JSON.stringify(geoBld));
             }
             onRelation = false;
         } else if (name === 'osm') {

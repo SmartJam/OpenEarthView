@@ -46,6 +46,7 @@ opt = require('node-getopt').create([
     .bindHelp() // bind option 'help' to default action
     .parseSystem(); // parse command line
 
+// log.setLevel("warn");
 log.setLevel("warn");
 if (opt.options.debug) {
     log.setLevel("debug");
@@ -97,6 +98,7 @@ var server = http.createServer(function(request, response) {
     var args = querystring.parse(url.parse(request.url).query);
     log.debug(args);
     if ('format' in args && 'zoom' in args && 'xtile' in args && 'ytile' in args) {
+        var factor = ('factor' in args) ? args.factor : 0;
         // wget "http://www.openstreetmap.org/api/0.6/map?bbox=-73.9874267578125,40.74725696280421,-73.98605346679688,40.74829735476796" -O result.osm
         // wget "http://www.openstreetmap.org/api/0.6/tiledata/18/77196/98527" -O tile.osm
         // wget "http://www.openearthview.net/osm2x3d.php?zoom=18&xtile=77196&ytile=98527" -O ESB18_old.x3d
@@ -124,12 +126,17 @@ var server = http.createServer(function(request, response) {
             //         tile2lat(+args.ytile, args.zoom), // top
             //     method: 'GET'
             // };
+
             var options = {
                 hostname: 'localhost',
                 port: 8082,
-                path: "/osmCache/osmXml?tile=" + args.zoom + "," + args.xtile + "," + args.ytile,
+                path: "/osmCache/osmXml?tile=" +
+                    (args.zoom - factor) + "," +
+                    Math.floor(args.xtile / (Math.pow(2, factor))) + "," +
+                    Math.floor(args.ytile / (Math.pow(2, factor))),
                 method: 'GET'
             };
+            console.log('options:', options);
             // var osmRequest = http.request(optionsOverpass, function(osmReadStream) {
             var osmRequest = http.request(options, function(osmReadStream) {
                 log.debug('Get osm map response.')
@@ -145,8 +152,15 @@ var server = http.createServer(function(request, response) {
                     geoJsonExtended: false,
                     zoom: args.zoom,
                     xtile: args.xtile,
-                    ytile: args.ytile
+                    ytile: args.ytile,
+                    bounds: {
+                        minlon: tile2long(+args.xtile, +args.zoom),
+                        maxlon: tile2long(+args.xtile + 1, +args.zoom),
+                        minlat: tile2lat(+args.ytile, +args.zoom),
+                        maxlat: tile2lat(+args.ytile + 1, +args.zoom)
+                    }
                 }
+                // console.log('myOptions:', JSON.stringify(myOptions));
                 var myWriteStream;
                 switch (args.format) {
                     case "osm":
