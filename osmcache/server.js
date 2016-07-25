@@ -1,6 +1,11 @@
 var path = require('path');
 var fs = require('fs');
 var os = require('os');
+var http = require('http');
+var log = require('loglevel');
+var querystring = require('querystring');
+var url = require('url');
+
 fs.mkdirParentSync = function(dirPath, mode) {
     console.log("dirPath: " + dirPath);
     //Call the standard fs.mkdir
@@ -19,27 +24,89 @@ fs.mkdirParentSync = function(dirPath, mode) {
     }
 };
 
-var http = require('http');
-var log = require('loglevel');
-var querystring = require('querystring');
-var url = require('url');
+fs.fileExists = function(filePath) {
+    try {
+        return fs.statSync(filePath).isFile();
+    } catch (err) {
+        return false;
+    }
+}
 
-var CACHE_DIR = os.homedir() + '/.overpass/cache'
+
+var config = {
+    hostname: 'www.openstreetmap.org',
+    port: 80,
+    path: '/api/0.6/map?bbox=${minlon},${minlat},${maxlon},${maxlat}',
+    serverport: 8082,
+    fileExt: 'xml'
+}
+
+// var myPath = "/api/0.6/map?bbox=" +
+//     tile2long(+xtile, zoom) + "," +
+//     tile2lat(+ytile + 1, zoom) + "," +
+//     tile2long(+xtile + 1, zoom) + "," +
+//     tile2lat(+ytile, zoom);
+
 var opt = require('node-getopt').create([
     ['c', 'cacheDir=ARG', 'Default cache dir is ' + CACHE_DIR],
     ['d', 'debug', 'print in debug level'],
+    ['h', 'hostname=ARG', 'Default hostname is ' + config.hostname],
+    ['p', 'port=ARG', 'Default port is ' + config.port],
+    ['q', 'path=ARG', 'Default path is ' + config.path],
+    ['s', 'serverport=ARG', 'Default server port is ' + config.serverport],
+    ['f', 'fileext=ARG', 'Default file extension is xml']
 ]).bindHelp().parseSystem();
-
-
-if (cacheDir === undefined) {
-    var cacheDir = CACHE_DIR;
-}
-fs.mkdirParentSync(cacheDir);
 
 log.setLevel("warn");
 if (opt.options.debug) {
     log.setLevel("debug");
 }
+log.info('log level:', log.getLevel());
+
+if (opt.options.hostname) {
+    config.hostname = opt.options.hostname;
+}
+log.info('config.hostname:', config.hostname);
+
+if (opt.options.port) {
+    config.port = opt.options.port;
+}
+log.info('config.port:', config.port);
+
+if (opt.options.path) {
+    config.path = opt.options.path;
+}
+log.info('config.path:', config.path);
+
+if (opt.options.serverport) {
+    config.serverport = opt.options.serverport;
+}
+log.info('config.serverport:', config.serverport);
+
+if (opt.options.fileext) {
+    config.fileExt = opt.options.fileext;
+}
+log.info('config.fileExt:', config.fileExt);
+var contentType = 'text/xml';
+
+switch (config.fileExt) {
+    case 'xml':
+        contentType = 'text/xml';
+        break;
+    case 'json':
+    case 'geojson':
+        contentType = 'application/json';
+        break;
+    default:
+        break;
+}
+log.info('contentType:', contentType);
+
+var CACHE_DIR = os.homedir() + '/.cache/osmcache';
+var cacheDir = CACHE_DIR;
+cacheDir = (opt.options.cacheDir) ? opt.options.cacheDir : CACHE_DIR;
+log.info('cache folder:', cacheDir);
+fs.mkdirParentSync(cacheDir);
 
 var activeRequests = {};
 
@@ -50,7 +117,7 @@ var server = http.createServer(function(request, response) {
     // localhost:8082/osmCache/osmXml?tile=zoom,xtile,ytile
 
     // if (page != '/osmCache/osmXml' && page != '/osmCache/osmJson' ) {
-    if (page != '/osmCache/osmXml') {
+    if (page !== '/osmCache/osmXml' && page !== '/osmCache/geojson') {
         response.writeHead(404, {
             "Content-Type": "text/html"
         });
@@ -64,29 +131,37 @@ var server = http.createServer(function(request, response) {
         var zoom = tile[0];
         var xtile = tile[1];
         var ytile = tile[2];
-
-        var cacheFile = cacheDir + "/" + zoom + "/" + xtile + "/" + ytile + ".xml";
+        var minlon = tile2long(+xtile, zoom);
+        var minlat = tile2lat(+ytile + 1, zoom);
+        var maxlon = tile2long(+xtile + 1, zoom);
+        var maxlat = tile2lat(+ytile, zoom);
+        var factor = Math.max(0, (zoom - 16));
+        var cacheFile = cacheDir + '/' + zoom + '/' + xtile + '/' + ytile + '.' + config.fileExt;
         var cacheFileLock = cacheFile + ".lock";
         var tileId = 'tile_' + zoom + '_' + xtile + '_' + ytile;
-
-        if (!fileExists(cacheFile) && !fileExists(cacheFileLock)) {
+        if (!fs.fileExists(cacheFile) && !fs.fileExists(cacheFileLock)) {
             fs.mkdirParentSync(path.dirname(cacheFileLock));
             fs.closeSync(fs.openSync(cacheFileLock, 'w'));
             console.log('Lock file (', cacheFileLock, ')');
             log.debug('Can not access file ' + cacheFile);
-            var myPath = "/api/0.6/map?bbox=" +
-                tile2long(+xtile, zoom) + "," +
-                tile2lat(+ytile + 1, zoom) + "," +
-                tile2long(+xtile + 1, zoom) + "," +
-                tile2lat(+ytile, zoom);
+            var myPath = config.path.replace('${minlon}', minlon);
+            var myPath = myPath.replace('${minlat}', minlat);
+            var myPath = myPath.replace('${maxlon}', maxlon);
+            var myPath = myPath.replace('${maxlat}', maxlat);
+            var myPath = myPath.replace('${x}', xtile);
+            var myPath = myPath.replace('${y}', ytile);
+            var myPath = myPath.replace('${z}', zoom);
+            var myPath = myPath.replace('${f}', factor);
+
             console.log('cacheFile:', cacheFile);
             console.log("myPath: " + myPath);
             if (!activeRequests.hasOwnProperty(tileId)) {
                 activeRequests[tileId] = {};
                 activeRequests[tileId].responses = [];
+                activeRequests[tileId].responses.push(response);
                 activeRequests[tileId].request = http.request({
-                    hostname: 'www.openstreetmap.org',
-                    port: 80,
+                    hostname: config.hostname,
+                    port: config.port,
                     path: myPath,
                     method: 'GET'
                 }, function(osmReadStream) {
@@ -100,14 +175,12 @@ var server = http.createServer(function(request, response) {
                         while (activeRequests[tileId].responses.length > 0) {
                             console.log('Give response (', tileId, ')');
                             var response_ = activeRequests[tileId].responses.pop();
-                            response_.writeHead(200, {
-                                'Content-Type': 'text/xml'
-                            });
+                            var stats = fs.statSync(cacheFile);
+                            response_.writeHead(200, osmReadStream.headers);
                             fs.createReadStream(cacheFile).pipe(response_, {
                                 end: true
                             });
                         }
-                        // delete activeRequests[tileId];
                     });
                 });
                 activeRequests[tileId].request.on('error', function(e) {
@@ -115,93 +188,21 @@ var server = http.createServer(function(request, response) {
                 });
                 activeRequests[tileId].request.end();
             }
-        } else if (fileExists(cacheFileLock)) {
-            console.log('File locked, waiting for end (', tileId, ')');
+        } else if (fs.fileExists(cacheFileLock)) {
+            console.log('File locked (' + cacheFileLock + '), waiting for end (', tileId, ')');
             // console.log('activeRequests:', JSON.stringify(activeRequests));
             activeRequests[tileId].responses.push(response);
         } else {
             console.log('No blockers, give response (', tileId, ')');
+            var stats = fs.statSync(cacheFile);
             response.writeHead(200, {
-                'Content-Type': 'text/xml'
+                'Content-Type': contentType,
+                'Content-Length': stats.size
             });
             fs.createReadStream(cacheFile).pipe(response, {
                 end: true
             });
         }
-
-
-
-        // fs.stat(
-        //     cacheFile,
-        //     function(err, stats) {
-        //         if (err !== null && err.code === 'ENOENT') {
-        //             fs.closeSync(fs.openSync(cacheFile + '.lock', 'w'));
-        //             //  || !stats.isFile()
-        //             // TODO: reset file
-        //             log.debug('Can not access file ' + cacheFile);
-        //             log.debug('err: ' + err);
-        //             // Get data from external overpass API
-        //             // and write it to cache file
-        //             var myPath = "/api/0.6/map?bbox=" +
-        //                 tile2long(+xtile, zoom) + "," +
-        //                 tile2lat(+ytile + 1, zoom) + "," +
-        //                 tile2long(+xtile + 1, zoom) + "," +
-        //                 tile2lat(+ytile, zoom);
-        //             console.log('cacheFile:', cacheFile);
-        //             console.log("myPath: " + myPath);
-        //             var tileId = 'tile_' + zoom + '_' + xtile + '_' + ytile;
-        //             // var osmRequest = http.request({
-        //             if (!activeRequests.hasOwnProperty(tileId)) {
-        //                 activeRequests[tileId] = {};
-        //                 activeRequests[tileId].responses = [];
-        //                 activeRequests[tileId].request = http.request({
-        //                     hostname: 'www.openstreetmap.org',
-        //                     port: 80,
-        //                     path: myPath,
-        //                     method: 'GET'
-        //                 }, function(osmReadStream) {
-        //                     console.log("pipe to :" + cacheFile)
-        //                     fs.mkdirParentSync(path.dirname(cacheFile));
-        //                     osmReadStream.pipe(fs.createWriteStream(cacheFile), {
-        //                         end: true
-        //                     });
-        //                     osmReadStream.on('end', () => {
-        //                         // activeRequests[myPath].responses
-        //                         while (activeRequests[tileId].responses.length > 0) {
-        //                             var response_ = activeRequests[tileId].responses.pop();
-        //                             // activeRequests[tileId].responses.splice(0, 1);
-        //                             response_.writeHead(200, {
-        //                                 'Content-Type': 'text/xml'
-        //                             });
-        //                             fs.createReadStream(cacheFile).pipe(response_, {
-        //                                 end: true
-        //                             });
-        //                         }
-        //                         // delete activeRequests[tileId];
-        //                     });
-        //                 });
-        //                 // responses: []
-        //                 // };
-        //             }
-        //             activeRequests[tileId].responses.push(response);
-        //             // else {
-        //             // }
-        //             activeRequests[tileId].request.on('error', function(e) {
-        //                 log.debug('problem with request: ' + e.message);
-        //             });
-        //             activeRequests[tileId].request.end();
-        //         } else {
-        //             response.writeHead(200, {
-        //                 'Content-Type': 'text/xml',
-        //                 'Content-Length': stats.size
-        //             });
-        //             fs.createReadStream(cacheFile).pipe(response, {
-        //                 end: true
-        //             });
-        //         }
-        //         // Return osm data
-        //     }
-        // );
     } else {
         // fallback;
         response.writeHead(404, {
@@ -210,15 +211,7 @@ var server = http.createServer(function(request, response) {
         response.end();
     }
 });
-server.listen(8082);
-
-function fileExists(filePath) {
-    try {
-        return fs.statSync(filePath).isFile();
-    } catch (err) {
-        return false;
-    }
-}
+server.listen(config.serverport);
 
 function tile2long(x, z) {
     return (x / Math.pow(2, z) * 360) % 360 - 180;
