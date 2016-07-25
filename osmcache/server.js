@@ -117,7 +117,7 @@ var server = http.createServer(function(request, response) {
     // localhost:8082/osmCache/osmXml?tile=zoom,xtile,ytile
 
     // if (page != '/osmCache/osmXml' && page != '/osmCache/osmJson' ) {
-    if (page !== '/osmCache/osmXml' && page !== '/osmCache/geojson') {
+    if (page !== '/osmCache/osmXml') {
         response.writeHead(404, {
             "Content-Type": "text/html"
         });
