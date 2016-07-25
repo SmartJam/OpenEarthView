@@ -86,20 +86,6 @@ if (opt.options.fileext) {
     config.fileExt = opt.options.fileext;
 }
 log.info('config.fileExt:', config.fileExt);
-var contentType = 'text/xml';
-
-switch (config.fileExt) {
-    case 'xml':
-        contentType = 'text/xml';
-        break;
-    case 'json':
-    case 'geojson':
-        contentType = 'application/json';
-        break;
-    default:
-        break;
-}
-log.info('contentType:', contentType);
 
 var CACHE_DIR = os.homedir() + '/.cache/geojsoncache';
 var cacheDir = CACHE_DIR;
@@ -167,10 +153,9 @@ var server = http.createServer(function(request, response) {
                     console.log("pipe to :" + cacheFile);
                     // osmReadStream.headers: {"content-type":"application/json","date":"Mon, 25 Jul 2016 09:10:07 GMT","connection":"close","content-length":"6281"}
                     // console.log('osmReadStream.headers:', JSON.stringify(osmReadStream.headers));
-                    osmReadStream.pipe(fs.createWriteStream(cacheFile), {
-                        end: true
-                    });
-                    osmReadStream.on('end', () => {
+                    var cacheFileWriteStream = fs.createWriteStream(cacheFile);
+                    osmReadStream.pipe(cacheFileWriteStream);
+                    cacheFileWriteStream.on('close', () => {
                         fs.unlinkSync(cacheFileLock);
                         console.log('Unlock file');
                         while (activeRequests[tileId].responses.length > 0) {
@@ -178,9 +163,7 @@ var server = http.createServer(function(request, response) {
                             var response_ = activeRequests[tileId].responses.pop();
                             var stats = fs.statSync(cacheFile);
                             response_.writeHead(200, osmReadStream.headers);
-                            fs.createReadStream(cacheFile).pipe(response_, {
-                                end: true
-                            });
+                            fs.createReadStream(cacheFile).pipe(response_);
                         }
                     });
                 });
@@ -197,12 +180,11 @@ var server = http.createServer(function(request, response) {
             console.log('No blockers, give response (', tileId, ')');
             var stats = fs.statSync(cacheFile);
             response.writeHead(200, {
-                'Content-Type': contentType,
-                'Content-Length': stats.size
+                'content-type': 'application/json',
+                'connection': 'close',
+                'content-length': stats.size
             });
-            fs.createReadStream(cacheFile).pipe(response, {
-                end: true
-            });
+            fs.createReadStream(cacheFile).pipe(response);
         }
     } else {
         // fallback;
