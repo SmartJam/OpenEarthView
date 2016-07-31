@@ -1,0 +1,36 @@
+{
+  "name": "osm2geojson",
+  "description": "Open Earth View project - Open Street Map to 3D formats converter",
+  "version": "0.0.1",
+  "devDependencies": {},
+  "dependencies": {
+    "body-parser": "~1.0.2",
+    "chai": "3.5.0",
+    "chai-fuzzy": "1.6.1",
+    "loglevel": "1.4.0",
+    "node-getopt": "0.2.3",
+    "node-xml-compare": "0.1.0",
+    "pkgfiles": "2.3.0",
+    "rgbcolor": "0.0.4",
+    "sax": "1.2.1",
+    "three": "0.76.1",
+    "turf": "2.0.2",
+    "xslt": "0.7.0"
+  },
+  "main": "./web_server.js",
+  "files": [
+    "lib",
+    "scripts",
+    "tools/junit.sh",
+    "package.json",
+    "README.md",
+    "web_server.js"
+  ],
+  "author": "Clement IGONET <clement@igonet.fr>",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git@git.framasoft.org:pizaninja/OpenEarthView.git"
+  },
+  "license": "MIT"
+}
