@@ -7,12 +7,12 @@ var querystring = require('querystring');
 var url = require('url');
 
 fs.mkdirParentSync = function(dirPath, mode) {
-    console.log("dirPath: " + dirPath);
+    log.debug("dirPath: " + dirPath);
     //Call the standard fs.mkdir
     try {
         fs.mkdirSync(dirPath, mode);
     } catch (e) {
-        console.log("error: " + e.code);
+        // console.log("error: " + e.code);
         if (e.code === 'EEXIST') {
             // path already exists
         } else if (e.code === 'ENOENT') {
@@ -35,7 +35,7 @@ fs.fileExists = function(filePath) {
 var config = {
     hostname: 'localhost',
     port: 8081,
-    path: '/3dtile?format=geojson&xtile=${x}&ytile=${y}&zoom=${z}&factor=${f}',
+    path: '/geojsontile?xtile=${x}&ytile=${y}&zoom=${z}&factor=${f}',
     serverport: 8083,
     fileExt: 'geojson'
 }
@@ -48,7 +48,9 @@ var config = {
 
 var opt = require('node-getopt').create([
     ['c', 'cacheDir=ARG', 'Default cache dir is ' + CACHE_DIR],
-    ['d', 'debug', 'print in debug level'],
+    ['', 'vvv', 'print in trace level'],
+    ['', 'vv', 'print in debug level'],
+    ['v', '', 'print in verbose level'],
     ['h', 'hostname=ARG', 'Default hostname is ' + config.hostname],
     ['p', 'port=ARG', 'Default port is ' + config.port],
     ['q', 'path=ARG', 'Default path is ' + config.path],
@@ -56,9 +58,15 @@ var opt = require('node-getopt').create([
     ['f', 'fileext=ARG', 'Default file extension is xml']
 ]).bindHelp().parseSystem();
 
+console.log('opt.options:' + JSON.stringify(opt.options));
+
 log.setLevel("warn");
-if (opt.options.debug) {
+if (opt.options.vvv) {
+    log.setLevel("trace");
+} else if (opt.options.vv) {
     log.setLevel("debug");
+} else if (opt.options.v) {
+    log.setLevel("info");
 }
 log.info('log level:', log.getLevel());
 
@@ -96,8 +104,9 @@ fs.mkdirParentSync(cacheDir);
 var activeRequests = {};
 
 var server = http.createServer(function(request, response) {
+    // response.getHeader('content-type');
     var page = url.parse(request.url).pathname;
-    log.debug("page:" + page);
+    // log.debug("page:" + page);
     // www.openstreetmap.org/api/0.6/map?bbox=left,bottom,right,top
     // localhost:8082/osmCache/osmXml?tile=zoom,xtile,ytile
 
@@ -127,8 +136,9 @@ var server = http.createServer(function(request, response) {
         if (!fs.fileExists(cacheFile) && !fs.fileExists(cacheFileLock)) {
             fs.mkdirParentSync(path.dirname(cacheFileLock));
             fs.closeSync(fs.openSync(cacheFileLock, 'w'));
-            console.log('Lock file (', cacheFileLock, ')');
-            log.debug('Can not access file ' + cacheFile);
+            // console.log('Lock file (', cacheFileLock, ')');
+            log.debug('cacheFile:', cacheFile);
+            log.debug(cacheFile + 'does not exist.');
             var myPath = config.path.replace('${minlon}', minlon);
             var myPath = myPath.replace('${minlat}', minlat);
             var myPath = myPath.replace('${maxlon}', maxlon);
@@ -138,8 +148,7 @@ var server = http.createServer(function(request, response) {
             var myPath = myPath.replace('${z}', zoom);
             var myPath = myPath.replace('${f}', factor);
 
-            console.log('cacheFile:', cacheFile);
-            console.log("myPath: " + myPath);
+            log.debug("Url request: " + config.hostname + ':' + config.port + myPath);
             if (!activeRequests.hasOwnProperty(tileId)) {
                 activeRequests[tileId] = {};
                 activeRequests[tileId].responses = [];
@@ -149,20 +158,20 @@ var server = http.createServer(function(request, response) {
                     port: config.port,
                     path: myPath,
                     method: 'GET'
-                }, function(osmReadStream) {
-                    console.log("pipe to :" + cacheFile);
+                }, function(geojsonReadStream) {
+                    log.debug("Pipe result to: " + cacheFile);
                     // osmReadStream.headers: {"content-type":"application/json","date":"Mon, 25 Jul 2016 09:10:07 GMT","connection":"close","content-length":"6281"}
                     // console.log('osmReadStream.headers:', JSON.stringify(osmReadStream.headers));
                     var cacheFileWriteStream = fs.createWriteStream(cacheFile);
-                    osmReadStream.pipe(cacheFileWriteStream);
+                    geojsonReadStream.pipe(cacheFileWriteStream);
                     cacheFileWriteStream.on('close', () => {
                         fs.unlinkSync(cacheFileLock);
-                        console.log('Unlock file');
+                        // console.log('Unlock file');
                         while (activeRequests[tileId].responses.length > 0) {
-                            console.log('Give response (', tileId, ')');
+                            log.info('Response about: ', tileId);
                             var response_ = activeRequests[tileId].responses.pop();
                             var stats = fs.statSync(cacheFile);
-                            response_.writeHead(200, osmReadStream.headers);
+                            response_.writeHead(200, geojsonReadStream.headers);
                             fs.createReadStream(cacheFile).pipe(response_);
                         }
                     });
@@ -173,11 +182,12 @@ var server = http.createServer(function(request, response) {
                 activeRequests[tileId].request.end();
             }
         } else if (fs.fileExists(cacheFileLock)) {
-            console.log('File locked (' + cacheFileLock + '), waiting for end (', tileId, ')');
+            // console.log('File locked (' + cacheFileLock + '), waiting for end (', tileId, ')');
             // console.log('activeRequests:', JSON.stringify(activeRequests));
             activeRequests[tileId].responses.push(response);
         } else {
-            console.log('No blockers, give response (', tileId, ')');
+            log.debug('No blockers, give response (', tileId, ')');
+            log.info('Response about: ', tileId);
             var stats = fs.statSync(cacheFile);
             response.writeHead(200, {
                 'content-type': 'application/json',
