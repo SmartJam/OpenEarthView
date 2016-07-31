@@ -111,6 +111,9 @@ fs.mkdirParentSync(cacheDir);
 var activeRequests = {};
 
 var server = http.createServer(function(request, response) {
+    // response.header('Access-Control-Allow-Origin', '*');
+    // response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    // response.header('Access-Control-Allow-Headers', 'Content-Type');
     var page = url.parse(request.url).pathname;
     log.debug("page:" + page);
     // www.openstreetmap.org/api/0.6/map?bbox=left,bottom,right,top
