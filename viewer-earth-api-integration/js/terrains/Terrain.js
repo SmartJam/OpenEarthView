@@ -1,0 +1,2 @@
+var OpenEarthViewTerrains = {};
+OpenEarthView.Terrain = {};
