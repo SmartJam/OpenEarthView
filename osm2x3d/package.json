@@ -5,7 +5,6 @@
   "devDependencies": {},
   "dependencies": {
     "body-parser": "~1.0.0",
-    "node-expat": "",
     "chai": "",
     "chai-fuzzy": "",
     "loglevel": "",
