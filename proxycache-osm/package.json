@@ -1,0 +1,31 @@
+{
+    "name": "osmcache",
+    "description": "Open Earth View project - Open Street Map cache",
+    "version": "0.0.3",
+    "devDependencies": {
+        "pkgfiles": "2.3.0"
+    },
+    "dependencies": {
+        "loglevel": "1.4.0",
+        "node-getopt": "0.2.3"
+    },
+    "main": "./server.js",
+    "scripts": {
+        "test": "./test/unit/serverMocha.sh",
+        "prepublish": "pkgfiles"
+    },
+    "files": [
+        "test/unit",
+        "package.json",
+        "README.md",
+        "server.js"
+    ],
+    "author": "Clement IGONET <clement@igonet.fr>",
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "git@git.framasoft.org:pizaninja/OpenEarthView.git"
+    },
+    "devDependencies": {},
+    "license": "LGPL-3.0"
+}
