@@ -36,32 +36,33 @@ OpenEarthView.World = function(domElement) {
             delete scope.layers["defaultLayer"];
         }
         scope.layers[openEarthViewLayer.getName()] = openEarthViewLayer;
-        for (var xtile = 0; xtile < 4; xtile++) {
-            for (var ytile = 0; ytile < 4; ytile++) {
-                if (openEarthViewLayer.type === 'tile') {
-                    tileLoader.tileFactory(
-                        openEarthViewLayer.getUrl(2, xtile, ytile),
-                        2,
-                        xtile,
-                        ytile,
-                        function(texture) {
-                          // Do nothing
-                        }
-                    );
-                }
-            }
-        }
+        // for (var xtile = 0; xtile < 4; xtile++) {
+        //     for (var ytile = 0; ytile < 4; ytile++) {
+        //         if (openEarthViewLayer.type === 'tile') {
+        //             tileLoader.tileFactory(
+        //                 openEarthViewLayer.getUrl(2, xtile, ytile),
+        //                 2,
+        //                 xtile,
+        //                 ytile,
+        //                 function(texture) {
+        //                     // Do nothing
+        //                 }
+        //             );
+        //         }
+        //     }
+        // }
+        tileLoader.tileFactory(openEarthViewLayer.getUrl(0, 0, 0), 0, 0, 0);
     }
     this.terrains = {};
     this.terrains["defaultTerrain"] = new OpenEarthView.Terrain.FlatTerrain("FlatTerrain");
 
     this.addTerrain = function(openEarthViewTerrain) {
-            console.log('Add terrain:', openEarthViewTerrain.getName());
-            if (scope.terrains.hasOwnProperty("defaultTerrain")) {
-                delete scope.terrains["defaultTerrain"];
-            }
-            scope.terrains[openEarthViewTerrain.getName()] = openEarthViewTerrain;
+        console.log('Add terrain:', openEarthViewTerrain.getName());
+        if (scope.terrains.hasOwnProperty("defaultTerrain")) {
+            delete scope.terrains["defaultTerrain"];
         }
+        scope.terrains[openEarthViewTerrain.getName()] = openEarthViewTerrain;
+    }
 
     var toolbox = OpenEarthView.toolbox;
     var tileLoader = new OpenEarthView.TileLoader();
@@ -247,8 +248,9 @@ OpenEarthView.World = function(domElement) {
             xtile: scope.xtile,
             ytile: scope.ytile
         }));
-
-        for (var zoom_ = Math.max(scope.zoom, scope.ZOOM_MIN); zoom_ > Math.max(scope.zoom - scope.ZOOM_SHIFT_SIZE, scope.ZOOM_MIN); zoom_--) {
+        var zoomMax = Math.max(scope.zoom, scope.ZOOM_MIN);
+        var zoomMin = Math.max(scope.zoom - scope.ZOOM_SHIFT_SIZE, scope.ZOOM_MIN);
+        for (var zoom_ = zoomMax; zoom_ > zoomMin; zoom_--) {
             var zShift = scope.zoom - zoom_;
             scope.tileGroup[zShift] = new THREE.Object3D(); //create an empty container
             scope.tileGroups.add(scope.tileGroup[zShift]);
@@ -273,16 +275,29 @@ OpenEarthView.World = function(domElement) {
             var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
             for (var atile = minXtile; atile <= maxXtile; atile++) {
                 for (var btile = minYtile; btile <= maxYtile; btile++) {
-                    var id = 'z_' + zoom_ + '_' + (atile % modulus) + "_" + (btile % modulus);
+                    var id = '' + zoom_ + '/' + (atile % modulus) + '/' + (btile % modulus);
                     for (var zzz = 1; zzz <= 2; zzz++) {
-                        var idNext = 'z_' + (zoom_ - zzz) + '_' + Math.floor((atile % modulus) / Math.pow(2, zzz)) + "_" + Math.floor((btile % modulus) / Math.pow(2, zzz));
+                        var zoom__ = (zoom_ - zzz);
+                        var xtile__ = Math.floor((atile % modulus) / Math.pow(2, zzz));
+                        var ytile__ = Math.floor((btile % modulus) / Math.pow(2, zzz));
+                        var idNext = '' + zoom__ + '/' + xtile__ + '/' + ytile__;
                         tiles[idNext] = {};
+                        for (var terrainId in scope.terrains) {
+                            switch (scope.terrains[terrainId].type) {
+                                case 'tile':
+                                    tileLoader.tileFactory(
+                                        scope.terrains[terrainId].getUrl(zoom__, xtile__, ytile__),
+                                        zoom__,
+                                        xtile__,
+                                        ytile__);
+                                    break;
+                            }
+                        }
                     }
                     if (!tiles.hasOwnProperty(id)) {
                         var tileSupport = new THREE.Object3D(); //create an empty container
                         var tileMesh = new THREE.Mesh();
                         tileSupport.add(tileMesh);
-
                         // tileMesh.position.set(0, 0, -10);
                         if (zoom_ < scope.ZOOM_FLAT) {
                             var tileEarth = new THREE.Object3D(); //create an empty container
@@ -350,6 +365,20 @@ OpenEarthView.World = function(domElement) {
                                         opacity: scope.layers[layerId].opacity
                                     });
                                     scope.render();
+
+                                    // (function(zoom, xtile, ytile) {
+                                    //     if (zoom_ === Math.max(zoomMin - 5, 0) && xtile === scope.xtile && ytile === scope.ytile) {
+                                    //         tileLoader.tileFactory(
+                                    //             scope.layers[layerId].getUrl(zoom_, xtile, ytile),
+                                    //             zoom_,
+                                    //             xtile,
+                                    //             ytile
+                                    //         );
+                                    //     }
+                                    // })(zoom_, atile % modulus, btile % modulus);
+                                    //
+                                    //
+                                    //
                                     tileLoader.tilePreload(
                                         zoom_,
                                         atile % modulus,
@@ -360,6 +389,7 @@ OpenEarthView.World = function(domElement) {
                                             scope.render();
                                         }
                                     );
+
                                     (function(tileMesh, zoom, xtile, ytile, layerId) {
                                         var url = scope.layers[layerId].getUrl(
                                             zoom,

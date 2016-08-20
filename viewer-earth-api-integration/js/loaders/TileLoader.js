@@ -27,7 +27,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var MAX_TEXTURE_REQUEST = 10;
 OpenEarthView.TileLoader = function() {
     this.textureLoader = new THREE.TextureLoader();
-    this.textureLoader.crossOrigin = '';
+    // this.textureLoader.crossOrigin = '';
     // this.textureLoader
 };
 
@@ -65,7 +65,9 @@ OpenEarthView.TileLoader.prototype = {
                     function(texture) {
                         textures[id] = texture;
                         if (textureAliveRequests.hasOwnProperty(id)) {
-                            textureAliveRequests[id].onLoaded(texture);
+                            if (textureAliveRequests[id].onLoaded !== undefined) {
+                                textureAliveRequests[id].onLoaded(texture);
+                            }
                             delete textureAliveRequests[id];
                             scope.textureAliveRequestsCount--;
                             // console.log('(0) scope.textureAliveRequestsCount: ', scope.textureAliveRequestsCount);
@@ -99,7 +101,8 @@ OpenEarthView.TileLoader.prototype = {
         var textureRequests = scope.textureRequests;
         var textureAliveRequests = scope.textureAliveRequests;
         var id = zoom + '/' + xtile + '/' + ytile;
-        for (var diff = 0; diff < zoom; diff++) {
+        // for (var diff = 0; diff < zoom; diff++) {
+        for (var diff = 0; diff <= Math.min(5, zoom); diff++) {
             var power = Math.pow(2, diff);
             var idZoomOther = (+zoom - diff) + '/' + Math.floor(xtile / power) + '/' + Math.floor(ytile / power);
             // console.log('Looking for texture: ', idZoomOther);
@@ -110,14 +113,15 @@ OpenEarthView.TileLoader.prototype = {
                 tex.repeat.x = 1 / power;
                 tex.repeat.y = 1 / power;
                 var xOffset = xtile - Math.floor(xtile / power) * power
-                // console.log('xOffset: ', xOffset);
+                    // console.log('xOffset: ', xOffset);
                 var yOffset = (power - 1) - (ytile - Math.floor(ytile / power) * power);
                 // console.log('yOffset: ', yOffset);
                 tex.offset.x = xOffset * tex.repeat.x;
                 tex.offset.y = yOffset * tex.repeat.y;
                 tex.needsUpdate = true;
                 onLoaded(tex);
-                return;
+                // return;
+                break;
             }
         }
         // for (var diff = Math.min(zoom - 19, -8); diff < Math.min(zoom - 1, -1); diff++) {
@@ -144,6 +148,10 @@ OpenEarthView.TileLoader.prototype = {
     },
     tileFactory: function(url, zoom, xtile, ytile, onLoaded) {
         var scope = this;
+        // if (onLoaded === undefined) {
+        //     scope.loadNextTile();
+        //     return;
+        // }
         var textures = scope.textures;
         var textureRequests = scope.textureRequests;
         var textureAliveRequests = scope.textureAliveRequests;
@@ -151,6 +159,7 @@ OpenEarthView.TileLoader.prototype = {
         // var myUrl = new URL(url);
         var id = zoom + '/' + xtile + '/' + ytile;
         if (textures.hasOwnProperty(id)) {
+            // Covered by preload
             // onLoaded(textures[id]);
         } else {
             scope.textureRequestsCount = scope.textureRequestsCount + (textureRequests.hasOwnProperty(id) ? 0 : 1);
