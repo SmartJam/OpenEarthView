@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Open Earth View - demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/mybootstrap.css" type="text/css">
+    <link rel="stylesheet" href="css/openearthview.css" type="text/css">
+
+    <script src="node_modules/three/build/three.js"></script>
+    <script src="js/turf/v2.0.2/turf.min.js"></script>
+    <script src="js/openearthview.js" type="text/javascript"></script>
+    <script src="js/toolbox.js" type="text/javascript"></script>
+    <script src="js/loaders/TileLoader.js" type="text/javascript"></script>
+    <script src="js/loaders/TerrainLoader.js" type="text/javascript"></script>
+    <script src="js/loaders/GeojsonLoader.js"></script>
+    <script src="js/loaders/mapzenGeojsonLoader.js"></script>
+    <script src="js/controls/EarthControls.js"></script>
+    <script src="js/layers/Layer.js"></script>
+    <script src="js/layers/OsmLayer.js"></script>
+    <script src="js/layers/BuildingLayer.js"></script>
+    <script src="js/terrains/Terrain.js"></script>
+    <script src="js/terrains/FlatTerrain.js"></script>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="index.html">\O/pen Earth View</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="home.html">Home</a></li>
+                        <li class="dropdown active">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Demo <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="mapsimple.html">Map simple</a></li>
+                                <li><a href="mapbuilding.html">Map with buildings</a></li>
+                                <li><a href="mapelevation.html">Map with elevation</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="dev.html">Dev</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fill">
+        <div id="osmworld"></div>
+    </div>
+    <script type="text/javascript">
+        var world = new OpenEarthView.World("osmworld");
+        world.addLayer(new OpenEarthView.Layer.OSM(
+            "OpenStreetMap", [
+                "https://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+                "https://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+                "https://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+            ]));
+
+        world.setCenter(2.3364709900972684, 48.86045538042749);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                world.setCenter(position.coords.longitude, position.coords.latitude);
+            });
+        }
+    </script>
+    <!-- <script src="bower_components/jquery/dist/jquery.min.js"></script> -->
+    <!-- <script src="bower_components/jquery/dist/jquery.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
