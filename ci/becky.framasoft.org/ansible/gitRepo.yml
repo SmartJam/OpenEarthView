@@ -6,7 +6,7 @@
 
     - name: fetching oev repo
       git: repo=git@framagit.org:pizaninja/OpenEarthView.git
-           dest="Project/OpenEarthView"
+           dest="Projects/OpenEarthView"
            accept_hostkey=yes
            force=yes
           #  recursive=no
