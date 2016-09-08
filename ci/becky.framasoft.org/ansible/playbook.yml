@@ -6,3 +6,4 @@
 - include: bootstrap.yml
 - include: docker.yml
 - include: gitRepo.yml
+- include: jenkins.yml
