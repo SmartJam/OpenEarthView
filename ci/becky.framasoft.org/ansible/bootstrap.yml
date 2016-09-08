@@ -1,0 +1,17 @@
+---
+- name: bootstrap
+  hosts: all
+
+  tasks:
+
+    - name: install basic packages
+      apt: name={{ item }} state=present update_cache=yes
+      with_items:
+          - "sudo"
+          - "aptitude"
+          - "sshpass"
+          - "file"
+          - "screen"
+      register: packages
+      become: yes
+    - debug: var=packages.stdout_lines

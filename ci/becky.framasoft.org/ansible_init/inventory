@@ -1,0 +1,8 @@
+[becky.framasoft.org]
+becky.framasoft.org
+
+[becky.framasoft.org:vars]
+ansible_port=22
+ansible_host=becky.framasoft.org
+ansible_user=piz
+ansible_ssh_private_key_file=~/.ssh/id_rsa_becky

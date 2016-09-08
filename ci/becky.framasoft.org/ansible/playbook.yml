@@ -1,0 +1,8 @@
+---
+- name: this is a play at the top level of a file
+  hosts: all
+
+  tasks:
+- include: bootstrap.yml
+- include: docker.yml
+- include: gitRepo.yml

@@ -1,0 +1,30 @@
+---
+- name: oevUser
+  hosts: all
+
+  tasks:
+
+    - name: create oev group
+      group: name=oev state=present
+      become: yes
+
+    - name: create oev user
+      user:
+        name: oev
+        password: $6$FsKHyvbkdAt1dFKP$XKhvQ1M6M6MhnDIOTonEtk1zUWStMC2qZg5vEMciVTUU/D4dSdb/Dm2YQGcCiPnTdOxF6vmPBc6nHjcPJ2xZB0
+        shell: /bin/bash
+        group: oev
+        groups: sudo
+      become: yes
+
+    - name: create oev dir
+      shell: |
+        chown -R oev:oev /home/oev
+      become: yes
+
+    - name: Set up authorized_keys for the oev user
+      authorized_key: user=oev key="{{ item }}"
+      with_file:
+      - ../resources/public_keys/cigone.pub
+      - ../resources/public_keys/cbigon.pub
+      become: yes

@@ -1,0 +1,19 @@
+---
+- name: ssh daemon
+  hosts: all
+  remote_user: piz
+  become: yes
+  vars:
+    # This is the certificate admins email - make sure to set it to yours!
+    ssh_port: 11166
+
+  tasks:
+    - name: Change ssh port
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^Port\\s"
+        line: "Port {{ssh_port}}"
+        state: present
+
+    - name: Restart ssh
+      service: name=ssh state=restarted

@@ -1,0 +1,12 @@
+---
+- name: gitRepo
+  hosts: all
+
+  tasks:
+
+    - name: fetching oev repo
+      git: repo=git@framagit.org:pizaninja/OpenEarthView.git
+           dest="Project/OpenEarthView"
+           accept_hostkey=yes
+           force=yes
+          #  recursive=no
