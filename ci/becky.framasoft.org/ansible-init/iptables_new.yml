@@ -1,0 +1,46 @@
+---
+- name: Set up iptables
+  hosts: all
+  become: yes
+
+  tasks:
+
+    - name: install basic packages
+      apt: name={{ item }} state=present update_cache=yes
+      with_items:
+          - "iptables"
+          - "iptables-persistent"
+      register: packages
+    - debug: var=packages.stdout_lines
+
+    # -A INPUT -i lo -j ACCEPT
+    - iptables: chain=INPUT in_interface=lo jump=ACCEPT
+    # -A INPUT ! -i lo -d 127.0.0.0/8 -j REJECT
+    - iptables: chain=INPUT in_interface=!lo destination=127.0.0.0/8 jump=REJECT
+    # -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+    - iptables: chain=INPUT ctstate=ESTABLISHED,RELATED jump=ACCEPT
+    # -A OUTPUT -j ACCEPT
+    - iptables: chain=OUTPUT jump=ACCEPT
+    # -A INPUT -p tcp -m state --state NEW --dport 11166 -j ACCEPT
+    - iptables: chain=INPUT protocol=tcp ctstate=NEW destination_port=22 jump=ACCEPT
+    - iptables: chain=INPUT protocol=tcp ctstate=NEW destination_port=11166 jump=ACCEPT
+    # -A INPUT -p tcp --dport 20 -j ACCEPT
+    - iptables: chain=INPUT protocol=tcp destination_port=20 jump=ACCEPT
+    # -A INPUT -p tcp --dport 21 -j ACCEPT
+    - iptables: chain=INPUT protocol=tcp destination_port=21 jump=ACCEPT
+    # -A INPUT -p tcp --dport 30000:30009 -j ACCEPT
+    - iptables: chain=INPUT protocol=tcp destination_port=30000:30009 jump=ACCEPT
+    #-A INPUT -m state --state NEW -p tcp --dport 80 -j ACCEPT
+    - iptables: chain=INPUT ctstate=NEW protocol=tcp destination_port=80 jump=ACCEPT
+    #-A INPUT -m state --state NEW -p tcp --dport 443 -j ACCEPT
+    - iptables: chain=INPUT ctstate=NEW protocol=tcp destination_port=443 jump=ACCEPT
+
+    # -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+    - iptables: chain=INPUT protocol=icmp match=icmp icmp_type=8 jump=ACCEPT
+
+    # -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: " --log-level 7
+    - iptables: chain=INPUT match=limit limit=5/min jump=LOG
+    # -A INPUT -j REJECT
+    - iptables: chain=INPUT jump=REJECT
+    # -A FORWARD -j REJECT
+    - iptables: chain=FORWARD jump=REJECT

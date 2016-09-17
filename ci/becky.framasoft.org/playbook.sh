@@ -7,8 +7,8 @@ ansible-playbook \
 --private-key=~/.ssh/id_rsa_becky \
 --user=oev \
 --connection=ssh \
---inventory-file=./inventory \
+--inventory-file=./ansible/inventory \
 --limit='becky.framasoft.org' \
-./playbook.yml \
 -vvvv \
---extra-vars "ansible_sudo_pass=$1"
+--extra-vars "ansible_sudo_pass=$1" \
+./ansible/playbook.yml

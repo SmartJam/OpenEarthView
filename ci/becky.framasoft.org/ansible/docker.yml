@@ -1,6 +1,7 @@
 ---
 - name: docker
   hosts: all
+  become: yes
 
   tasks:
 
@@ -9,42 +10,41 @@
       with_items:
            - apt-transport-https
            - ca-certificates
-      sudo: yes
 
     - name: install python-pip
       easy_install: name=pip
-      sudo: yes
 
     - name: install docker-py
       pip: name=docker-py version=1.2.3
-      sudo: yes
 
     - name: register apt docker key
       apt_key:
         keyserver: p80.pool.sks-keyservers.net
         id: 58118E89F3A912897C070ADBF76221572C52609D
-      sudo: yes
 
     - name: add docker repo
-      apt_repository: repo='deb https://apt.dockerproject.org/repo debian-wheezy main' state=present
-      sudo: yes
+      apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=present
 
     - name: Install docker packages
-      apt: name={{ item }} state=present update_cache=yes
+      apt: name={{ item }} state=latest update_cache=yes
       with_items:
           - docker-engine
-      sudo: yes
 
     - name: Stop docker service
       service:
         name: docker
         state: stopped
-      sudo: yes
+
+    - name: Setup docker daemon options
+      lineinfile:
+        dest: /etc/default/docker
+        state: present
+        regexp: '^DOCKER_OPTS'
+        line: 'DOCKER_OPTS="--iptalbes=true"'
 
     - name: Set oev user properties
       shell: |
         usermod -a -G docker oev
-      sudo: yes
 
     - name: Kill SSH
       shell: sleep 1; pkill -u {{ ansible_ssh_user }} sshd
@@ -56,4 +56,3 @@
         name: docker
         state: started
         enabled: yes
-      sudo: yes
