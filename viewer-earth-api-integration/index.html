@@ -67,12 +67,12 @@
         <script type="text/javascript">
             var world = new OpenEarthView.World("osmworld");
             // world.updateSceneLazy();
-            // world.addLayer(new OpenEarthView.Layer.OSM(
-            //     "OpenStreetMap", [
-            //         "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-            //         "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-            //         "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
-            //     ]));
+            world.addLayer(new OpenEarthView.Layer.OSM(
+                "OpenStreetMap", [
+                    "https://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+                    "https://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+                    "https://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+                ]));
             // world.addLayer(new OpenEarthView.Layer.Building(
             //     "OpenEarthView", [
             //         'http://localhost:8081/3dtile?format=geojson&xtile=${x}&ytile=${y}&zoom=${z}&factor=${f}'
@@ -81,17 +81,17 @@
             // http://localhost:8083/proxycache-geojson?tile=${z},${x},${y}
 
 
-            world.addLayer(new OpenEarthView.Layer.OSM(
-                "OpenCycleMap", [
-                    "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"
-                ]));
+            // world.addLayer(new OpenEarthView.Layer.OSM(
+            //     "OpenCycleMap", [
+            //         "https://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"
+            //     ]));
 
             // world.addLayer(new OpenEarthView.Layer.OSM(
             //     "GoogleMap", [
-            //         "http://mt0.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
-            //         "http://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
-            //         "http://mt2.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
-            //         "http://mt3.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}"
+            //         "https://mt0.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+            //         "https://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+            //         "https://mt2.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+            //         "https://mt3.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}"
             //     ], {
             //         mapTextureRequest: 10
             //     }));
