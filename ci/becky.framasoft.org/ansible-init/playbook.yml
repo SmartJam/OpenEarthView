@@ -5,6 +5,6 @@
 
   tasks:
 - include: bootstrap.yml
-- include: iptables.yml
+# - include: iptables.yml
 - include: sshd.yml
 - include: oevUser.yml

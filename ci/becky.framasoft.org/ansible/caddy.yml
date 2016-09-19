@@ -1,0 +1,70 @@
+---
+- name: caddy
+  hosts: all
+
+  tasks:
+
+
+  - name: download caddy_linux_mad64_custom.tar.gz
+    get_url:
+      url: https://caddyserver.com/download/build?os=linux&arch=amd64&features=
+      dest: /tmp/caddy_linux_mad64_custom.tar.gz
+    become: yes
+    register: downloadCaddy
+  - debug: var=downloadCaddy
+
+  - file: path=/tmp/caddy state=directory mode=0755
+    become: yes
+
+  - name: extract caddy
+    shell: |
+      set -xe
+      tar -zxvf /tmp/caddy_linux_mad64_custom.tar.gz -C /tmp/caddy
+      chown -R root:root /tmp/caddy
+
+    become: yes
+    register: extractCaddy
+  - debug: var=extractCaddy
+
+  - name: deploy caddy
+    shell: |
+      set -xe
+      mv -f /tmp/caddy/caddy /usr/local/bin/caddy
+      mv -f /tmp/caddy/init/linux-sysvinit/caddy /etc/init.d/caddy
+      mkdir -p /etc/caddy
+    become: yes
+    register: deployCaddy
+  - debug: var=deployCaddy
+
+  - name: Set properties for nexus service
+    lineinfile:
+      dest: /etc/init.d/caddy
+      regexp: '^DAEMONUSER=.*'
+      line: 'DAEMONUSER=oev'
+      owner: root
+      group: root
+      mode: 0755
+    become: yes
+
+  - name: configure caddy
+    copy:
+      src: ../resources/caddy/etc/caddy/Caddyfile
+      dest: /etc/caddy/Caddyfile
+    become: yes
+    register: setupCaddy
+  - debug: var=setupCaddy
+
+  - name: Start caddy as a daemon
+    shell: |
+      # service caddy restart
+      /etc/init.d/caddy restart
+    become: yes
+    register: startCaddyService
+  - debug: var=startCaddyService
+
+# https://caddyserver.com/download/build?os=linux&arch=amd64&features=
+# * Download the appropriate Caddy binary in `/usr/local/bin/caddy` or use `curl https://getcaddy.com | bash`.
+# * Save the SysVinit config file in `/etc/init.d/caddy`.
+# * Ensure that the folder `/etc/caddy` exists and that the subfolder `ssl` is owned by `www-data`.
+# * Create a Caddyfile in `/etc/caddy/Caddyfile`
+# * Now you can use `service caddy start|stop|restart|reload|status` as `root`.

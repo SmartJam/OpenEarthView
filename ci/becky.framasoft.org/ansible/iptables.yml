@@ -1,7 +1,6 @@
 ---
 - name: Set up iptables
   hosts: all
-  become: yes
 
   tasks:
 
@@ -10,13 +9,18 @@
       with_items:
           - "iptables"
           - "iptables-persistent"
+      become: yes
       register: packages
     - debug: var=packages.stdout_lines
+
     - name: set iptables
       copy:
-        src: ../resources/iptables/etc/iptables.up.rules
+        src: ../../resources/iptables/etc/iptables.up.rules
         dest: /etc/iptables.test.rules
+      become: yes
+
     - name: apply iptables
       shell: |
         iptables-restore < /etc/iptables.test.rules
         iptables-save > /etc/iptables.up.rules
+      become: yes

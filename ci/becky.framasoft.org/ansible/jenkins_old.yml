@@ -1,0 +1,50 @@
+---
+- name: jenkins4OEV
+  hosts: all
+
+  tasks:
+
+  - name: Copy jenkins4OEV plugins file
+    copy:
+      src: "{{ item.source}}"
+      dest: "{{ item.dest }}"
+    with_items:
+      - { source: '../jenkins/jenkins4OEV_home/plugins.txt', dest: '/home/oev/Projects/OpenEarthView/ci/becky.framasoft.org/docker/oev-jenkins/' }
+    register: copyJenkins4OEVPlugins
+  - debug: var=copyJenkins4OEVPlugins
+
+  - name: OEV Jenkins4OEV docker image
+    shell: |
+      groups
+      docker build -t 'oev-jenkins:jenkins4OEV' /home/oev/Projects/OpenEarthView/ci/becky.framasoft.org/docker/oev-jenkins/
+    register: jenkins4OEVImage
+  - debug: var=jenkins4OEVImage
+
+  - file: path=/home/oev/jenkins4FTP state=directory
+  - name: jenkins container for OEV
+    shell: |
+      # Remove old docker if any
+      docker ps -a | grep jenkins4OEV && docker rm -f jenkins4OEV
+      docker run \
+        -d \
+        --network="host" \
+        -v /home/oev/jenkins4FTP:/var/jenkins_home \
+        --name "jenkins4OEV" \
+        -e JAVA_OPTS="-Dhudson.diyChunking=false" \
+        'oev-jenkins:jenkins4OEV'
+
+    register: jenkins4OEVContainer
+  - debug: var=jenkins4OEVContainer
+
+  - name: Setup hosts in jenkins4OEV
+    shell: docker exec -u root jenkins4OEV /usr/local/bin/hosts.sh
+
+  - name: Generate new ssh keys for jenkins4OEV
+    shell: docker exec -u jenkins jenkins4OEV /usr/local/bin/ssh-keygen.sh "jenkins@jenkins4OEV"
+
+  - name: Get jenkins@jenkins4OEV public key
+    shell: docker exec jenkins4OEV cat /var/jenkins_home/.ssh/id_rsa.pub
+    register: jenkins4OEVPubKey
+
+  - name: Insert jenkins4OEVPubKey in hakan authorized_key
+    authorized_key: user=gexprod key="{{ jenkins4OEVPubKey.stdout }}"
