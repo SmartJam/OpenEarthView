@@ -16,6 +16,11 @@
   - file: path=/tmp/caddy state=directory mode=0755
     become: yes
 
+  - shell: |
+      mkdir /etc/caddy/log
+      chown -R caddy:caddy /etc/caddy
+    become: yes
+
   - name: extract caddy
     shell: |
       set -xe
@@ -40,7 +45,7 @@
     lineinfile:
       dest: /etc/init.d/caddy
       regexp: '^DAEMONUSER=.*'
-      line: 'DAEMONUSER=oev'
+      line: 'DAEMONUSER=caddy'
       owner: root
       group: root
       mode: 0755

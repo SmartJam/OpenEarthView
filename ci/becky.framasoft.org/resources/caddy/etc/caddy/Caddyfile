@@ -2,5 +2,5 @@ integration.openearthview.net {
     tls contact@openearthview.net
     root /home/oev/Projects/OpenEarthView/viewer-earth-api-integration
     gzip
-    log /home/oev/Projects/OpenEarthView/viewer-earth-api-integration/access.log
+    log /etc/caddy/log/access_integration.openearthview.net.log
 }
