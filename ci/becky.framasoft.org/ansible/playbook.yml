@@ -9,3 +9,4 @@
 - include: gitRepo.yml
 - include: jenkins.yml
 - include: caddy.yml
+- include: npm.yml

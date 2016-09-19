@@ -1,0 +1,28 @@
+---
+- name: npm
+  hosts: all
+
+  tasks:
+
+  - name: get npm setup
+    copy:
+      src: ../resources/npm
+      dest: /tmp/npm
+    become: yes
+    register: getNpmScript
+  - debug: var=getNpmScript
+
+  - name: setup npm repo
+    shell: |
+      cat /tmp/npm/setup/setup_6.x | sudo -E bash -
+    become: yes
+    register: setupNpmRepo
+  - debug: var=setupNpmRepo
+
+  - name: install npm packages
+    apt: name={{ item }} state=latest update_cache=yes
+    with_items:
+      - "nodejs"
+    become: yes
+    register: npmPackages
+  - debug: var=npmPackages
