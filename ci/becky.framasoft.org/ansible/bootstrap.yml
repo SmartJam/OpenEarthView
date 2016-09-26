@@ -15,6 +15,12 @@
           - "cifs-utils"
           - "nfs-common"
           - "apt-utils"
+          - "nodejs"
       register: packages
       become: yes
     - debug: var=packages.stdout_lines
+
+    - shell: |
+        cd /usr/bin
+        ln -sf /usr/bin/nodejs node
+      become: yes

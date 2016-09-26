@@ -1,0 +1,27 @@
+---
+- name: website
+  hosts: all
+
+  tasks:
+
+  # - name: share
+  #   copy:
+  #     src: /home/oev/Projects/OpenEarthView/website
+  #     dest: /var/www/
+  #     remote_src: True
+  #     owner: www-data
+  #     group: www-data
+  #   become: yes
+
+  - name: Install bower
+    npm: name=bower global=yes
+    become: yes
+
+  - name: Bower install
+    bower: path=/home/oev/Projects/OpenEarthView/website
+
+  - name: share
+    shell: |
+      cp -r /home/oev/Projects/OpenEarthView/website /var/www/
+      chown -R www-data:www-data /var/www/
+    become: yes

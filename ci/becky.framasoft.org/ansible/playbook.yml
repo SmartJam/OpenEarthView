@@ -8,5 +8,7 @@
 - include: iptables.yml
 - include: gitRepo.yml
 - include: jenkins.yml
-- include: caddy.yml
+- include: caddy-ansible-tunned.yml
 - include: npm.yml
+- include: viewer-earth-api-integration.yml
+- include: website.yml

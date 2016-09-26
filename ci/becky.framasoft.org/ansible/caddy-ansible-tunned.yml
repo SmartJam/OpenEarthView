@@ -1,0 +1,29 @@
+---
+- hosts: all
+  roles:
+    - role: caddy-ansible-tunned
+      caddy_config: |
+        integration.openearthview.net {
+          tls contact@openearthview.net
+          root /var/www/viewer-earth-api-integration
+          gzip
+        }
+        www.openearthview.net {
+          tls contact@openearthview.net
+          root /var/www/website
+          gzip
+        }
+  become: yes
+    # - role: caddy-ansible
+    #   caddy_update: yes
+    #   caddy_email: contact@openearthview.net
+#
+# ---
+# - hosts: all
+#   roles:
+#     - role: caddy-ansible
+#       caddy_config: |
+#         localhost:2020
+#         gzip
+#         root /var/www
+#         git github.com/antoiner77/caddy-ansible /

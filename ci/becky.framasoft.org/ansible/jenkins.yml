@@ -9,16 +9,12 @@
   - name: Add apt key to the system
     apt_key: url=http://pkg.jenkins.io/debian-stable/jenkins.io.key state=present
     become: yes
-    register: addAptKey
-  - debug: var=addAptKey
 
   # Then add the following entry in your /etc/apt/sources.list:
   # deb http://pkg.jenkins.io/debian-stable binary/
   - name: Add deb entry to /etc/apt/sources.list
     apt_repository: repo='deb http://pkg.jenkins.io/debian-stable binary/' state=present
     become: yes
-    register: addDebEntry
-  - debug: var=addDebEntry
 
   # Update your local package index, then finally install Jenkins:
   # sudo apt-get update

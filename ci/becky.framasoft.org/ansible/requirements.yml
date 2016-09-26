@@ -1,0 +1,5 @@
+- src: antoiner77.caddy
+  version: v2.0.0
+  name: caddy-ansible
+# - src: https://github.com/antoiner77/caddy-ansible
+#   version: v2.0.0

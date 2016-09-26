@@ -1,0 +1,27 @@
+---
+- name: viewer-earth-api-integration
+  hosts: all
+
+  tasks:
+
+  - name: npm install
+    shell: |
+      cd ~/Projects/OpenEarthView/viewer-earth-api-integration
+      npm install
+    register: npmInstall
+  - debug: var=npmInstall
+
+  - name: share
+    shell: |
+      cp -r /home/oev/Projects/OpenEarthView/viewer-earth-api-integration /var/www/
+      chown -R www-data:www-data /var/www/
+    become: yes
+
+  # - name: share
+  #   copy:
+  #     src: /home/oev/Projects/OpenEarthView/viewer-earth-api-integration
+  #     dest: /var/www/
+  #     remote_src: True
+  #     owner: www-data
+  #     group: www-data
+  #   become: yes

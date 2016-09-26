@@ -19,10 +19,11 @@
     register: setupNpmRepo
   - debug: var=setupNpmRepo
 
-  - name: install npm packages
+  - name: install node.js packages
     apt: name={{ item }} state=latest update_cache=yes
     with_items:
       - "nodejs"
+      - "npm"
     become: yes
     register: npmPackages
   - debug: var=npmPackages
