@@ -1,0 +1,5 @@
+integration.openearthview.net {
+  tls contact@openearthview.net
+  root /var/www/viewer-earth-api-integration
+  gzip
+}
