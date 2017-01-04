@@ -28,6 +28,7 @@ var MAX_TEXTURE_REQUEST = 10;
 OpenEarthView.TileLoader = function() {
     this.textureLoader = new THREE.TextureLoader();
     this.textureLoader.crossOrigin = '';
+    // this.textureLoader
 };
 
 OpenEarthView.TileLoader.prototype = {
@@ -45,6 +46,8 @@ OpenEarthView.TileLoader.prototype = {
         var textures = scope.textures;
         var textureRequests = scope.textureRequests;
         var textureAliveRequests = scope.textureAliveRequests;
+        // console.log('scope.textureAliveRequestsCount: ', scope.textureAliveRequestsCount);
+        // console.log('scope.textureRequestsCount: ', scope.textureRequestsCount);
         while (scope.textureAliveRequestsCount < MAX_TEXTURE_REQUEST && scope.textureRequestsCount > 0) {
             var ids = Object.keys(textureRequests);
             var id = ids[ids.length - 1];
@@ -53,7 +56,11 @@ OpenEarthView.TileLoader.prototype = {
             var url = textureAliveRequests[id].url;
             delete textureRequests[id];
             scope.textureRequestsCount--;
+            // console.log('(2) scope.textureAliveRequestsCount: ', scope.textureAliveRequestsCount);
+            // console.log('(2) scope.textureRequestsCount: ', scope.textureRequestsCount);
             (function(url, id) {
+                // console.log("Asking for loading: ", url);
+                // zoom =
                 textureAliveRequests[id].request = scope.textureLoader.load(url,
                     function(texture) {
                         textures[id] = texture;
@@ -61,6 +68,8 @@ OpenEarthView.TileLoader.prototype = {
                             textureAliveRequests[id].onLoaded(texture);
                             delete textureAliveRequests[id];
                             scope.textureAliveRequestsCount--;
+                            // console.log('(0) scope.textureAliveRequestsCount: ', scope.textureAliveRequestsCount);
+                            // console.log('(0) scope.textureRequestsCount: ', scope.textureRequestsCount);
                         }
                         scope.loadNextTile();
                     },
@@ -70,6 +79,8 @@ OpenEarthView.TileLoader.prototype = {
                             // textureAliveRequests[id].onLoaded(texture);
                             delete textureAliveRequests[id];
                             scope.textureAliveRequestsCount--;
+                            // console.log('scope.textureAliveRequestsCount: ', scope.textureAliveRequestsCount);
+                            // console.log('scope.textureRequestsCount: ', scope.textureRequestsCount);
                         }
                         scope.loadNextTile();
                     }
@@ -82,18 +93,73 @@ OpenEarthView.TileLoader.prototype = {
     // var TILE_PROVIDER01_RANDOM = ['a', 'b', 'c'];
     // var TILE_PROVIDER01_FILE_EXT = 'png';
 
-
-    tileFactory: function(url, zoom, xtile, ytile, onLoaded, layerName) {
+    tilePreload: function(zoom, xtile, ytile, onLoaded) {
         var scope = this;
         var textures = scope.textures;
         var textureRequests = scope.textureRequests;
         var textureAliveRequests = scope.textureAliveRequests;
-        var id = 'tile' + zoom + '_' + xtile + '_' + ytile + '_' + layerName;
+        var id = zoom + '/' + xtile + '/' + ytile;
+        for (var diff = 0; diff < zoom; diff++) {
+            var power = Math.pow(2, diff);
+            var idZoomOther = (+zoom - diff) + '/' + Math.floor(xtile / power) + '/' + Math.floor(ytile / power);
+            // console.log('Looking for texture: ', idZoomOther);
+            if (textures.hasOwnProperty(idZoomOther)) {
+                // onLoaded(textures[idZoomOther]);
+                // origin : bottom left
+                var tex = textures[idZoomOther].clone();
+                tex.repeat.x = 1 / power;
+                tex.repeat.y = 1 / power;
+                var xOffset = xtile - Math.floor(xtile / power) * power
+                // console.log('xOffset: ', xOffset);
+                var yOffset = (power - 1) - (ytile - Math.floor(ytile / power) * power);
+                // console.log('yOffset: ', yOffset);
+                tex.offset.x = xOffset * tex.repeat.x;
+                tex.offset.y = yOffset * tex.repeat.y;
+                tex.needsUpdate = true;
+                onLoaded(tex);
+                return;
+            }
+        }
+        // for (var diff = Math.min(zoom - 19, -8); diff < Math.min(zoom - 1, -1); diff++) {
+        //     var power = Math.pow(2, diff);
+        //     var idZoomOther = (+zoom - diff) + '/' + Math.floor(xtile / power) + '/' + Math.floor(ytile / power);
+        //     // console.log('Looking for texture: ', idZoomOther);
+        //     if (textures.hasOwnProperty(idZoomOther)) {
+        //         // onLoaded(textures[idZoomOther]);
+        //         // origin : bottom left
+        //         var tex = textures[idZoomOther].clone();
+        //         tex.repeat.x = 1 / power;
+        //         tex.repeat.y = 1 / power;
+        //         var xOffset = xtile - Math.floor(xtile / power) * power
+        //         console.log('xOffset: ', xOffset);
+        //         var yOffset = (power - 1) - (ytile - Math.floor(ytile / power) * power);
+        //         console.log('yOffset: ', yOffset);
+        //         tex.offset.x = xOffset * tex.repeat.x;
+        //         tex.offset.y = yOffset * tex.repeat.y;
+        //         tex.needsUpdate = true;
+        //         onLoaded(tex);
+        //         return;
+        //     }
+        // }
+    },
+    tileFactory: function(url, zoom, xtile, ytile, onLoaded) {
+        var scope = this;
+        var textures = scope.textures;
+        var textureRequests = scope.textureRequests;
+        var textureAliveRequests = scope.textureAliveRequests;
+        // var id = 'tile' + zoom + '_' + xtile + '_' + ytile + '_' + layerName;
+        // var myUrl = new URL(url);
+        var id = zoom + '/' + xtile + '/' + ytile;
         if (textures.hasOwnProperty(id)) {
-            onLoaded(textures[id]);
+            // onLoaded(textures[id]);
         } else {
             scope.textureRequestsCount = scope.textureRequestsCount + (textureRequests.hasOwnProperty(id) ? 0 : 1);
+            // console.log('scope.textureAliveRequestsCount: ', scope.textureAliveRequestsCount);
+            // console.log('scope.textureRequestsCount: ', scope.textureRequestsCount);
             textureRequests[id] = {
+                zoom: zoom,
+                xtile: xtile,
+                ytile: ytile,
                 url: url,
                 onLoaded: onLoaded
             }
@@ -105,10 +171,14 @@ OpenEarthView.TileLoader.prototype = {
         var textures = scope.textures;
         var textureRequests = scope.textureRequests;
         var textureAliveRequests = scope.textureAliveRequests;
+        // console.log('currentIds: ', JSON.stringify(currentIds));
         for (var id in textureRequests) {
             if (!currentIds.hasOwnProperty(id)) {
                 delete textureRequests[id];
                 scope.textureRequestsCount--;
+                // console.log('id: ', id);
+                // console.log('(1) scope.textureAliveRequestsCount: ', scope.textureAliveRequestsCount);
+                // console.log('(1) scope.textureRequestsCount: ', scope.textureRequestsCount);
             }
         }
         for (var id in textureAliveRequests) {

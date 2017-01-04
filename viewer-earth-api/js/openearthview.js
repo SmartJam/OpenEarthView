@@ -29,13 +29,46 @@ OpenEarthView.World = function(domElement) {
     var scope = this;
 
     // LAYERS
-    this.layers = [];
+    this.layers = {};
     this.addLayer = function(openEarthViewLayer) {
-            console.log('Add layer:', openEarthViewLayer.getName());
-            if (scope.layers.length === 1 && scope.layers[0].getName() === "defaultLayer") {
-                scope.layers.pop();
+        console.log('Add layer:', openEarthViewLayer.getName());
+        if (scope.layers.hasOwnProperty("defaultLayer")) {
+            delete scope.layers["defaultLayer"];
+        }
+        // if (scope.layers.length === 1 && scope.layers[0].getName() === "defaultLayer") {
+        //     scope.layers.pop();
+        // }
+        // scope.layers[scope.layers.length] = openEarthViewLayer;
+        scope.layers[openEarthViewLayer.getName()] = openEarthViewLayer;
+        for (var xtile = 0; xtile < 4; xtile++) {
+            for (var ytile = 0; ytile < 4; ytile++) {
+                if (openEarthViewLayer.type === 'tile') {
+                    tileLoader.tileFactory(
+                        openEarthViewLayer.getUrl(2, xtile, ytile),
+                        2,
+                        xtile,
+                        ytile,
+                        function(texture) {
+                            // tileMesh.material.map = texture;
+                            // tileMesh.material.needsUpdate = true;
+                            // scope.render();
+                        }
+                    );
+                }
             }
-            scope.layers[scope.layers.length] = openEarthViewLayer;
+        }
+    }
+    this.terrains = {};
+    this.terrains["defaultTerrain"] = new OpenEarthView.Terrain.FlatTerrain("FlatTerrain");
+    // this.addTerrain("defaultTerrain", new OpenEarthView.Terrain.FlatTerrain("FlatTerrain"));
+    // world.addTerrain(new OpenEarthView.Terrain.FlatTerrain("FlatTerrain"));
+
+    this.addTerrain = function(openEarthViewTerrain) {
+            console.log('Add terrain:', openEarthViewTerrain.getName());
+            if (scope.terrains.hasOwnProperty("defaultTerrain")) {
+                delete scope.terrains["defaultTerrain"];
+            }
+            scope.terrains[openEarthViewTerrain.getName()] = openEarthViewTerrain;
         }
         // for (layerIdx = 0; layerIdx < layers.length; layerIdx++) {
         //     scope.addLayer(layers[layerIdx]);
@@ -44,14 +77,15 @@ OpenEarthView.World = function(domElement) {
 
     var toolbox = OpenEarthView.toolbox;
     var tileLoader = new OpenEarthView.TileLoader();
+    // var terrainLoader = new OpenEarthView.TerrainLoader();
 
     if (domElement === null) {
         alert('No domElement defined.');
         return;
     }
-    if (scope.layers.length === 0) {
-        this.layers[0] = new OpenEarthView.Layer.OSM("defaultLayer");
-    }
+    // if (scope.layers.length === 0) {
+    //     this.layers[0] = new OpenEarthView.Layer.OSM("defaultLayer");
+    // }
     this.ZOOM_SHIFT_SIZE = 4;
     this.ZOOM_MIN = 1;
     this.MAX_TILEMESH = 400;
@@ -68,7 +102,10 @@ OpenEarthView.World = function(domElement) {
     this.tileGroup = [];
     this.defaultAlti = 150;
 
-    this.geojsonLoader = new THREE.GeojsonLoader();
+    // this.geojsonLoader = new THREE.GeojsonLoader();
+    // this.geojsonLoader = THREE.GeojsonLoader.getSingleton();
+    this.overpassJsonLoader = THREE.OverpassJsonLoader.getSingleton();
+
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000000);
     this.camera.up.set(0, 0, 1);
 
@@ -238,8 +275,8 @@ OpenEarthView.World = function(domElement) {
 
 
     function updateScene(position) {
-        console.log('position.lon:', position.lon);
-        console.log('position.lat:', position.lat);
+        // console.log('zoom:', scope.zoom);
+        // console.log('position:', JSON.stringify(position));
         scope.xtile = toolbox.long2tile(position.lon, scope.zoom);
         scope.ytile = toolbox.lat2tile(position.lat, scope.zoom);
 
@@ -272,9 +309,9 @@ OpenEarthView.World = function(domElement) {
 
         var currentIds = {};
         console.log('position:', JSON.stringify({
-          zoom: scope.zoom,
-          xtile: scope.xtile,
-          ytile: scope.ytile
+            zoom: scope.zoom,
+            xtile: scope.xtile,
+            ytile: scope.ytile
         }));
         for (var zoom_ = Math.max(scope.zoom, scope.ZOOM_MIN); zoom_ > Math.max(scope.zoom - scope.ZOOM_SHIFT_SIZE, scope.ZOOM_MIN); zoom_--) {
             var zShift = scope.zoom - zoom_;
@@ -300,64 +337,117 @@ OpenEarthView.World = function(domElement) {
             var maxYtile = Math.floor((ytile_ + (Math.pow(2, (size - 1)) - 1)) / 2) * 2 + 1;
             var modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
             for (var atile = minXtile; atile <= maxXtile; atile++) {
-                var lon1 = toolbox.tile2long(atile, zoom_);
-                var lon2 = toolbox.tile2long(atile + 1, zoom_);
-                var lon = (lon1 + lon2) / 2;
                 for (var btile = minYtile; btile <= maxYtile; btile++) {
-                    var lat1 = toolbox.tile2lat(btile, zoom_);
-                    var lat2 = toolbox.tile2lat(btile + 1, zoom_);
-                    var lat = (lat1 + lat2) / 2;
-                    var widthUp = toolbox.measure(lat1, lon1, lat1, lon2);
-                    var widthDown = toolbox.measure(lat2, lon1, lat2, lon2);
-                    var widthSide = toolbox.measure(lat1, lon1, lat2, lon1);
-                    var id = 'z_' + zoom_ + '_' + atile + "_" + btile;
+                    var id = 'z_' + zoom_ + '_' + (atile % modulus) + "_" + (btile % modulus);
                     for (var zzz = 1; zzz <= 2; zzz++) {
-                        var idNext = 'z_' + (zoom_ - zzz) + '_' + Math.floor(atile / Math.pow(2, zzz)) + "_" + Math.floor(btile / Math.pow(2, zzz));
+                        var idNext = 'z_' + (zoom_ - zzz) + '_' + Math.floor((atile % modulus) / Math.pow(2, zzz)) + "_" + Math.floor((btile % modulus) / Math.pow(2, zzz));
                         tiles[idNext] = {};
                     }
                     if (!tiles.hasOwnProperty(id)) {
+                        var tileSupport = new THREE.Object3D(); //create an empty container
+                        var tileMesh = new THREE.Mesh();
+                        tileSupport.add(tileMesh);
+
+                        // tileMesh.position.set(0, 0, -10);
                         if (zoom_ < scope.ZOOM_FLAT) {
-                            var tileMesh;
                             var tileEarth = new THREE.Object3D(); //create an empty container
-                            tileEarth.rotation.set(0, (lon1 + 180) * Math.PI / 180, 0);
+                            tileEarth.rotation.set(0, (toolbox.tile2long(atile, zoom_) + 180) * Math.PI / 180, 0);
                             scope.tileGroup[zShift].add(tileEarth);
                             tileMesh = toolbox.getTileMesh(R, zoom_, btile, Math.max(9 - zoom_, 0));
                             tileEarth.add(tileMesh);
                         } else {
-                            var tileShape = new THREE.Shape();
+                            for (var terrainId in scope.terrains) {
+                                // for (var layerIdx = 0; layerIdx < layerIds.length; layerIdx++) {
+                                if (!scope.terrains.hasOwnProperty(terrainId)) {
+                                    continue;
+                                }
+                                switch (scope.terrains[terrainId].type) {
+                                    case 'terrain':
+                                        (function(tileSupport, tileMesh, zoom, xtile, ytile) {
 
-                            var xTileShift = (atile - xtile_) + (xtile_ % Math.pow(2, zoom_ - scope.ZOOM_FLAT));
-                            var yTileShift = (btile - ytile_) + (ytile_ % Math.pow(2, zoom_ - scope.ZOOM_FLAT));
-                            var xA = 0;
-                            var xB = xA;
-                            var xC = widthUp;
-                            var xD = xC;
-                            var yA = -widthSide;
-                            var yB = 0;
-                            var yC = yB;
-                            var yD = yA;
-                            tileShape.moveTo(xA, yA);
-                            tileShape.lineTo(xB, yB);
-                            tileShape.lineTo(xC, yC);
-                            tileShape.lineTo(xD, yD);
-                            tileShape.lineTo(xA, yA);
+                                            var lon1 = toolbox.tile2long(xtile, zoom_);
+                                            var lon2 = toolbox.tile2long(xtile + 1, zoom_);
+                                            var lon = (lon1 + lon2) / 2;
+                                            var lat1 = toolbox.tile2lat(ytile, zoom_);
+                                            var lat2 = toolbox.tile2lat(ytile + 1, zoom_);
+                                            var lat = (lat1 + lat2) / 2;
+                                            var widthUp = toolbox.measure(lat, lon1, lat, lon2);
+                                            // var widthDown = toolbox.measure(lat2, lon1, lat2, lon2);
+                                            var widthSide = toolbox.measure(lat1, lon, lat2, lon);
 
-                            var geometry = new THREE.ShapeGeometry(tileShape);
-                            toolbox.assignUVs(geometry);
-                            var tileSupport = new THREE.Object3D(); //create an empty container
-                            tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
-                            oriGround.add(tileSupport);
+                                            var tileShape = new THREE.Shape();
+                                            var xTileShift = (atile - xtile_) + (xtile_ % Math.pow(2, zoom_ - scope.ZOOM_FLAT));
+                                            var yTileShift = (btile - ytile_) + (ytile_ % Math.pow(2, zoom_ - scope.ZOOM_FLAT));
+                                            var xA = 0;
+                                            var xB = xA;
+                                            var xC = widthUp;
+                                            var xD = xC;
+                                            var yA = -widthSide;
+                                            var yB = 0;
+                                            var yC = yB;
+                                            var yD = yA;
+                                            tileShape.moveTo(xA, yA);
+                                            tileShape.lineTo(xB, yB);
+                                            tileShape.lineTo(xC, yC);
+                                            tileShape.lineTo(xD, yD);
+                                            tileShape.lineTo(xA, yA);
 
-                            var tileMesh = new THREE.Mesh(geometry);
-                            // tileMesh.position.set(0, 0, -10);
-                            tileSupport.add(tileMesh)
-                                // if (zoom_ >= 19 && atile == xtile_ && btile == ytile) {
+                                            tileSupport.position.set(xTileShift * widthUp, -yTileShift * widthSide, 0);
+                                            oriGround.add(tileSupport);
+
+                                            var geometry = new THREE.ShapeGeometry(tileShape);
+                                            toolbox.assignUVs(geometry);
+                                            tileMesh.geometry = geometry;
+
+
+
+                                            // var url = scope.terrains[terrainId].getUrl(
+                                            //     zoom,
+                                            //     ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0),
+                                            //     ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0));
+                                            // terrainLoader.terrainFactory(
+                                            //     url,
+                                            //     zoom,
+                                            //     xtile,
+                                            //     ytile,
+                                            //     function(geometry) {
+                                            //         tileMesh.geometry = geometry;
+                                            //         scope.render();
+                                            //     },
+                                            //     scope.terrains[terrainId].getName();
+                                            // );
+                                        })(tileSupport, tileMesh, zoom_, atile % modulus, btile % modulus);
+
+                                        break;
+                                }
+                            }
+                            // if (zoom_ >= 19 && atile == xtile_ && btile == ytile) {
                         }
-                        for (var layerIdx = 0; layerIdx < scope.layers.length; layerIdx++) {
-                            switch (scope.layers[layerIdx].type) {
+                        for (var layerId in scope.layers) {
+                            // console.log("layerId:", layerId);
+                            if (!scope.layers.hasOwnProperty(layerId)) {
+                                continue;
+                            }
+                            // console.log('scope.layers[',layerId ,']:', JSON.stringify(scope.layers[layerId]));
+                            switch (scope.layers[layerId].type) {
                                 case 'tile':
-                                    (function(tileMesh, zoom, xtile, ytile, layerIdx) {
-                                        var url = scope.layers[layerIdx].getUrl(
+                                    tileMesh.material = new THREE.MeshBasicMaterial({
+                                        transparent: ((scope.layers[layerId].opacity === 1) ? false : true),
+                                        opacity: scope.layers[layerId].opacity
+                                    });
+                                    scope.render();
+                                    tileLoader.tilePreload(
+                                        zoom_,
+                                        atile % modulus,
+                                        btile % modulus,
+                                        function(texture) {
+                                            tileMesh.material.map = texture;
+                                            tileMesh.material.needsUpdate = true;
+                                            scope.render();
+                                        }
+                                    );
+                                    (function(tileMesh, zoom, xtile, ytile, layerId) {
+                                        var url = scope.layers[layerId].getUrl(
                                             zoom,
                                             ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0),
                                             ((zoom > 0) ? (ytile % Math.pow(2, zoom)) : 0));
@@ -367,45 +457,123 @@ OpenEarthView.World = function(domElement) {
                                             xtile,
                                             ytile,
                                             function(texture) {
-                                                tileMesh.material = new THREE.MeshBasicMaterial({
-                                                    map: texture,
-                                                    transparent: ((scope.layers[layerIdx].opacity === 1) ? false : true),
-                                                    opacity: scope.layers[layerIdx].opacity
-                                                });
+                                                tileMesh.material.map = texture;
+                                                tileMesh.material.needsUpdate = true;
                                                 scope.render();
-                                            },
-                                            scope.layers[layerIdx].getName()
+                                            }
                                         );
-                                    })(tileMesh, zoom_, atile % modulus, btile % modulus, layerIdx);
-
-                                    var id = 'tile' + zoom_ + '_' + (atile % modulus) + '_' + (btile % modulus) + '_' + scope.layers[layerIdx].getName();
-                                    currentIds[id] = {};
+                                        var tilePath = zoom + '/' + xtile + '/' + ytile;
+                                        currentIds[tilePath] = {};
+                                    })(tileMesh, zoom_, atile % modulus, btile % modulus, layerId);
                                     break;
                                 case 'building':
-                                    // if (scope.zoom === 19 && atile === 265544 && btile ===180362) {
-                                    if (scope.zoom >= 17 && zoom_ >= scope.zoom - 1) {
+                                    if (scope.zoom >= 17 && zoom_ >= Math.max(scope.zoom - 1, scope.layers[layerId].minZoom)) {
+                                        var id = 'tile_' + zoom_ + '_' + (atile % modulus) + '_' + (btile % modulus) + '_' + scope.layers[layerId].getName();
+                                        // console.log('tile for building: ', id);
                                         var defaultColor =
                                             ((13 * scope.zoom) % 256) * 65536 +
                                             ((53 * (atile % modulus)) % 256) * 256 +
                                             ((97 * (btile % modulus)) % 256);
-                                        var lod = Math.max(0, zoom_ - 14);
-                                        (function(myTile, zoom, xtile, ytile, lod, defaultColor) {
-                                            var url = scope.layers[layerIdx].getUrl(
-                                                zoom, xtile, ytile, zoom_ - 16);
-                                            scope.geojsonLoader.load(
+                                        var lod = Math.max(0, zoom_ - 15);
+                                        // console.log('my lod:', lod);
+                                        (function(tileSupport, zoom, xtile, ytile, lod, defaultColor) {
+                                            // var tilePath = '/' + zoom_ + '/' + (atile % modulus) + '/' + (btile % modulus);
+                                            var url = scope.layers[layerId].getUrl(
+                                                zoom, xtile, ytile);
+                                            // console.log("Building request:", url);
+                                            // if (zoom == 19 && xtile === 154404 && ytile === 197057) {
+                                            scope.geojsonLoader.load({
+                                                    z: zoom,
+                                                    x: xtile,
+                                                    y: ytile
+                                                },
                                                 url,
                                                 function(obj) {
-                                                    myTile.add(obj);
+                                                    // console.log('Loading: ', JSON.stringify(obj));
+                                                    tileSupport.add(obj);
                                                     scope.render();
                                                 },
                                                 function() {},
                                                 function() {},
                                                 lod,
                                                 defaultColor);
+                                            // }
+
                                         })(tileSupport, zoom_, (atile % modulus), (btile % modulus), lod, defaultColor);
                                     }
 
                                     break;
+                                case 'overpassBuilding':
+                                    // console.log("overpassBuilding");
+                                    // console.log('scope.layers[', layerId, ']:', JSON.stringify(scope.layers[layerId]));
+                                    // console.log('scope.layers[', layerId, '].type:', JSON.stringify(scope.layers[layerId].type));
+                                    // console.log('scope.zoom:', scope.zoom);
+                                    // console.log('zoom_:', zoom_);
+                                    // console.log('scope.layers[layerId].minZoom:', scope.layers[layerId].minZoom);
+                                    Math.max(scope.zoom - 1, scope.layers[layerId].minZoom)
+                                    if (scope.zoom >= 17 && zoom_ >= Math.max(scope.zoom - 1, scope.layers[layerId].minZoom)) {
+                                        // console.log('scope.zoom:', scope.zoom);
+                                        var id = 'tile_' + zoom_ + '_' + (atile % modulus) + '_' + (btile % modulus) + '_' + scope.layers[layerId].getName();
+                                        // console.log('tile for building: ', id);
+                                        var defaultColor =
+                                            ((13 * scope.zoom) % 256) * 65536 +
+                                            ((53 * (atile % modulus)) % 256) * 256 +
+                                            ((97 * (btile % modulus)) % 256);
+                                        var lod = Math.max(0, zoom_ - 15);
+                                        // console.log('my lod:', lod);
+                                        (function(tileSupport, zoom, xtile, ytile, lod, defaultColor) {
+                                            // var tilePath = '/' + zoom_ + '/' + (atile % modulus) + '/' + (btile % modulus);
+                                            var url = scope.layers[layerId].getUrl(
+                                                zoom, xtile, ytile);
+                                            // console.log("Building request:", url);
+                                            // if (zoom == 19 && xtile === 154404 && ytile === 197057) {
+                                            // console.log("out - THREE.OverpassJsonLoader.load");
+
+                                            //     z: zoom,
+                                            //     x: xtile,
+                                            //     y: ytile
+                                            // },
+                                            scope.overpassJsonLoader.load({
+                                                    z: zoom,
+                                                    x: xtile,
+                                                    y: ytile
+                                                },
+                                                url,
+                                                function(obj) {
+                                                    // console.log('Loading: ', JSON.stringify(obj));
+                                                    tileSupport.add(obj);
+                                                    scope.render();
+                                                },
+                                                function() {},
+                                                function() {},
+                                                lod,
+                                                defaultColor);
+                                            // }
+
+                                        })(tileSupport, zoom_, (atile % modulus), (btile % modulus), lod, defaultColor);
+                                    }
+
+                                    break;
+                                    // case 'elevation':
+                                    //     if (scope.zoom >= 19 && zoom_ >= 19) {
+                                    //         var id = 'tile_' + zoom_ + '_' + (atile % modulus) + '_' + (btile % modulus) + '_' + scope.layers[layerIdx].getName();
+                                    //         var lod = Math.max(0, zoom_ - 15);
+                                    //         (function(myTile, zoom, xtile, ytile, lod) {
+                                    //             var url = scope.layers[layerIdx].getUrl(
+                                    //                 xtile, ytile, zoom_ - 16);
+                                    //             scope.elevationLoader.load(
+                                    //                 url,
+                                    //                 function(obj) {
+                                    //                     myTile.add(obj);
+                                    //                     scope.render();
+                                    //                 },
+                                    //                 function() {},
+                                    //                 function() {},
+                                    //                 lod);
+                                    //         })(tileSupport, zoom_, (atile % modulus), (btile % modulus), lod, defaultColor);
+                                    //
+                                    //     }
+                                    //     break;
                                 default:
                                     break;
                             }

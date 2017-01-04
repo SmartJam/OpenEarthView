@@ -24,10 +24,13 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 * @author Clement Igonet
 */
 
+var singleton = undefined;
+
 THREE.GeojsonLoader = function(manager) {
-
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
-
+    if (singleton === undefined) {
+        singleton = this;
+    }
 };
 
 var R = 6378.137;
@@ -37,24 +40,48 @@ var geojsonRequests = {};
 var geojsonAliveRequests = {};
 var geojsonAliveRequestsCount = 0;
 var geojsonRequestsCount = 0;
-var MAX_GEOJSON_REQUEST = 1;
+var MAX_GEOJSON_REQUEST = 10;
+
+// THREE.GeojsonLoader.getSingleton = function(manager) {}
+// scope = GeojsonLoader.getSingleton();
+
+THREE.GeojsonLoader.getSingleton = function() {
+    if (singleton === undefined) {
+        singleton = new THREE.GeojsonLoader();
+    }
+    return singleton;
+}
 
 THREE.GeojsonLoader.prototype = {
 
     constructor: THREE.GeojsonLoader,
     crossOrigin: undefined,
-
     load: function(url, onLoad, onProgress, onError, lod, defaultColor) {
+        var myUrl = new URL(url);
+        var tilePath = myUrl.pathname + myUrl.search;
+        // console.log('Loading (0): ', tilePath);
 
         // console.log('Loading: ', url);
         var scope = this;
         var loader = new THREE.XHRLoader(scope.manager);
-        if (geojsons.hasOwnProperty(url)) {
-            onLoad(scope.parse(JSON.parse(geojsons[url]), lod, defaultColor));
+        if (geojsons.hasOwnProperty(tilePath)) {
+            // onLoad(scope.parse(JSON.parse(geojsons[url]), lod, defaultColor));
+
+            geojson = geojsons[tilePath];
+            try {
+                // console.log('Loading (1): ', tilePath);
+                var myGeojson = JSON.parse(geojson);
+                onLoad(scope.parse(myGeojson, lod, defaultColor));
+            } catch (e) {
+                console.error('Cannot parse geojson data (' + tilePath + ')');
+                console.error('Error message: ', e.message);
+                onLoad(scope.parse({}, lod, defaultColor));
+            }
         } else {
             geojsonRequestsCount = geojsonRequestsCount +
-                (geojsonRequests.hasOwnProperty(url) ? 0 : 1);
-            geojsonRequests[url] = {
+                (geojsonRequests.hasOwnProperty(tilePath) ? 0 : 1);
+            geojsonRequests[tilePath] = {
+                url: url,
                 onLoad: onLoad,
                 onProgress: onProgress,
                 onError: onError,
@@ -74,38 +101,62 @@ THREE.GeojsonLoader.prototype = {
         var scope = this;
         var loader = new THREE.XHRLoader(scope.manager);
         while (geojsonAliveRequestsCount < MAX_GEOJSON_REQUEST && geojsonRequestsCount > 0) {
-            var urls = Object.keys(geojsonRequests);
-            var url = urls[urls.length - 1];
+            var tilePaths = Object.keys(geojsonRequests);
+            var tilePath = tilePaths[tilePaths.length - 1];
             geojsonAliveRequestsCount = geojsonAliveRequestsCount +
-                (geojsonAliveRequests.hasOwnProperty(url) ? 0 : 1);
-            console.log('geojsonAliveRequestsCount:', geojsonAliveRequestsCount);
-            geojsonAliveRequests[url] = geojsonRequests[url];
-            var onLoad = geojsonAliveRequests[url].onLoad;
-            var onProgress = geojsonAliveRequests[url].onProgress;
-            var onError = geojsonAliveRequests[url].onError;
-            var lod = geojsonAliveRequests[url].lod;
-            var defaultColor = geojsonAliveRequests[url].defaultColor;
-            delete geojsonRequests[url];
+                (geojsonAliveRequests.hasOwnProperty(tilePath) ? 0 : 1);
+            // if (geojsonAliveRequestsCount === MAX_GEOJSON_REQUEST)
+            //     console.log('geojsonAliveRequestsCount:', geojsonAliveRequestsCount);
+            geojsonAliveRequests[tilePath] = geojsonRequests[tilePath];
+            var url = geojsonAliveRequests[tilePath].url;
+            var onLoad = geojsonAliveRequests[tilePath].onLoad;
+            var onProgress = geojsonAliveRequests[tilePath].onProgress;
+            var onError = geojsonAliveRequests[tilePath].onError;
+            var lod = geojsonAliveRequests[tilePath].lod;
+            var defaultColor = geojsonAliveRequests[tilePath].defaultColor;
+            delete geojsonRequests[tilePath];
             geojsonRequestsCount--;
             (function(url, onLoad, onProgress, onError, lod, defaultColor) {
+                // console.log('Loading (3): ', tilePath);
                 loader.load(
                     url,
-                    function(geojson) {
+                    function(geojsonTile) {
                         // console.log('geojson:', geojson);
-                        geojsons[url] = geojson;
-                        if (geojsonAliveRequests.hasOwnProperty(url)) {
-                            delete geojsonAliveRequests[url];
+                        var myUrl = new URL(url);
+                        var tilePath = myUrl.pathname + myUrl.search;
+                        if (geojsonAliveRequests.hasOwnProperty(tilePath)) {
+                            delete geojsonAliveRequests[tilePath];
                             geojsonAliveRequestsCount--;
-                            console.log('geojsonAliveRequestsCount:', geojsonAliveRequestsCount);
-                            onLoad(scope.parse(JSON.parse(geojson), lod, defaultColor));
+                            // if (geojsonAliveRequestsCount === 0)
+                            //     console.log('geojsonAliveRequestsCount back to 0:', geojsonAliveRequestsCount);
+                            try {
+                                var myGeojson = JSON.parse(geojsonTile);
+                                // for (var tilePath in geojsonTiles.getKey()) {
+                                geojsons[tilePath] = geojsonTile;
+                                // }
+                                // geojsons[tilePath] = geojson;
+                                // var xxx = THREE.GeojsonLoader.getSingleton();
+                                onLoad(THREE.GeojsonLoader.getSingleton().parse(myGeojson, lod, defaultColor));
+                                // console.error('Cannot parse geojson data (' + tilePath + ')');
+                                // console.error('Error message: ', e.message);
+                            } catch (e) {
+                                console.error('Error when parsing geojson data (' + tilePath + '): ', geojsonTile);
+                                console.error(e);
+                                onLoad(scope.parse({}, lod, defaultColor));
+                            }
+
+                            // onLoad(scope.parse(JSON.parse(geojson), lod, defaultColor));
                         }
                         scope.loadNextGeojson();
                     }, onProgress,
                     function(geojson) {
-                        if (geojsonAliveRequests.hasOwnProperty(url)) {
-                            delete geojsonAliveRequests[url];
+                        var myUrl = new URL(url);
+                        var tilePath = myUrl.pathname + myUrl.search;
+                        if (geojsonAliveRequests.hasOwnProperty(tilePath)) {
+                            delete geojsonAliveRequests[tilePath];
                             geojsonAliveRequestsCount--;
-                            console.log('geojsonAliveRequestsCount:', geojsonAliveRequestsCount);
+                            // if (geojsonAliveRequestsCount === 0)
+                            //     console.log('geojsonAliveRequestsCount back to 0:', geojsonAliveRequestsCount);
                         }
                         scope.loadNextGeojson();
                     });
@@ -116,6 +167,7 @@ THREE.GeojsonLoader.prototype = {
         this.crossOrigin = value;
     },
     roofMesh: function(feature) {
+        var scope = this;
         var measure = OpenEarthView.toolbox.measure;
         // var roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
         var prop = feature.properties;
@@ -176,7 +228,8 @@ THREE.GeojsonLoader.prototype = {
                         transparent: false,
                         opacity: 0.4
                     });
-                    if (lod == 5) {
+                    // console.log('lod:', lod)
+                    if (lod == 4) {
                         roofMaterial.transparent = true;
                     }
 
@@ -190,21 +243,20 @@ THREE.GeojsonLoader.prototype = {
         return roofMesh;
     },
     parse: function(json, lod, defaultColor) {
-        var measure = OpenEarthView.toolbox.measure;
         var scope = this;
+        var measure = OpenEarthView.toolbox.measure;
         var lonOri, latOri;
         var tile = new THREE.Object3D();
-        var geojsons;
+        var geojsonArray;
         if (json.constructor === Array) {
-            geojsons = json;
+            geojsonArray = json;
         } else {
-            geojsons = [json];
+            geojsonArray = [json];
         }
 
         var lonOri, latOri;
-        for (var geoIdx = 0; geoIdx < geojsons.length; geoIdx++) {
-            var geojson = geojsons[geoIdx];
-            // console.log('geojson:', JSON.stringify(geojson));
+        for (var geoIdx = 0; geoIdx < geojsonArray.length; geoIdx++) {
+            var geojson = geojsonArray[geoIdx];
             switch (geojson.type) {
                 case 'Feature':
                     switch (geojson.properties.type) {
@@ -230,8 +282,8 @@ THREE.GeojsonLoader.prototype = {
 
                                 // var geometry = new THREE.ShapeGeometry(rectShape);
                                 var material = new THREE.LineBasicMaterial({
-                                    color: 0xff0000,
-                                    linewidth: 3
+                                    color: defaultColor,
+                                    linewidth: 10
                                 });
                                 var mesh = new THREE.Line(points, material);
                                 mesh.position.z = 1;
@@ -311,7 +363,7 @@ THREE.GeojsonLoader.prototype = {
                                                 transparent: false,
                                                 opacity: 0.4
                                             });
-                                            if (lod == 5) {
+                                            if (lod == 4) {
                                                 material.transparent = true;
                                             }
 

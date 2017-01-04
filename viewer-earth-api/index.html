@@ -45,13 +45,21 @@
         <script src="node_modules/three/build/three.js"></script>
         <script src="js/turf/v2.0.2/turf.min.js"></script>
         <script src="js/openearthview.js" type="text/javascript"></script>
-        <script src="js/loaders/TileLoader.js" type="text/javascript"></script>
-        <script src="js/loaders/GeojsonLoader.js"></script>
         <script src="js/toolbox.js" type="text/javascript"></script>
+        <!-- <script src="js/loaders/TerrainLoader.js" type="text/javascript"></script> -->
+        <script src="js/loaders/TileLoader.js" type="text/javascript"></script>
+        <script src="js/loaders/TerrainLoader.js" type="text/javascript"></script>
+        <!-- <script src="js/loaders/GeojsonLoader.js"></script> -->
+        <script src="js/loaders/OverpassJsonLoader.js"></script>
+        <!-- <script src="js/loaders/mapzenGeojsonLoader.js"></script> -->
+        <!-- <script src="js/toolbox.js" type="text/javascript"></script> -->
         <script src="js/controls/EarthControls.js"></script>
         <script src="js/layers/Layer.js"></script>
         <script src="js/layers/OsmLayer.js"></script>
         <script src="js/layers/BuildingLayer.js"></script>
+        <script src="js/layers/OverpassBuildingLayer.js"></script>
+        <script src="js/terrains/Terrain.js"></script>
+        <script src="js/terrains/FlatTerrain.js"></script>
         <title>OpenEartView example</title>
     </head>
 
@@ -67,22 +75,93 @@
             //         "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
             //         "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
             //     ]));
-            world.addLayer(new OpenEarthView.Layer.Building(
-                "OpenEarthView", [
-                    'http://localhost:8081/3dtile?format=geojson&xtile=${x}&ytile=${y}&zoom=${z}&factor=${f}'
-                ]));
+            // world.addLayer(new OpenEarthView.Layer.Building(
+            //     "OpenEarthView", [
+            //         'http://localhost:8081/3dtile?format=geojson&xtile=${x}&ytile=${y}&zoom=${z}&factor=${f}'
+            //     ]));
+
+
+
+
+
+            world.addLayer(new OpenEarthView.Layer.OverpassBuilding(
+                "Overpass", [
+                    'http://overpass-api.de/api/interpreter'
+                ], {
+                    minZoom: 18
+                }));
+
+
+
+
+
+            // curl -G -d 'data=[bbox];(relation["building"])->.relbuilding;'\
+            // '.relbuilding%20is_in({{center}})->.relcentered;'\
+            // '(.relcentered;>;)->.bigbuildings' \
+            // '(way["building"])->.waybuilding;'\
+            // '.waybuilding%20is_in({{center}})->.waycentered;'\
+            // '(.bigbuildings;.waycentered;);out;' \
+            //   "http://overpass-api.de/api/interpreter?bbox=55.7523958,37.6216078,55.7528487,37.6237535"
+
+            // [out:json];
+            // (relation["building"]({{bbox}}))->.relbuilding;
+            // .relbuilding is_in({{center}})->.relcentered;
+            // (.relcentered;>;)->.bigbuildings;
+            // (way["building"]({{bbox}}))->.waybuilding;
+            // .waybuilding is_in({{center}})->.waycentered;
+            // (.bigbuildings;.waycentered;);
+            // out;
+
+            // http://localhost:8083/proxycache-geojson?tile=${z},${x},${y}
+            // world.addLayer(new OpenEarthView.Layer.Building(
+            //     "OpenEarthView", [
+            //         'http://localhost:8083/proxycache-geojson?tile=${z},${x},${y}'
+            //     ], {
+            //         minZoom: 17
+            //     }));
+            // world.addLayer(new OpenEarthView.Layer.Building(
+            //     "OpenEarthView", [
+            //         'http://vector.mapzen.com/osm/buildings/${z}/${x}/${y}.json'
+            //     ], {
+            //         minZoom: 17
+            //     }));
+
+
+            // world.addLayer(new OpenEarthView.Layer.OSM(
+            //     "OpenCycleMap", [
+            //         "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"
+            //     ]));
+
 
             world.addLayer(new OpenEarthView.Layer.OSM(
-                "OpenCycleMap", [
-                    "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"
-                ]));
+                "GoogleMap", [
+                    "http://mt0.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+                    "http://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+                    "http://mt2.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+                    "http://mt3.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}"
+                ], {
+                    mapTextureRequest: 10
+                }));
+
+            // world.addLayer(new OpenEarthView.Layer.OSM(
+            //     "OpenStreetMap", [
+            //         "https://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+            //         "https://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+            //         "https://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+            //     ]));
+
+            // world.addLayer(new OpenEarthView.Layer.Elevation(
+            //     "OpenEarthView", [
+            //         'http://localhost:8084/oevElevation?tile=${z},${x},${y},${lod}'
+            //     ]));
+            // world.addTerrain(new OpenEarthView.Terrain.FlatTerrain("FlatTerrain"));
 
             // UNESCO
             // world.setCenter(2.3057599523656336, 48.849568465379264);
             // LOUVRE
-            // world.setCenter(2.3364709900972684, 48.86045538042749);
+            world.setCenter(2.3364709900972684, 48.86045538042749);
             // MANHATTAN
-            world.setCenter(286.02073690310226, 40.747508647167834);
+            // world.setCenter(286.02073690310226, 40.747508647167834);
         </script>
     </body>
 

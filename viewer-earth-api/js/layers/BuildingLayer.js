@@ -5,8 +5,12 @@
 //         "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
 //     ]));
 
-OpenEarthView.Layer.Building = function(name, urls) {
+OpenEarthView.Layer.Building = function(name, urls, options) {
     this.name = (name !== undefined) ? name : 'OpenEarthView';
+    if (options !== undefined) {
+        this.minZoom = (options.minZoom !== undefined)?options.minZoom:18;
+        console.log('minZoom: ' + this.minZoom);
+    }
     if (OpenEarthViewLayers.hasOwnProperty(name)) {
         console.err('Cannot register this already existing layer !');
         return;
@@ -22,7 +26,7 @@ OpenEarthView.Layer.Building.prototype = {
     getName: function() {
         return this.name
     },
-    getUrl: function(zoom, xtile, ytile, factor) {
+    getUrl: function(zoom, xtile, ytile) {
         var scope = this;
         var urls = OpenEarthViewLayers[scope.name];
         var urlRandom = urls[
@@ -34,8 +38,8 @@ OpenEarthView.Layer.Building.prototype = {
         //         // console.log("Match!");
         //         return p1 + zoom + p2 + xtile + p3 + ytile + p4;
         //     });
-        var url = urlRandom.replace('${f}', factor);
-        var url = url.replace('${z}', zoom);
+        // var url = urlRandom.replace('${f}', factor);
+        var url = urlRandom.replace('${z}', zoom);
         var url = url.replace('${x}', xtile);
         return url.replace('${y}', ytile);
         // return url;
