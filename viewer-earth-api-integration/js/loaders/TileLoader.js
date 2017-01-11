@@ -102,9 +102,11 @@ OpenEarthView.TileLoader.prototype = {
         var textureAliveRequests = scope.textureAliveRequests;
         var id = zoom + '/' + xtile + '/' + ytile;
         // for (var diff = 0; diff < zoom; diff++) {
-        for (var diff = 0; diff <= Math.min(5, zoom); diff++) {
-            var power = Math.pow(2, diff);
-            var idZoomOther = (+zoom - diff) + '/' + Math.floor(xtile / power) + '/' + Math.floor(ytile / power);
+        // for (var diff = 0; diff <= Math.min(5, zoom); diff++) {
+        var preLoaded = false;
+        for (var zoom_ = +zoom; zoom_ >= Math.max(zoom - 5, 2); zoom_--) {
+            var power = Math.pow(2, +zoom - +zoom_);
+            var idZoomOther = (+zoom_) + '/' + Math.floor(xtile / power) + '/' + Math.floor(ytile / power);
             // console.log('Looking for texture: ', idZoomOther);
             if (textures.hasOwnProperty(idZoomOther)) {
                 // onLoaded(textures[idZoomOther]);
@@ -121,9 +123,28 @@ OpenEarthView.TileLoader.prototype = {
                 tex.needsUpdate = true;
                 onLoaded(tex);
                 // return;
+                preLoaded = true;
                 break;
             }
         }
+        if (!preLoaded) {
+            if (textures.hasOwnProperty(2)) {
+                var power = Math.pow(2, +zoom - 2);
+                var tex = textures[2].clone();
+                tex.repeat.x = 1 / power;
+                tex.repeat.y = 1 / power;
+                var xOffset = xtile - Math.floor(xtile / power) * power
+                var yOffset = (power - 1) - (ytile - Math.floor(ytile / power) * power);
+                tex.offset.x = xOffset * tex.repeat.x;
+                tex.offset.y = yOffset * tex.repeat.y;
+                tex.needsUpdate = true;
+                onLoaded(tex);
+                preLoaded = true;
+            }
+        }
+
+
+
         // for (var diff = Math.min(zoom - 19, -8); diff < Math.min(zoom - 1, -1); diff++) {
         //     var power = Math.pow(2, diff);
         //     var idZoomOther = (+zoom - diff) + '/' + Math.floor(xtile / power) + '/' + Math.floor(ytile / power);

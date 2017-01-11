@@ -126,6 +126,25 @@ THREE.EarthControls = function(object, domElement, render, coord) {
         scope.render();
     }
 
+    this.setPolarAngle = function(phi) {
+        spherical.phi = phi;
+        scope.update();
+        scope.render();
+    };
+    this.setAzimuthalAngle = function(theta) {
+        spherical.theta = theta;
+        scope.update();
+        scope.render();
+    };
+    this.setPosition = function(lon, lat, phi, theta) {
+        longitude = lon;
+        latitude = lat;
+        sphericalDelta.phi = phi;
+        sphericalDelta.theta = theta;
+        scope.update();
+        scope.render();
+    }
+
     this.getPolarAngle = function() {
         return spherical.phi;
     };
