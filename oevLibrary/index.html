@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>Open Earth View - viewer-earth</title>
+    <link rel="stylesheet" href="css/openearthview.css" type="text/css">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #osmworld {
+            height: 90%;
+            margin-left: 5%;
+            margin-right: 5%;
+        }
+    </style>
+    <script src="node_modules/three/build/three.js"></script>
+    <script src="./lib/OpenEarthView.js" type="text/javascript"></script>
+    <script src="./js/layers/OverpassBuildingLayer.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+    <div id="osmworld"></div>
+
+    <script type="text/javascript">
+        var world = new OpenEarthView.World("osmworld");
+        // world.addLayer(
+        //     new OpenEarthView.Layer.OSM(
+        //         'GoogleMap', [
+        //             "http://mt0.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+        //             "http://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+        //             "http://mt2.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+        //             "http://mt3.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}"
+        //         ], {
+        //             mapTextureRequest: 10
+        //         }));
+
+        // Set ground layer
+        world.addLayer(
+            new OpenEarthView.Layer.OSM(
+                "OpenStreetMap", [
+                    "https://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+                    "https://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+                    "https://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+                ]));
+
+        // Set 3D building layer
+        world.addLayer(
+            new OpenEarthView.Layer.OverpassBuilding(
+                'Overpass', [
+                    'http://overpass-api.de/api/interpreter'
+                ], {
+                    minZoom: 18
+                }),
+            THREE.OverpassJsonLoader.getSingleton());
+
+        world.setPosition(-73.982704, 40.7489443, 0, 0);
+    </script>
+
+</body>
+
+</html>
