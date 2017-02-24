@@ -1,0 +1,1994 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API",
+  "osm3s": {
+    "timestamp_osm_base": "2017-02-24T15:05:02Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 2709702879,
+  "lat": 40.7501114,
+  "lon": -73.9854304
+},
+{
+  "type": "node",
+  "id": 2709702905,
+  "lat": 40.7501901,
+  "lon": -73.9856397
+},
+{
+  "type": "node",
+  "id": 2709702917,
+  "lat": 40.7502120,
+  "lon": -73.9856921
+},
+{
+  "type": "node",
+  "id": 2709702923,
+  "lat": 40.7502257,
+  "lon": -73.9845956
+},
+{
+  "type": "node",
+  "id": 2709702938,
+  "lat": 40.7502882,
+  "lon": -73.9847468
+},
+{
+  "type": "node",
+  "id": 2709702949,
+  "lat": 40.7503209,
+  "lon": -73.9859947
+},
+{
+  "type": "node",
+  "id": 2709702950,
+  "lat": 40.7503246,
+  "lon": -73.9852767
+},
+{
+  "type": "node",
+  "id": 2709702960,
+  "lat": 40.7503492,
+  "lon": -73.9860626
+},
+{
+  "type": "node",
+  "id": 2709702962,
+  "lat": 40.7503519,
+  "lon": -73.9849011
+},
+{
+  "type": "node",
+  "id": 2709702966,
+  "lat": 40.7503766,
+  "lon": -73.9849608
+},
+{
+  "type": "node",
+  "id": 2709702978,
+  "lat": 40.7504061,
+  "lon": -73.9862062
+},
+{
+  "type": "node",
+  "id": 2709702980,
+  "lat": 40.7504099,
+  "lon": -73.9854813
+},
+{
+  "type": "node",
+  "id": 2709702982,
+  "lat": 40.7504258,
+  "lon": -73.9850799
+},
+{
+  "type": "node",
+  "id": 2709702983,
+  "lat": 40.7504317,
+  "lon": -73.9855337
+},
+{
+  "type": "node",
+  "id": 2709702985,
+  "lat": 40.7504363,
+  "lon": -73.9844452
+},
+{
+  "type": "node",
+  "id": 2709702988,
+  "lat": 40.7504383,
+  "lon": -73.9862835
+},
+{
+  "type": "node",
+  "id": 2709702993,
+  "lat": 40.7504504,
+  "lon": -73.9863121
+},
+{
+  "type": "node",
+  "id": 2709702996,
+  "lat": 40.7504622,
+  "lon": -73.9862663
+},
+{
+  "type": "node",
+  "id": 2709703004,
+  "lat": 40.7504741,
+  "lon": -73.9862950
+},
+{
+  "type": "node",
+  "id": 2709703007,
+  "lat": 40.7504902,
+  "lon": -73.9864077
+},
+{
+  "type": "node",
+  "id": 2709703010,
+  "lat": 40.7504987,
+  "lon": -73.9845964
+},
+{
+  "type": "node",
+  "id": 2709703011,
+  "lat": 40.7505002,
+  "lon": -73.9864320
+},
+{
+  "type": "node",
+  "id": 2709703013,
+  "lat": 40.7505045,
+  "lon": -73.9845923
+},
+{
+  "type": "node",
+  "id": 2709703014,
+  "lat": 40.7505099,
+  "lon": -73.9852836
+},
+{
+  "type": "node",
+  "id": 2709703016,
+  "lat": 40.7505139,
+  "lon": -73.9863905
+},
+{
+  "type": "node",
+  "id": 2709703019,
+  "lat": 40.7505177,
+  "lon": -73.9852781
+},
+{
+  "type": "node",
+  "id": 2709703022,
+  "lat": 40.7505240,
+  "lon": -73.9864148
+},
+{
+  "type": "node",
+  "id": 2709703026,
+  "lat": 40.7505339,
+  "lon": -73.9845124
+},
+{
+  "type": "node",
+  "id": 2709703027,
+  "lat": 40.7505364,
+  "lon": -73.9865189
+},
+{
+  "type": "node",
+  "id": 2709703028,
+  "lat": 40.7505493,
+  "lon": -73.9858300
+},
+{
+  "type": "node",
+  "id": 2709703032,
+  "lat": 40.7505619,
+  "lon": -73.9865006
+},
+{
+  "type": "node",
+  "id": 2709703033,
+  "lat": 40.7505682,
+  "lon": -73.9847466
+},
+{
+  "type": "node",
+  "id": 2709703036,
+  "lat": 40.7505733,
+  "lon": -73.9847430
+},
+{
+  "type": "node",
+  "id": 2709703038,
+  "lat": 40.7505776,
+  "lon": -73.9858979
+},
+{
+  "type": "node",
+  "id": 2709703040,
+  "lat": 40.7505818,
+  "lon": -73.9848142
+},
+{
+  "type": "node",
+  "id": 2709703043,
+  "lat": 40.7505879,
+  "lon": -73.9854482
+},
+{
+  "type": "node",
+  "id": 2709703045,
+  "lat": 40.7505980,
+  "lon": -73.9848026
+},
+{
+  "type": "node",
+  "id": 2709703049,
+  "lat": 40.7506141,
+  "lon": -73.9855116
+},
+{
+  "type": "node",
+  "id": 2709703050,
+  "lat": 40.7506169,
+  "lon": -73.9847134
+},
+{
+  "type": "node",
+  "id": 2709703053,
+  "lat": 40.7506256,
+  "lon": -73.9848071
+},
+{
+  "type": "node",
+  "id": 2709703056,
+  "lat": 40.7506310,
+  "lon": -73.9849334
+},
+{
+  "type": "node",
+  "id": 2709703064,
+  "lat": 40.7506456,
+  "lon": -73.9849229
+},
+{
+  "type": "node",
+  "id": 2709703066,
+  "lat": 40.7506464,
+  "lon": -73.9860331
+},
+{
+  "type": "node",
+  "id": 2709703068,
+  "lat": 40.7506488,
+  "lon": -73.9847906
+},
+{
+  "type": "node",
+  "id": 2709703083,
+  "lat": 40.7506894,
+  "lon": -73.9849615
+},
+{
+  "type": "node",
+  "id": 2709703086,
+  "lat": 40.7506980,
+  "lon": -73.9849554
+},
+{
+  "type": "node",
+  "id": 2709703090,
+  "lat": 40.7507297,
+  "lon": -73.9851266
+},
+{
+  "type": "node",
+  "id": 2709703091,
+  "lat": 40.7507307,
+  "lon": -73.9850345
+},
+{
+  "type": "node",
+  "id": 2709703095,
+  "lat": 40.7507456,
+  "lon": -73.9858300
+},
+{
+  "type": "node",
+  "id": 2709703096,
+  "lat": 40.7507501,
+  "lon": -73.9843580
+},
+{
+  "type": "node",
+  "id": 2709703100,
+  "lat": 40.7507636,
+  "lon": -73.9851143
+},
+{
+  "type": "node",
+  "id": 2709703102,
+  "lat": 40.7507767,
+  "lon": -73.9863457
+},
+{
+  "type": "node",
+  "id": 2709703104,
+  "lat": 40.7507916,
+  "lon": -73.9850944
+},
+{
+  "type": "node",
+  "id": 2709703107,
+  "lat": 40.7508000,
+  "lon": -73.9852967
+},
+{
+  "type": "node",
+  "id": 2709703111,
+  "lat": 40.7508222,
+  "lon": -73.9860154
+},
+{
+  "type": "node",
+  "id": 2709703112,
+  "lat": 40.7508262,
+  "lon": -73.9853601
+},
+{
+  "type": "node",
+  "id": 2709703113,
+  "lat": 40.7508331,
+  "lon": -73.9845590
+},
+{
+  "type": "node",
+  "id": 2709703117,
+  "lat": 40.7508506,
+  "lon": -73.9852612
+},
+{
+  "type": "node",
+  "id": 2709703118,
+  "lat": 40.7508582,
+  "lon": -73.9852557
+},
+{
+  "type": "node",
+  "id": 2709703121,
+  "lat": 40.7508650,
+  "lon": -73.9846361
+},
+{
+  "type": "node",
+  "id": 2709703124,
+  "lat": 40.7508835,
+  "lon": -73.9861638
+},
+{
+  "type": "node",
+  "id": 2709703126,
+  "lat": 40.7509086,
+  "lon": -73.9848049
+},
+{
+  "type": "node",
+  "id": 2709703128,
+  "lat": 40.7509094,
+  "lon": -73.9854036
+},
+{
+  "type": "node",
+  "id": 2709703129,
+  "lat": 40.7509288,
+  "lon": -73.9847905
+},
+{
+  "type": "node",
+  "id": 2709703130,
+  "lat": 40.7509362,
+  "lon": -73.9854686
+},
+{
+  "type": "node",
+  "id": 2709703132,
+  "lat": 40.7509413,
+  "lon": -73.9848841
+},
+{
+  "type": "node",
+  "id": 2709703134,
+  "lat": 40.7509495,
+  "lon": -73.9863235
+},
+{
+  "type": "node",
+  "id": 2709703136,
+  "lat": 40.7509568,
+  "lon": -73.9863182
+},
+{
+  "type": "node",
+  "id": 2709703137,
+  "lat": 40.7509577,
+  "lon": -73.9856785
+},
+{
+  "type": "node",
+  "id": 2709703138,
+  "lat": 40.7509598,
+  "lon": -73.9855255
+},
+{
+  "type": "node",
+  "id": 2709703139,
+  "lat": 40.7509743,
+  "lon": -73.9849638
+},
+{
+  "type": "node",
+  "id": 2709703141,
+  "lat": 40.7509950,
+  "lon": -73.9849491
+},
+{
+  "type": "node",
+  "id": 2709703146,
+  "lat": 40.7510343,
+  "lon": -73.9858639
+},
+{
+  "type": "node",
+  "id": 2709703148,
+  "lat": 40.7510405,
+  "lon": -73.9846018
+},
+{
+  "type": "node",
+  "id": 2709703151,
+  "lat": 40.7510616,
+  "lon": -73.9851105
+},
+{
+  "type": "node",
+  "id": 2709703155,
+  "lat": 40.7510769,
+  "lon": -73.9866089
+},
+{
+  "type": "node",
+  "id": 2709703157,
+  "lat": 40.7510847,
+  "lon": -73.9858279
+},
+{
+  "type": "node",
+  "id": 2709703161,
+  "lat": 40.7510976,
+  "lon": -73.9858591
+},
+{
+  "type": "node",
+  "id": 2709703163,
+  "lat": 40.7511020,
+  "lon": -73.9860077
+},
+{
+  "type": "node",
+  "id": 2709703164,
+  "lat": 40.7510734,
+  "lon": -73.9846811
+},
+{
+  "type": "node",
+  "id": 2709703169,
+  "lat": 40.7511090,
+  "lon": -73.9852610
+},
+{
+  "type": "node",
+  "id": 2709703170,
+  "lat": 40.7511097,
+  "lon": -73.9860262
+},
+{
+  "type": "node",
+  "id": 2709703171,
+  "lat": 40.7511162,
+  "lon": -73.9860420
+},
+{
+  "type": "node",
+  "id": 2709703172,
+  "lat": 40.7511204,
+  "lon": -73.9852528
+},
+{
+  "type": "node",
+  "id": 2709703173,
+  "lat": 40.7511281,
+  "lon": -73.9848130
+},
+{
+  "type": "node",
+  "id": 2709703175,
+  "lat": 40.7511359,
+  "lon": -73.9853260
+},
+{
+  "type": "node",
+  "id": 2709703176,
+  "lat": 40.7511450,
+  "lon": -73.9861117
+},
+{
+  "type": "node",
+  "id": 2709703180,
+  "lat": 40.7511594,
+  "lon": -73.9853829
+},
+{
+  "type": "node",
+  "id": 2709703182,
+  "lat": 40.7511655,
+  "lon": -73.9853786
+},
+{
+  "type": "node",
+  "id": 2709703184,
+  "lat": 40.7511680,
+  "lon": -73.9861674
+},
+{
+  "type": "node",
+  "id": 2709703186,
+  "lat": 40.7511748,
+  "lon": -73.9847792
+},
+{
+  "type": "node",
+  "id": 2709703187,
+  "lat": 40.7511841,
+  "lon": -73.9860621
+},
+{
+  "type": "node",
+  "id": 2709703188,
+  "lat": 40.7511910,
+  "lon": -73.9860789
+},
+{
+  "type": "node",
+  "id": 2709703190,
+  "lat": 40.7511967,
+  "lon": -73.9859640
+},
+{
+  "type": "node",
+  "id": 2709703193,
+  "lat": 40.7512033,
+  "lon": -73.9859798
+},
+{
+  "type": "node",
+  "id": 2709703194,
+  "lat": 40.7512069,
+  "lon": -73.9850026
+},
+{
+  "type": "node",
+  "id": 2709703195,
+  "lat": 40.7512063,
+  "lon": -73.9844818
+},
+{
+  "type": "node",
+  "id": 2709703204,
+  "lat": 40.7512384,
+  "lon": -73.9847057
+},
+{
+  "type": "node",
+  "id": 2709703205,
+  "lat": 40.7512472,
+  "lon": -73.9847268
+},
+{
+  "type": "node",
+  "id": 2709703207,
+  "lat": 40.7512529,
+  "lon": -73.9849687
+},
+{
+  "type": "node",
+  "id": 2709703209,
+  "lat": 40.7512392,
+  "lon": -73.9845611
+},
+{
+  "type": "node",
+  "id": 2709703211,
+  "lat": 40.7512717,
+  "lon": -73.9851559
+},
+{
+  "type": "node",
+  "id": 2709703213,
+  "lat": 40.7512773,
+  "lon": -73.9851518
+},
+{
+  "type": "node",
+  "id": 2709703216,
+  "lat": 40.7512852,
+  "lon": -73.9846719
+},
+{
+  "type": "node",
+  "id": 2709703223,
+  "lat": 40.7513033,
+  "lon": -73.9857121
+},
+{
+  "type": "node",
+  "id": 2709703232,
+  "lat": 40.7513578,
+  "lon": -73.9853422
+},
+{
+  "type": "node",
+  "id": 2709703233,
+  "lat": 40.7513594,
+  "lon": -73.9858478
+},
+{
+  "type": "node",
+  "id": 2709703235,
+  "lat": 40.7513691,
+  "lon": -73.9846536
+},
+{
+  "type": "node",
+  "id": 2709703236,
+  "lat": 40.7513696,
+  "lon": -73.9846382
+},
+{
+  "type": "node",
+  "id": 2709703237,
+  "lat": 40.7513721,
+  "lon": -73.9848814
+},
+{
+  "type": "node",
+  "id": 2709703238,
+  "lat": 40.7513804,
+  "lon": -73.9854054
+},
+{
+  "type": "node",
+  "id": 2709703239,
+  "lat": 40.7513835,
+  "lon": -73.9854030
+},
+{
+  "type": "node",
+  "id": 2709703240,
+  "lat": 40.7513878,
+  "lon": -73.9859166
+},
+{
+  "type": "node",
+  "id": 2709703242,
+  "lat": 40.7513889,
+  "lon": -73.9847005
+},
+{
+  "type": "node",
+  "id": 2709703245,
+  "lat": 40.7513983,
+  "lon": -73.9859091
+},
+{
+  "type": "node",
+  "id": 2709703246,
+  "lat": 40.7513993,
+  "lon": -73.9847235
+},
+{
+  "type": "node",
+  "id": 2709703248,
+  "lat": 40.7514011,
+  "lon": -73.9847074
+},
+{
+  "type": "node",
+  "id": 2709703252,
+  "lat": 40.7514094,
+  "lon": -73.9854740
+},
+{
+  "type": "node",
+  "id": 2709703254,
+  "lat": 40.7514156,
+  "lon": -73.9848500
+},
+{
+  "type": "node",
+  "id": 2709703255,
+  "lat": 40.7514163,
+  "lon": -73.9847638
+},
+{
+  "type": "node",
+  "id": 2709703259,
+  "lat": 40.7514313,
+  "lon": -73.9847742
+},
+{
+  "type": "node",
+  "id": 2709703264,
+  "lat": 40.7514457,
+  "lon": -73.9847637
+},
+{
+  "type": "node",
+  "id": 2709703266,
+  "lat": 40.7514489,
+  "lon": -73.9848540
+},
+{
+  "type": "node",
+  "id": 2709703277,
+  "lat": 40.7514804,
+  "lon": -73.9850033
+},
+{
+  "type": "node",
+  "id": 2709703280,
+  "lat": 40.7515046,
+  "lon": -73.9849856
+},
+{
+  "type": "node",
+  "id": 2709703289,
+  "lat": 40.7515461,
+  "lon": -73.9857973
+},
+{
+  "type": "node",
+  "id": 2709703290,
+  "lat": 40.7515483,
+  "lon": -73.9862722
+},
+{
+  "type": "node",
+  "id": 2709703292,
+  "lat": 40.7515609,
+  "lon": -73.9851936
+},
+{
+  "type": "node",
+  "id": 2709703308,
+  "lat": 40.7515867,
+  "lon": -73.9852545
+},
+{
+  "type": "node",
+  "id": 2709703320,
+  "lat": 40.7516003,
+  "lon": -73.9844704
+},
+{
+  "type": "node",
+  "id": 2709703328,
+  "lat": 40.7516091,
+  "lon": -73.9852381
+},
+{
+  "type": "node",
+  "id": 2709703332,
+  "lat": 40.7516108,
+  "lon": -73.9853115
+},
+{
+  "type": "node",
+  "id": 2709703336,
+  "lat": 40.7516157,
+  "lon": -73.9853231
+},
+{
+  "type": "node",
+  "id": 2709703350,
+  "lat": 40.7516300,
+  "lon": -73.9845409
+},
+{
+  "type": "node",
+  "id": 2709703352,
+  "lat": 40.7516332,
+  "lon": -73.9852951
+},
+{
+  "type": "node",
+  "id": 2709703360,
+  "lat": 40.7516586,
+  "lon": -73.9846088
+},
+{
+  "type": "node",
+  "id": 2709703403,
+  "lat": 40.7517524,
+  "lon": -73.9856464
+},
+{
+  "type": "node",
+  "id": 2962750216,
+  "lat": 40.7504190,
+  "lon": -73.9856791
+},
+{
+  "type": "node",
+  "id": 2963999099,
+  "lat": 40.7502518,
+  "lon": -73.9856647
+},
+{
+  "type": "node",
+  "id": 2963999100,
+  "lat": 40.7502966,
+  "lon": -73.9857680
+},
+{
+  "type": "node",
+  "id": 2963999101,
+  "lat": 40.7503752,
+  "lon": -73.9859565
+},
+{
+  "type": "node",
+  "id": 2963999102,
+  "lat": 40.7503843,
+  "lon": -73.9855679
+},
+{
+  "type": "node",
+  "id": 2963999103,
+  "lat": 40.7503993,
+  "lon": -73.9860265
+},
+{
+  "type": "node",
+  "id": 2963999104,
+  "lat": 40.7504272,
+  "lon": -73.9856732
+},
+{
+  "type": "node",
+  "id": 2963999105,
+  "lat": 40.7504364,
+  "lon": -73.9856665
+},
+{
+  "type": "node",
+  "id": 2963999106,
+  "lat": 40.7504584,
+  "lon": -73.9861685
+},
+{
+  "type": "node",
+  "id": 2963999107,
+  "lat": 40.7504976,
+  "lon": -73.9858676
+},
+{
+  "type": "node",
+  "id": 2963999108,
+  "lat": 40.7505022,
+  "lon": -73.9858243,
+  "tags": {
+    "entrance": "main"
+  }
+},
+{
+  "type": "node",
+  "id": 2963999109,
+  "lat": 40.7505138,
+  "lon": -73.9859439
+},
+{
+  "type": "node",
+  "id": 2963999110,
+  "lat": 40.7505150,
+  "lon": -73.9858550
+},
+{
+  "type": "node",
+  "id": 2963999111,
+  "lat": 40.7505414,
+  "lon": -73.9859240
+},
+{
+  "type": "node",
+  "id": 2963999112,
+  "lat": 40.7505734,
+  "lon": -73.9860857
+},
+{
+  "type": "node",
+  "id": 2963999113,
+  "lat": 40.7505992,
+  "lon": -73.9860671
+},
+{
+  "type": "node",
+  "id": 2963999871,
+  "lat": 40.7503913,
+  "lon": -73.9855849,
+  "tags": {
+    "entrance": "main"
+  }
+},
+{
+  "type": "node",
+  "id": 3068326568,
+  "lat": 40.7512352,
+  "lon": -73.9860256
+},
+{
+  "type": "node",
+  "id": 3068326575,
+  "lat": 40.7513546,
+  "lon": -73.9859403
+},
+{
+  "type": "way",
+  "id": 265301805,
+  "center": {
+    "lat": 40.7503622,
+    "lon": -73.9845960
+  },
+  "nodes": [
+    2709702923,
+    2709702938,
+    2709703010,
+    2709702985,
+    2709702923
+  ],
+  "tags": {
+    "addr:housenumber": "15",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "61.4",
+    "nycdoitt:bin": "1015930"
+  }
+},
+{
+  "type": "way",
+  "id": 265301828,
+  "center": {
+    "lat": 40.7504282,
+    "lon": -73.9847467
+  },
+  "nodes": [
+    2709702938,
+    2709702962,
+    2709703033,
+    2709703013,
+    2709703010,
+    2709702938
+  ],
+  "tags": {
+    "addr:housenumber": "19",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "45.5",
+    "nycdoitt:bin": "1015929"
+  }
+},
+{
+  "type": "way",
+  "id": 265301835,
+  "center": {
+    "lat": 40.7506835,
+    "lon": -73.9845357
+  },
+  "nodes": [
+    2709703026,
+    2709703050,
+    2709703113,
+    2709703096,
+    2709703026
+  ],
+  "tags": {
+    "addr:housenumber": "20",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "45.8",
+    "nycdoitt:bin": "1015945"
+  }
+},
+{
+  "type": "way",
+  "id": 265301844,
+  "center": {
+    "lat": 40.7504750,
+    "lon": -73.9848519
+  },
+  "nodes": [
+    2709702962,
+    2709702966,
+    2709703040,
+    2709703045,
+    2709703036,
+    2709703033,
+    2709702962
+  ],
+  "tags": {
+    "addr:housenumber": "23",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "20.3",
+    "nycdoitt:bin": "1015928"
+  }
+},
+{
+  "type": "way",
+  "id": 265301853,
+  "center": {
+    "lat": 40.7505038,
+    "lon": -73.9849471
+  },
+  "nodes": [
+    2709702966,
+    2709702982,
+    2709703056,
+    2709703040,
+    2709702966
+  ],
+  "tags": {
+    "addr:housenumber": "25",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "44.1",
+    "nycdoitt:bin": "1015927"
+  }
+},
+{
+  "type": "way",
+  "id": 265301854,
+  "center": {
+    "lat": 40.7511398,
+    "lon": -73.9845815
+  },
+  "nodes": [
+    2709703209,
+    2709703195,
+    2709703148,
+    2709703164,
+    2709703209
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "21",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "hotel",
+    "building:levels": "16",
+    "name": "Fairfield Inn",
+    "nycdoitt:bin": "1015965",
+    "official_name": "Fairfield Inn & Suites New York Manhattan/Fifth Avenue",
+    "tourism": "hotel",
+    "website": "http://www.marriott.com/hotels/travel/nyctm-fairfield-inn-and-suites-new-york-manhattan-fifth-avenue/"
+  }
+},
+{
+  "type": "way",
+  "id": 265301859,
+  "center": {
+    "lat": 40.7507410,
+    "lon": -73.9846748
+  },
+  "nodes": [
+    2709703050,
+    2709703068,
+    2709703121,
+    2709703113,
+    2709703050
+  ],
+  "tags": {
+    "addr:housenumber": "26",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "8.9",
+    "nycdoitt:bin": "1015946"
+  }
+},
+{
+  "type": "way",
+  "id": 265301868,
+  "center": {
+    "lat": 40.7507772,
+    "lon": -73.9847988
+  },
+  "nodes": [
+    2709703053,
+    2709703083,
+    2709703086,
+    2709703126,
+    2709703129,
+    2709703121,
+    2709703068,
+    2709703053
+  ],
+  "tags": {
+    "addr:housenumber": "28",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "10.8",
+    "nycdoitt:bin": "1088178"
+  }
+},
+{
+  "type": "way",
+  "id": 265301876,
+  "center": {
+    "lat": 40.7505778,
+    "lon": -73.9851033
+  },
+  "nodes": [
+    2709702982,
+    2709703014,
+    2709703019,
+    2709703090,
+    2709703064,
+    2709703056,
+    2709702982
+  ],
+  "tags": {
+    "addr:housenumber": "29",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "58.0",
+    "nycdoitt:bin": "1015926"
+  }
+},
+{
+  "type": "way",
+  "id": 265301877,
+  "center": {
+    "lat": 40.7511793,
+    "lon": -73.9846870
+  },
+  "nodes": [
+    2709703164,
+    2709703173,
+    2709703186,
+    2709703205,
+    2709703204,
+    2709703216,
+    2709703209,
+    2709703164
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "25",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "hotel",
+    "building:levels": "19",
+    "name": "SpringHill Suites",
+    "nycdoitt:bin": "1015964",
+    "official_name": "SpringHill Suites New York Midtown Manhattan/Fifth Avenue",
+    "start_date": "2013",
+    "tourism": "hotel",
+    "website": "http://www.marriott.com/hotels/travel/nycsm-springhill-suites-new-york-midtown-manhattan-fifth-avenue/"
+  }
+},
+{
+  "type": "way",
+  "id": 265301883,
+  "center": {
+    "lat": 40.7508196,
+    "lon": -73.9849197
+  },
+  "nodes": [
+    2709703086,
+    2709703091,
+    2709703132,
+    2709703126,
+    2709703086
+  ],
+  "tags": {
+    "addr:housenumber": "32",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "17.1",
+    "nycdoitt:bin": "1015948"
+  }
+},
+{
+  "type": "way",
+  "id": 265301889,
+  "center": {
+    "lat": 40.7512734,
+    "lon": -73.9848203
+  },
+  "nodes": [
+    2709703237,
+    2709703216,
+    2709703204,
+    2709703205,
+    2709703186,
+    2709703207,
+    2709703237
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "33",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "hotel",
+    "building:levels": "19",
+    "email": "reservations@thestrandnyc.com",
+    "height": "66.9",
+    "name": "Marriott Vacation Club, New York City",
+    "nycdoitt:bin": "1084661",
+    "operator": "Marriott Vacation Club",
+    "phone": "212.448.1024",
+    "start_date": "2009",
+    "tourism": "hotel"
+  }
+},
+{
+  "type": "way",
+  "id": 265301894,
+  "center": {
+    "lat": 40.7508525,
+    "lon": -73.9849992
+  },
+  "nodes": [
+    2709703091,
+    2709703100,
+    2709703104,
+    2709703139,
+    2709703132,
+    2709703091
+  ],
+  "tags": {
+    "addr:housenumber": "34",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "14.6",
+    "nycdoitt:bin": "1015949"
+  }
+},
+{
+  "type": "way",
+  "id": 265301901,
+  "center": {
+    "lat": 40.7506588,
+    "lon": -73.9852874
+  },
+  "nodes": [
+    2709703019,
+    2709703043,
+    2709703107,
+    2709703090,
+    2709703019
+  ],
+  "tags": {
+    "addr:housenumber": "35",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "45.5",
+    "nycdoitt:bin": "1015925"
+  }
+},
+{
+  "type": "way",
+  "id": 265301912,
+  "center": {
+    "lat": 40.7513558,
+    "lon": -73.9850030
+  },
+  "nodes": [
+    2709703280,
+    2709703266,
+    2709703254,
+    2709703237,
+    2709703207,
+    2709703194,
+    2709703211,
+    2709703213,
+    2709703277,
+    2709703280
+  ],
+  "tags": {
+    "addr:housenumber": "37",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "46.2",
+    "nycdoitt:bin": "1015962"
+  }
+},
+{
+  "type": "way",
+  "id": 265301915,
+  "center": {
+    "lat": 40.7514996,
+    "lon": -73.9845889
+  },
+  "nodes": [
+    2709703236,
+    2709703235,
+    2709703242,
+    2709703248,
+    2709703350,
+    2709703320,
+    2709703236
+  ],
+  "tags": {
+    "addr:housenumber": "38",
+    "addr:postcode": "10018",
+    "addr:street": "West 38th Street",
+    "building": "yes",
+    "height": "18.5",
+    "nycdoitt:bin": "1015979"
+  }
+},
+{
+  "type": "way",
+  "id": 265301919,
+  "center": {
+    "lat": 40.7514191,
+    "lon": -73.9851728
+  },
+  "nodes": [
+    2709703213,
+    2709703232,
+    2709703292,
+    2709703277,
+    2709703213
+  ],
+  "tags": {
+    "addr:housenumber": "39",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "69.8",
+    "nycdoitt:bin": "1015961"
+  }
+},
+{
+  "type": "way",
+  "id": 265301924,
+  "center": {
+    "lat": 40.7515290,
+    "lon": -73.9846576
+  },
+  "nodes": [
+    2709703248,
+    2709703246,
+    2709703255,
+    2709703259,
+    2709703264,
+    2709703360,
+    2709703350,
+    2709703248
+  ],
+  "tags": {
+    "addr:housenumber": "40",
+    "addr:postcode": "10018",
+    "addr:street": "West 38th Street",
+    "building": "yes",
+    "height": "22.5",
+    "nycdoitt:bin": "1015980"
+  }
+},
+{
+  "type": "way",
+  "id": 265301931,
+  "center": {
+    "lat": 40.7507071,
+    "lon": -73.9854041
+  },
+  "nodes": [
+    2709703043,
+    2709703049,
+    2709703112,
+    2709703107,
+    2709703043
+  ],
+  "tags": {
+    "addr:housenumber": "41",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "13.9",
+    "nycdoitt:bin": "1015924"
+  }
+},
+{
+  "type": "way",
+  "id": 265301949,
+  "center": {
+    "lat": 40.7510227,
+    "lon": -73.9853648
+  },
+  "nodes": [
+    2709703128,
+    2709703130,
+    2709703175,
+    2709703169,
+    2709703128
+  ],
+  "tags": {
+    "addr:housenumber": "44",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "15.9",
+    "nycdoitt:bin": "1080729"
+  }
+},
+{
+  "type": "way",
+  "id": 265301952,
+  "center": {
+    "lat": 40.7514723,
+    "lon": -73.9852983
+  },
+  "nodes": [
+    2709703232,
+    2709703239,
+    2709703308,
+    2709703292,
+    2709703232
+  ],
+  "tags": {
+    "addr:housenumber": "45",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "13.4",
+    "nycdoitt:bin": "1015960"
+  }
+},
+{
+  "type": "way",
+  "id": 265301954,
+  "center": {
+    "lat": 40.7503109,
+    "lon": -73.9855867
+  },
+  "nodes": [
+    2709702905,
+    2709702917,
+    2963999099,
+    2963999102,
+    2709702983,
+    2709702980,
+    2709702905
+  ],
+  "tags": {
+    "addr:housenumber": "46",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "16.1",
+    "nycdoitt:bin": "1015911"
+  }
+},
+{
+  "type": "way",
+  "id": 265301955,
+  "center": {
+    "lat": 40.7510478,
+    "lon": -73.9854257
+  },
+  "nodes": [
+    2709703130,
+    2709703138,
+    2709703180,
+    2709703175,
+    2709703130
+  ],
+  "tags": {
+    "addr:housenumber": "46",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "16.5",
+    "nycdoitt:bin": "1080730"
+  }
+},
+{
+  "type": "way",
+  "id": 265301956,
+  "center": {
+    "lat": 40.7515068,
+    "lon": -73.9853561
+  },
+  "nodes": [
+    2709703238,
+    2709703252,
+    2709703336,
+    2709703332,
+    2709703352,
+    2709703328,
+    2709703308,
+    2709703239,
+    2709703238
+  ],
+  "tags": {
+    "addr:housenumber": "47",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "15.6",
+    "nycdoitt:bin": "1015959"
+  }
+},
+{
+  "type": "way",
+  "id": 265301972,
+  "center": {
+    "lat": 40.7508899,
+    "lon": -73.9858470
+  },
+  "nodes": [
+    2709703095,
+    2709703111,
+    2709703146,
+    2709703137,
+    2709703095
+  ],
+  "tags": {
+    "addr:housenumber": "53",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "45.1",
+    "nycdoitt:bin": "1015922"
+  }
+},
+{
+  "type": "way",
+  "id": 265301982,
+  "center": {
+    "lat": 40.7504493,
+    "lon": -73.9859463
+  },
+  "nodes": [
+    2709702949,
+    2709702960,
+    2963999103,
+    2963999109,
+    2963999111,
+    2709703038,
+    2709703028,
+    2963999110,
+    2963999107,
+    2963999101,
+    2709702949
+  ],
+  "tags": {
+    "addr:housenumber": "58",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "17.0",
+    "nycdoitt:bin": "1015914"
+  }
+},
+{
+  "type": "way",
+  "id": 265301995,
+  "center": {
+    "lat": 40.7512520,
+    "lon": -73.9859798
+  },
+  "nodes": [
+    2709703190,
+    2709703193,
+    2709703171,
+    2709703176,
+    2709703188,
+    2709703187,
+    3068326568,
+    3068326575,
+    2709703240,
+    2709703233,
+    2709703190
+  ],
+  "tags": {
+    "addr:housenumber": "62",
+    "addr:postcode": "10018",
+    "addr:street": "West 37th Street",
+    "building": "yes",
+    "height": "17.2",
+    "nycdoitt:bin": "1015953"
+  }
+},
+{
+  "type": "way",
+  "id": 265302008,
+  "center": {
+    "lat": 40.7510258,
+    "lon": -73.9861656
+  },
+  "nodes": [
+    2709703163,
+    2709703124,
+    2709703134,
+    2709703136,
+    2709703184,
+    2709703176,
+    2709703171,
+    2709703170,
+    2709703163
+  ],
+  "tags": {
+    "addr:city": "New York City",
+    "addr:housenumber": "72",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "45.5",
+    "nycdoitt:bin": "1015920"
+  }
+},
+{
+  "type": "way",
+  "id": 265302023,
+  "center": {
+    "lat": 40.7505914,
+    "lon": -73.9862760
+  },
+  "nodes": [
+    2709703102,
+    2709703066,
+    2963999113,
+    2963999112,
+    2963999106,
+    2709702978,
+    2709702988,
+    2709702996,
+    2709703004,
+    2709702993,
+    2709703007,
+    2709703016,
+    2709703022,
+    2709703011,
+    2709703027,
+    2709703032,
+    2709703102
+  ],
+  "tags": {
+    "addr:housenumber": "70",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "68.0",
+    "nycdoitt:bin": "1015916"
+  }
+},
+{
+  "type": "way",
+  "id": 265302055,
+  "center": {
+    "lat": 40.7510908,
+    "lon": -73.9859379
+  },
+  "nodes": [
+    2709703161,
+    2709703157,
+    2709703146,
+    2709703111,
+    2709703124,
+    2709703163,
+    2709703170,
+    2709703190,
+    2709703233,
+    2709703223,
+    2709703161
+  ],
+  "tags": {
+    "building": "yes",
+    "height": "6.8",
+    "nycdoitt:bin": "1015921"
+  }
+},
+{
+  "type": "way",
+  "id": 265302078,
+  "center": {
+    "lat": 40.7507859,
+    "lon": -73.9855951
+  },
+  "nodes": [
+    2709703049,
+    2709703095,
+    2709703137,
+    2709703112,
+    2709703049
+  ],
+  "tags": {
+    "building": "yes",
+    "height": "47.4",
+    "nycdoitt:bin": "1015923"
+  }
+},
+{
+  "type": "way",
+  "id": 265302091,
+  "center": {
+    "lat": 40.7515809,
+    "lon": -73.9855602
+  },
+  "nodes": [
+    2709703252,
+    2709703289,
+    2709703403,
+    2709703336,
+    2709703252
+  ],
+  "tags": {
+    "building": "yes",
+    "height": "64.2",
+    "nycdoitt:bin": "1015958"
+  }
+},
+{
+  "type": "way",
+  "id": 265302101,
+  "center": {
+    "lat": 40.7509266,
+    "lon": -73.9851024
+  },
+  "nodes": [
+    2709703104,
+    2709703118,
+    2709703151,
+    2709703141,
+    2709703139,
+    2709703104
+  ],
+  "tags": {
+    "building": "yes",
+    "height": "49.3",
+    "nycdoitt:bin": "1015950"
+  }
+},
+{
+  "type": "way",
+  "id": 265302141,
+  "center": {
+    "lat": 40.7511316,
+    "lon": -73.9856189
+  },
+  "nodes": [
+    2709703138,
+    2709703157,
+    2709703161,
+    2709703223,
+    2709703182,
+    2709703180,
+    2709703138
+  ],
+  "tags": {
+    "building": "yes",
+    "height": "71.3",
+    "nycdoitt:bin": "1015952"
+  }
+},
+{
+  "type": "way",
+  "id": 265302149,
+  "center": {
+    "lat": 40.7509855,
+    "lon": -73.9852571
+  },
+  "nodes": [
+    2709703117,
+    2709703128,
+    2709703169,
+    2709703172,
+    2709703151,
+    2709703118,
+    2709703117
+  ],
+  "tags": {
+    "building": "yes",
+    "height": "51.9",
+    "nycdoitt:bin": "1015951"
+  }
+},
+{
+  "type": "way",
+  "id": 265302177,
+  "center": {
+    "lat": 40.7512526,
+    "lon": -73.9862590
+  },
+  "nodes": [
+    2709703187,
+    2709703188,
+    2709703176,
+    2709703184,
+    2709703136,
+    2709703155,
+    2709703290,
+    2709703245,
+    2709703240,
+    3068326575,
+    3068326568,
+    2709703187
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "990",
+    "addr:postcode": "10018",
+    "addr:street": "Avenue Of The Americas",
+    "building": "apartments",
+    "building:colour": "#D7CFB8",
+    "building:levels": "4",
+    "building:part": "yes",
+    "height": "13",
+    "name": "The Vogue",
+    "nycdoitt:bin": "1015919",
+    "roof:material": "concrete",
+    "roof:shape": "flat",
+    "start_date": "1986",
+    "website": "http://www.thevoguenyc.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 292743602,
+  "center": {
+    "lat": 40.7502607,
+    "lon": -73.9854582
+  },
+  "nodes": [
+    2709702980,
+    2709702905,
+    2709702879,
+    2709702950,
+    2709702980
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "38",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "yes",
+    "height": "80",
+    "name": "LeSoleil",
+    "start_date": "2015",
+    "tourism": "hotel",
+    "website": "http://www.hotellesoleilny.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 292840083,
+  "center": {
+    "lat": 40.7503395,
+    "lon": -73.9856679
+  },
+  "nodes": [
+    2963999104,
+    2963999871,
+    2963999102,
+    2963999099,
+    2963999100,
+    2962750216,
+    2963999104
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "50",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "hotel",
+    "building:levels": "17",
+    "building:material": "glass",
+    "height": "50",
+    "name": "Best Western Herald Square",
+    "official_name": "Best Western Premier Herald Square",
+    "roof:material": "concrete",
+    "roof:shape": "flat",
+    "start_date": "2013",
+    "tourism": "hotel"
+  }
+},
+{
+  "type": "way",
+  "id": 292840084,
+  "center": {
+    "lat": 40.7504993,
+    "lon": -73.9860463
+  },
+  "nodes": [
+    2963999111,
+    2963999113,
+    2963999112,
+    2963999106,
+    2963999103,
+    2963999109,
+    2963999111
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "60",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "hotel",
+    "building:colour": "#A07F5C",
+    "building:levels": "17",
+    "building:part": "yes",
+    "height": "51",
+    "name": "Holiday Inn Express",
+    "official_name": "Holiday Inn Express NYC - Herald Square 36th St",
+    "roof:material": "concrete",
+    "roof:shape": "flat",
+    "tourism": "hotel",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "way",
+  "id": 292840085,
+  "center": {
+    "lat": 40.7504058,
+    "lon": -73.9858115
+  },
+  "nodes": [
+    2963999101,
+    2963999107,
+    2963999110,
+    2963999108,
+    2963999105,
+    2963999104,
+    2962750216,
+    2963999100,
+    2963999101
+  ],
+  "tags": {
+    "addr:city": "New York",
+    "addr:housenumber": "52",
+    "addr:postcode": "10018",
+    "addr:street": "West 36th Street",
+    "building": "hotel",
+    "name": "Hyatt Place",
+    "official_name": "Hyatt Place New York/Midtown-South",
+    "start_date": "2012",
+    "tourism": "hotel",
+    "website": "http://newyorkmidtown.place.hyatt.com/"
+  }
+}
+
+  ]
+}
