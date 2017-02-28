@@ -1,63 +1,117 @@
 <html>
 
 <head>
-    <meta charset=utf-8>
-    <title>Open Earth View - viewer-earth</title>
-    <link rel="stylesheet" href="css/openearthview.css" type="text/css">
-    <style>
-        body {
-            margin: 0;
-        }
-
-        #osmworld {
+	<meta charset=utf-8>
+	<title>Open Earth View - viewer-earth</title>
+	<link rel="stylesheet" href="css/openearthview.css" type="text/css">
+	<style>
+		body {
+			margin: 0;
+		}
+		/*#osmworld {
             height: 90%;
             margin-left: 5%;
             margin-right: 5%;
-        }
-    </style>
-    <script src="node_modules/three/build/three.js"></script>
-    <script src="./lib/OpenEarthView.js" type="text/javascript"></script>
-    <script src="./js/layers/OverpassBuildingLayer.js" type="text/javascript"></script>
+        }*/
+
+		#osmworld {
+			height: 100%;
+			margin-left: 0%;
+			margin-right: 0%;
+		}
+	</style>
+	<script src="node_modules/three/build/three.js"></script>
+	<script src="./lib/OpenEarthView.js" type="text/javascript"></script>
+	<script src="./js/layers/OverpassBuildingLayer.js" type="text/javascript"></script>
 
 </head>
 
 <body>
-    <div id="osmworld"></div>
+	<div id="osmworld"></div>
 
-    <script type="text/javascript">
-        var world = new OpenEarthView.World("osmworld");
-        // world.addLayer(
-        //     new OpenEarthView.Layer.OSM(
-        //         'GoogleMap', [
-        //             "http://mt0.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
-        //             "http://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
-        //             "http://mt2.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
-        //             "http://mt3.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}"
-        //         ], {
-        //             mapTextureRequest: 10
-        //         }));
+	<script type="text/javascript">
+		var world = new OpenEarthView.World("osmworld");
+		world.addLayer(
+			new OpenEarthView.Layer.OSM(
+				'GoogleMap', [
+					"http://mt0.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+					"http://mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+					"http://mt2.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+					"http://mt3.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}"
+				], {
+					mapTextureRequest: 10
+				}));
+		// world.addLayer(
+		// 	new OpenEarthView.Layer.OSM(
+		// 		'bluemarble', [
+		// 			"http://s3.amazonaws.com/com.modestmaps.bluemarble/${z}-r${y}-c${x}.jpg"
+		// 		], {
+		// 			mapTextureRequest: 10
+		// 		}));
 
-        // Set ground layer
-        world.addLayer(
-            new OpenEarthView.Layer.OSM(
-                "OpenStreetMap", [
-                    "https://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-                    "https://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-                    "https://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
-                ]));
+		// world.addLayer(
+		//     new OpenEarthView.Layer.OSM(
+		//         'GoogleMap', [
+		//             "http://localhost:8092/http/mt0.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+		//             "http://localhost:8092/http/mt1.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+		//             "http://localhost:8092/http/mt2.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}",
+		//             "http://localhost:8092/http/mt3.google.com/vt/lyrs=y&x=${x}&y=${y}&z=${z}"
+		//         ], {
+		//             mapTextureRequest: 10
+		//         }));
 
-        // Set 3D building layer
-        world.addLayer(
-            new OpenEarthView.Layer.OverpassBuilding(
-                'Overpass', [
-                    'http://overpass-api.de/api/interpreter'
-                ], {
-                    minZoom: 18
-                }),
-            THREE.OverpassJsonLoader.getSingleton());
+		// // Set ground layer
+		// world.addLayer(
+		//     new OpenEarthView.Layer.OSM(
+		//         "OpenStreetMap", [
+		//             "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+		//             "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+		//             "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+		//         ]));
 
-        world.setPosition(-73.982704, 40.7489443, 0, 0);
-    </script>
+		// Set ground layer
+		// world.addLayer(
+		//     new OpenEarthView.Layer.OSM(
+		//         "OpenStreetMap", [
+		//             "http://localhost:8092/osm/http/a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+		//             "http://localhost:8092/osm/http/b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+		//             "http://localhost:8092/osm/http/c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+		//         ]));
+
+		// Set 3D building layer
+		// world.addLayer(
+		//     new OpenEarthView.Layer.OverpassBuilding(
+		//         'Overpass', [
+		//             'http://overpass-api.de/api/interpreter'
+		//         ], {
+		//             minZoom: 18
+		//         }),
+		//     THREE.OverpassJsonLoader.getSingleton());
+		// 'http://localhost:8092/http/overpass-api.de/api/interpreter'
+		let bbox = '${tile2lat(y+1)},${tile2long(x)},${tile2lat(y)},${tile2long(x+1)}'
+		let url1 = 'http://overpass-api.de/api/interpreter' +
+			'?data=[out:json];(' +
+			'(relation["type"="building"](' + bbox + ');>;);' +
+			'(way["building"](' + bbox + ');>;););' +
+			'out center;';
+		// world.addLayer(
+		// 	new OpenEarthView.Layer.OverpassBuilding(
+		// 		'Overpass', [url1], {
+		// 			minZoom: 18,
+		// 			localData: 'file:///home/cigone/perso/OpenEarthView/oevLibrary_dev/buildingData/${z}/${x}/${y}.json'
+		// 		}),
+		// 	THREE.OverpassJsonLoader.getSingleton());
+		world.addLayer(
+			new OpenEarthView.Layer.OverpassBuilding(
+				'Overpass', [url1], {
+					minZoom: 18,
+					localData: 'file:///c:/cygwin64/home/pizaninja/Projects/OpenEarthView/oevLibrary_dev/buildingData/${z}/${x}/${y}.json',
+					maxRequest: 3
+				}),
+			THREE.OverpassJsonLoader.getSingleton());
+		// world.setPosition(-73.982704, 40.7489443, 500, 1, 0);
+		world.setPosition(-73.98585791124242, 40.74849635728433, 500, 1, 0);
+	</script>
 
 </body>
 

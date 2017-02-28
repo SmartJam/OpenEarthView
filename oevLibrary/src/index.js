@@ -13,6 +13,7 @@ THREE.EarthControls = require('./controls/EarthControls.js');
 export default {
     World: require('./world.js'),
     toolbox: require('./toolbox.js'),
+    RequestManager: require('./request/RequestManager.js'),
     Layer: {
         // OverpassBuilding: require('./layers/OverpassBuildingLayer.js'),
         OSM: require('./layers/OsmLayer.js')

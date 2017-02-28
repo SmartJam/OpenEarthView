@@ -42,9 +42,7 @@ let self;
 class World {
     constructor(domElement) {
         self = this;
-        this.goUpdateSceneLazy = function() {
-            self.updateSceneLazy();
-        };
+
         this.domElement = domElement;
         this.terrains = {};
         this.terrains['FlatTerrain'] = new FlatTerrain('FlatTerrain', null, null);
@@ -54,6 +52,13 @@ class World {
             alert('No domElement defined.');
             return;
         }
+        this.lastSelectedBuilding = {
+            id: undefined,
+            tileMesh: undefined,
+            bboxMesh: undefined,
+            bboxCenter: undefined,
+            building: undefined
+        };
         // if (this.layers.length === 0) {
         //     this.layers[0] = new OpenEarthView.Layer.OSM("defaultLayer");
         // }
@@ -77,6 +82,7 @@ class World {
         // this.geojsonLoader = THREE.GeojsonLoader.getSingleton();
 
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000000);
+        // console.log('camera:', JSON.stringify(this.camera));
         this.camera.up.set(0, 0, 1);
 
         this.domElement = document.getElementById(domElement);
@@ -121,10 +127,13 @@ class World {
         this.scene = new THREE.Scene();
 
         // document.body.appendChild(renderer.domElement);
-
+        this.buildingObjects = [];
         this.earth = new THREE.Object3D();
         this.earth.position.set(0, 0, -this.R * 1000);
         this.scene.add(this.earth);
+
+        // this.selectedBuildingContainer = new THREE.Object3D();
+        // this.scene.add(this.selectedBuildingContainer);
 
         let light1 = new THREE.DirectionalLight(0xf0f0e0, 1);
         let light2 = new THREE.DirectionalLight(0xf0f0e0, 1);
@@ -146,15 +155,23 @@ class World {
         this.controls = new THREE.EarthControls(
             this.camera,
             this.renderer.domElement,
-            this.goUpdateSceneLazy, {
+            () => {
+                self.render();
+            },
+            () => {
+                self.updateSceneLazy();
+            }, {
                 longitude: this.LONGITUDE_ORI,
                 latitude: this.LATITUDE_ORI
+            },
+            (event) => {
+                this.onSelectObject(event);
             }
         );
 
         // var canvas = document.getElementById('world');
         // this.canvas.addEventListener('resize', this.onWindowResize, false);
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', () => {
             // console.log('coucou !!!');
             // console.log('this.domElement.clientWidth:', this.domElement.clientWidth);
             var width = self.domElement.clientWidth;
@@ -194,6 +211,206 @@ class World {
     };
     // var scope = this;
 
+    onSelectObject(event) {
+        let scope = this;
+        console.log('Select object !');
+        console.log('event:{clientX:', event.clientX, ', clientY:', event.clientY, '}');
+        console.log('event:{offsetX:', event.offsetX, ', offsetY:', event.offsetY, '}');
+        console.log('self.renderer.domElement:{clientWidth:', self.renderer.domElement.clientWidth, ', clientHeight:', self.renderer.domElement.clientHeight, '}');
+        let mouse = new THREE.Vector3(
+            (event.offsetX / self.renderer.domElement.clientWidth) * 2 - 1, -(event.offsetY / self.renderer.domElement.clientHeight) * 2 + 1,
+            0.5);
+        event.preventDefault();
+
+        let raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, self.camera);
+
+        for (let layerId in self.layers) {
+            console.log('self.layers[layerId].type:', JSON.stringify(self.layers[layerId].type));
+
+            switch (self.layers[layerId].type) {
+                case 'building':
+
+                    console.log('self.buildingObjects:', (self.buildingObjects));
+                    // let intersects = raycaster.intersectObjects(self.buildingObjects, true);
+
+                    let intersects = raycaster.intersectObjects(self.buildingObjects, false);
+                    //
+                    console.log('intersects.length:', JSON.stringify(intersects.length));
+                    // console.log('intersects.length:', JSON.stringify(intersects.length));
+                    if (intersects.length > 0) {
+                        console.log('intersects:', (intersects));
+                        let distance = 0;
+                        let intersect = null;
+                        for (let idx = 0; idx < intersects.length; idx++) {
+                            if (distance === 0 || intersects[idx].distance < distance) {
+                                intersect = intersects[idx];
+                                distance = intersect.distance;
+                            }
+                        }
+                        if (intersect === null) break;
+                        if (!intersect.object.hasOwnProperty('geometry')) break;
+                        let building = intersect.object.parent;
+                        if (scope.lastSelectedBuilding.id !== undefined && building.userData.osm.id === scope.lastSelectedBuilding.id) {
+                            // BREAK
+                            break;
+                        }
+                        if (scope.lastSelectedBuilding.id !== undefined && building.userData.osm.id !== scope.lastSelectedBuilding.id) {
+                            // Remove previous selection.
+                            scope.lastSelectedBuilding.tileMesh.remove(scope.lastSelectedBuilding.bboxMesh);
+                            scope.lastSelectedBuilding.tileMesh.remove(scope.lastSelectedBuilding.bboxCenter);
+                            for (let i = scope.lastSelectedBuilding.building.children.length - 1; i >= 0; i--) {
+                                let buildingBlockMesh = scope.lastSelectedBuilding.building.children[i];
+                                buildingBlockMesh.material.transparent = false;
+                            }
+                            // scope.lastSelectedBuildinguildingBlockMesh.material.transparent = true;
+                        }
+
+                        for (let i = building.children.length - 1; i >= 0; i--) {
+                            let buildingBlockMesh = building.children[i];
+                            buildingBlockMesh.material.transparent = true;
+
+                            // buildingBlockMesh.material = new THREE.MeshPhongMaterial({
+                            //     color: buildingBlockMesh.material.color,
+                            //     transparent: true,
+                            //     opacity: 0.4
+                            // });
+                        }
+
+                        let tileMesh = building.parent;
+
+                        console.log('intersect:', intersect);
+                        console.log('intersect.object:', JSON.stringify(intersect.object));
+                        console.log('intersect.object.userData:', intersect.object.userData);
+                        console.log('building:', building);
+
+                        // Tutorial - Process bounding box - method setFromObject
+                        // Scene coordinates.
+                        // let setFromObject = new THREE.Box3().setFromObject(building);
+
+                        // Tutorial - Process bounding box - method computeBoundingBox
+                        // Bad: not hierarchical.
+                        // Target object coordinates.
+                        // buildingBlock.object.geometry.computeBoundingBox();
+                        // let computeBoundingBox = buildingBlock.object.geometry.boundingBox.clone();
+
+                        // Tutorial - Process bounding box - method BoxHelper
+                        let bboxMesh = new THREE.BoxHelper(building);
+                        console.log('bboxMesh: ', bboxMesh);
+                        let bboxWorldPos = new THREE.Vector3();
+                        bboxWorldPos.setFromMatrixPosition(tileMesh.matrixWorld);
+                        console.log('bboxWorldPos: ', bboxWorldPos);
+                        bboxMesh.position.setX(-bboxWorldPos.x);
+                        bboxMesh.position.setY(-bboxWorldPos.y);
+
+                        let bboxCenter = new THREE.Object3D();
+                        bboxCenter.position.set(
+                            bboxMesh.geometry.boundingSphere.center.x - bboxWorldPos.x,
+                            bboxMesh.geometry.boundingSphere.center.y - bboxWorldPos.y,
+                            bboxMesh.geometry.boundingSphere.center.z - bboxWorldPos.z);
+                        // bboxCenter.add(toolbox.originAxes(4, 1000));
+
+                        tileMesh.add(bboxCenter);
+                        tileMesh.add(bboxMesh);
+
+                        scope.lastSelectedBuilding.id = building.userData.osm.id;
+                        scope.lastSelectedBuilding.tileMesh = tileMesh;
+                        scope.lastSelectedBuilding.bboxMesh = bboxMesh;
+                        scope.lastSelectedBuilding.bboxCenter = bboxCenter;
+                        scope.lastSelectedBuilding.building = building;
+
+                        // Add axis to scene
+                        // self.scene.add(toolbox.originAxes(4, 1000));
+
+                        console.log('building.userData.info.tags:', building.userData.osm.tags.building);
+
+                        let message = 'id: ' + building.userData.osm.id;
+                        if (building.userData.osm.tags.hasOwnProperty('name')) {
+                            message = building.userData.osm.tags.name;
+                        } else if (building.userData.osm.tags.hasOwnProperty('addr:street')) {
+                            message = (building.userData.osm.tags.hasOwnProperty('addr:housenumber')) ? building.userData.osm.tags['addr:housenumber'] : '';
+                            message = building.userData.osm.tags['addr:street'];
+                        }
+
+                        let spritey = toolbox.makeTextSprite(message, {
+                            fontsize: 24,
+                            borderColor: {
+                                r: 255,
+                                g: 0,
+                                b: 0,
+                                a: 1.0
+                            },
+                            backgroundColor: {
+                                r: 255,
+                                g: 100,
+                                b: 100,
+                                a: 0.8
+                            }
+                        });
+                        // let spritey2 = toolbox.makeTextSprite('abcdefghijkl', {
+                        //     fontsize: 24,
+                        //     borderColor: {
+                        //         r: 255,
+                        //         g: 0,
+                        //         b: 0,
+                        //         a: 1.0
+                        //     },
+                        //     backgroundColor: {
+                        //         r: 255,
+                        //         g: 100,
+                        //         b: 100,
+                        //         a: 0.8
+                        //     }
+                        // });
+                        // let spritey3 = toolbox.makeTextSprite(
+                        //     'abcdefghijklmnopqrstuv', {
+                        //         fontsize: 24,
+                        //         borderColor: {
+                        //             r: 255,
+                        //             g: 0,
+                        //             b: 0,
+                        //             a: 1.0
+                        //         },
+                        //         backgroundColor: {
+                        //             r: 255,
+                        //             g: 100,
+                        //             b: 100,
+                        //             a: 0.8
+                        //         }
+                        //     });
+
+                        spritey.position.setZ(bboxMesh.geometry.boundingSphere.radius);
+                        // spritey2.position.setZ(bboxMesh.geometry.boundingSphere.radius + 35);
+                        // spritey3.position.setZ(bboxMesh.geometry.boundingSphere.radius + 70);
+
+                        console.log('spritey:', spritey);
+
+                        bboxCenter.add(spritey);
+                        // bboxCenter.add(spritey2);
+                        // bboxCenter.add(spritey3);
+
+                        self.render();
+                    }
+
+                    /*
+                    // Parse all the faces
+                    for ( var i in intersects ) {
+
+                    	intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
+
+                    }
+                    */
+                    break;
+            }
+        }
+
+        // console.log('intersects:', JSON.stringify(intersects));
+        //
+        // if (intersects.length > 0) {
+        //     intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
+        // }
+    }
+
     // LAYERS
     addLayer(openEarthViewLayer, openEarthViewLoader) {
         let layerName = openEarthViewLayer.getName();
@@ -216,7 +433,7 @@ class World {
                         2,
                         xtile,
                         ytile,
-                        function(texture) {
+                        (texture) => {
                             // tileMesh.material.map = texture;
                             // tileMesh.material.needsUpdate = true;
                             // this.render();
@@ -249,70 +466,117 @@ class World {
     // this.updateSceneLazy();
 
     render() {
+        // requestAnimationFrame(render);
+        // //////////////////////////////////////////////////////////
+        // var oldXtile;
+        // var oldYtile;
+        // var oldZoom = this.zoom;
+        // var dist = new THREE.Vector3().copy(this.controls.object.position).sub(this.controls.target).length();
+        // var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
+
+        // if (zoom__ > this.ZOOM_MIN) {
+        //     this.zoom = zoom__;
+        // }
+
+        if (this.lonStamp !== this.controls.getLongitude() ||
+            this.latStamp !== this.controls.getLatitude()) {
+            // this.lonStamp = this.controls.getLongitude();
+            // this.latStamp = this.controls.getLatitude();
+            this.earth.rotation.set(
+                this.controls.getLatitude() * Math.PI / 180,
+                (-this.controls.getLongitude()) * Math.PI / 180,
+                0);
+            // oldXtile = this.xtile;
+            // oldYtile = this.ytile;
+            // console.log('toolbox:', toolbox);
+            // this.xtile = toolbox.long2tile(this.lonStamp, this.zoom);
+            // this.ytile = toolbox.lat2tile(this.latStamp, this.zoom);
+
+            // if (Math.abs(oldXtile - this.xtile) >= 1 ||
+            //     Math.abs(oldYtile - this.ytile) >= 1) {
+            //     this.updateScene({
+            //         'lon': this.lonStamp,
+            //         'lat': this.latStamp,
+            //         'alti': this.altitude
+            //     });
+            // }
+        }
+        // else if (Math.abs(this.zoom - oldZoom) >= 1) {
+        //     this.updateScene({
+        //         'lon': this.lonStamp,
+        //         'lat': this.latStamp,
+        //         'alti': this.altitude
+        //     });
+        // }
+
+        // //////////////////////////////////////////////////////////
         this.renderer.render(this.scene, this.camera);
     }
 
     updateSceneLazy() {
-            // requestAnimationFrame(render);
-            // //////////////////////////////////////////////////////////
-            var oldXtile;
-            var oldYtile;
-            var oldZoom = this.zoom;
-            var dist = new THREE.Vector3().copy(this.controls.object.position).sub(this.controls.target).length();
-            var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
+        // requestAnimationFrame(render);
+        // //////////////////////////////////////////////////////////
+        var oldXtile;
+        var oldYtile;
+        var oldZoom = this.zoom;
+        var dist = new THREE.Vector3().copy(this.controls.object.position).sub(this.controls.target).length();
+        var zoom__ = Math.floor(Math.max(Math.min(Math.floor(27 - Math.log2(dist)), 19), 1));
 
-            if (zoom__ > this.ZOOM_MIN) {
-                this.zoom = zoom__;
-            }
+        if (zoom__ > this.ZOOM_MIN) {
+            this.zoom = zoom__;
+        }
 
-            if (this.lonStamp !== this.controls.getLongitude() ||
-                this.latStamp !== this.controls.getLatitude()) {
-                this.lonStamp = this.controls.getLongitude();
-                this.latStamp = this.controls.getLatitude();
-                this.earth.rotation.set(
-                    this.controls.getLatitude() * Math.PI / 180,
-                    (-this.controls.getLongitude()) * Math.PI / 180,
-                    0);
-                oldXtile = this.xtile;
-                oldYtile = this.ytile;
-                console.log('toolbox:', toolbox);
-                this.xtile = toolbox.long2tile(this.lonStamp, this.zoom);
-                this.ytile = toolbox.lat2tile(this.latStamp, this.zoom);
+        if (this.lonStamp !== this.controls.getLongitude() ||
+            this.latStamp !== this.controls.getLatitude()) {
+            this.lonStamp = this.controls.getLongitude();
+            this.latStamp = this.controls.getLatitude();
+            this.earth.rotation.set(
+                this.controls.getLatitude() * Math.PI / 180,
+                (-this.controls.getLongitude()) * Math.PI / 180,
+                0);
+            oldXtile = this.xtile;
+            oldYtile = this.ytile;
+            // console.log('toolbox:', toolbox);
+            this.xtile = toolbox.long2tile(this.lonStamp, this.zoom);
+            this.ytile = toolbox.lat2tile(this.latStamp, this.zoom);
 
-                if (Math.abs(oldXtile - this.xtile) >= 1 ||
-                    Math.abs(oldYtile - this.ytile) >= 1) {
-                    this.updateScene({
-                        'lon': this.lonStamp,
-                        'lat': this.latStamp,
-                        'alti': this.altitude
-                    });
-                }
-            } else if (Math.abs(this.zoom - oldZoom) >= 1) {
+            if (Math.abs(oldXtile - this.xtile) >= 1 ||
+                Math.abs(oldYtile - this.ytile) >= 1) {
                 this.updateScene({
                     'lon': this.lonStamp,
                     'lat': this.latStamp,
                     'alti': this.altitude
                 });
             }
-            // //////////////////////////////////////////////////////////
-            this.renderer.render(this.scene, this.camera);
+        } else if (Math.abs(this.zoom - oldZoom) >= 1) {
+            this.updateScene({
+                'lon': this.lonStamp,
+                'lat': this.latStamp,
+                'alti': this.altitude
+            });
         }
-        //
-        // goUpdateSceneLazy() {
-        //     self.updateSceneLazy();
-        // }
+
+        // //////////////////////////////////////////////////////////
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    //
+    // goUpdateSceneLazy() {
+    //     self.updateSceneLazy();
+    // }
 
     updateScene(position) {
         // function updateScene(position) {
-        var tiles = {};
-        var currentIds = {};
-        var zoomMax;
-        var zoomMin;
-        var oriGround;
+        let tiles = {};
+        let currentIds = {};
+        let zoomMax;
+        let zoomMin;
+        let oriGround;
 
         this.xtile = toolbox.long2tile(position.lon, this.zoom);
         this.ytile = toolbox.lat2tile(position.lat, this.zoom);
         this.earth.remove(this.tileGroups);
+        this.buildingObjects = [];
         this.tileGroups = new THREE.Object3D();
         this.earth.add(this.tileGroups);
         oriGround = new THREE.Object3D();
@@ -380,10 +644,10 @@ class World {
             maxYtile = Math.floor((ytile_ + (Math.pow(2, (size - 1)) - 1)) / 2) * 2 + 1;
             modulus = (zoom_ > 0) ? Math.pow(2, zoom_) : 0;
 
-            // var minXtile = xtile_;
-            // var maxXtile = xtile_;
-            // var minYtile = ytile_;
-            // var maxYtile = ytile_;
+            // minXtile = xtile_;
+            // maxXtile = xtile_;
+            // minYtile = ytile_;
+            // maxYtile = ytile_;
             for (let atile = minXtile; atile <= maxXtile; atile++) {
                 for (let btile = minYtile; btile <= maxYtile; btile++) {
                     let id;
@@ -423,7 +687,7 @@ class World {
                                 }
                                 switch (this.terrains[terrainId].type) {
                                     case 'terrain':
-                                        (function(tileSupport, tileMesh, zoom, xtile, ytile) {
+                                        ((tileSupport, tileMesh, zoom, xtile, ytile) => {
 
                                             var lon1 = toolbox.tile2long(xtile, zoom_);
                                             var lon2 = toolbox.tile2long(xtile + 1, zoom_);
@@ -505,13 +769,13 @@ class World {
                                         zoom_,
                                         atile % modulus,
                                         btile % modulus,
-                                        function(texture) {
+                                        (texture) => {
                                             tileMesh.material.map = texture;
                                             tileMesh.material.needsUpdate = true;
                                             self.render();
                                         }
                                     );
-                                    (function(tileMesh, zoom, xtile, ytile, layer) {
+                                    ((tileMesh, zoom, xtile, ytile, layer) => {
                                         var url = layer.getUrl(
                                             zoom,
                                             ((zoom > 0) ? (xtile % Math.pow(2, zoom)) : 0),
@@ -523,7 +787,7 @@ class World {
                                             zoom,
                                             xtile,
                                             ytile,
-                                            function(texture) {
+                                            texture => {
                                                 tileMesh.material.map = texture;
                                                 tileMesh.material.needsUpdate = true;
                                                 self.render();
@@ -541,7 +805,10 @@ class World {
                                             ((97 * (btile % modulus)) % 256);
                                         const lod = Math.max(0, zoom_ - 15);
 
-                                        (function(tileSupport, zoom, xtile, ytile, lod_, defaultColor_) {
+                                        ((tileSupport, zoom, xtile, ytile, lod_, defaultColor_) => {
+                                            const localUrl = self.layers[layerId].getLocalUrl(
+                                                zoom, xtile, ytile);
+                                            // console.log('localUrl:', localUrl);
                                             const url = self.layers[layerId].getUrl(
                                                 zoom, xtile, ytile);
 
@@ -550,13 +817,22 @@ class World {
                                                     x: xtile,
                                                     y: ytile
                                                 },
+                                                localUrl,
                                                 url,
-                                                function(obj) {
-                                                    tileSupport.add(obj);
+                                                tileMesh => {
+                                                    tileSupport.add(tileMesh);
+                                                    for (let i = tileMesh.children.length - 1; i >= 0; i--) {
+                                                        let buildingMesh = tileMesh.children[i];
+                                                        for (let j = buildingMesh.children.length - 1; j >= 0; j--) {
+                                                            self.buildingObjects.push(buildingMesh.children[j]);
+                                                        }
+                                                    }
+                                                    // self.buildingObjects.push(obj);
+                                                    // self.buildingObjects.push(obj);
                                                     self.render();
                                                 },
-                                                function() {},
-                                                function() {},
+                                                () => {},
+                                                () => {},
                                                 lod_,
                                                 defaultColor_);
                                         })(tileSupport, zoom_, (atile % modulus), (btile % modulus), lod, defaultColor);
@@ -575,8 +851,13 @@ class World {
     setCenter(lon, lat) {
         this.controls.setCenter(lon, lat);
     };
-    setPosition(lon, lat, phi, theta) {
-        this.controls.setPosition(lon, lat, phi, theta);
+    setPosition(lon, lat, alti, phi, theta) {
+        this.controls.setPosition(lon, lat, alti, phi, theta);
+        // this.updateScene({
+        //     'lon': this.lonStamp,
+        //     'lat': this.latStamp,
+        //     'alti': this.altitude
+        // });
     };
 }
 World.ZOOM_FLAT = 13;

@@ -63,8 +63,9 @@ class TileLoader {
             // console.log('(2) scope.textureRequestsCount: ', scope.textureRequestsCount);
             let scope = this;
             (function(url, id) {
-                // console.log("Asking for loading: ", url);
+                // console.log('Asking for loading: ', url);
                 // zoom =
+
                 textureAliveRequests[id].request = scope.textureLoader.load(url,
                     function(texture) {
                         textures[id] = texture;

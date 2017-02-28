@@ -216,6 +216,121 @@ class Toolbox {
     static latOffsetMeter2lat(lat, y) {
         return (y / Toolbox.R) + lat;
     }
+
+    static makeTextSprite(message, parameters) {
+        if (parameters === undefined) parameters = {};
+        let fontface = parameters.hasOwnProperty('fontface') ?
+            parameters['fontface'] : 'Arial';
+        let fontsize = parameters.hasOwnProperty('fontsize') ?
+            parameters['fontsize'] : 108;
+        let borderThickness = parameters.hasOwnProperty('borderThickness') ?
+            parameters['borderThickness'] : 4;
+        let borderColor = parameters.hasOwnProperty('borderColor') ?
+            parameters['borderColor'] : {
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 1.0
+            };
+        let backgroundColor = parameters.hasOwnProperty('backgroundColor') ?
+            parameters['backgroundColor'] : {
+                r: 255,
+                g: 255,
+                b: 255,
+                a: 1.0
+            };
+
+        // let spriteAlignment = THREE.SpriteAlignment.topLeft;
+
+        let canvas = document.createElement('canvas');
+        // let canvas = document.getElementById('osmworld');
+        console.log('canvas:', canvas);
+        let context = canvas.getContext('2d');
+        context.font = 'Bold ' + fontsize + 'px ' + fontface;
+
+        // get size data (height depends only on font size)
+        let metrics = context.measureText(message);
+        let textWidth = metrics.width;
+
+        // background color
+        context.fillStyle = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
+        // border color
+        context.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
+
+        context.lineWidth = borderThickness;
+        Toolbox.roundRect(context, borderThickness / 2 + 140 - textWidth / 2, borderThickness / 2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+        // Toolbox.roundRect(context, borderThickness / 2 + textWidth / 2, borderThickness / 2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+
+        // 1.4 is extra height factor for text below baseline: g,j,p,q.
+
+        // text color
+        context.fillStyle = 'rgba(0, 0, 0, 1.0)';
+
+        context.fillText(message, borderThickness + 140 - textWidth / 2, fontsize + borderThickness);
+        // context.fillText(message, 0, fontsize + borderThickness);
+
+        // canvas contents will be used for a texture
+        let texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+
+        let spriteMaterial = new THREE.SpriteMaterial({
+            map: texture,
+            useScreenCoordinates: false
+                // alignment: spriteAlignment
+        });
+        let sprite = new THREE.Sprite(spriteMaterial);
+        sprite.scale.set(100, 50, 1.0);
+        return sprite;
+    }
+    static roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    }
+    static originAxes(radius, height) {
+        // static originAxes() {
+        let origin = new THREE.Object3D();
+
+        //radiusTop, radiusBottom, height, segmentsRadius, segmentsHeight, openEnded
+        let ge3 = new THREE.CylinderGeometry(radius, radius, height, 4, 1);
+        let axeXMesh = new THREE.Mesh(ge3,
+            new THREE.MeshBasicMaterial({
+                color: Math.random() * 0xffffff,
+                opacity: 0.7
+            })
+        );
+        axeXMesh.rotation.set(0, 0, Math.PI / 2);
+        axeXMesh.position.setX(500);
+        origin.add(axeXMesh);
+        let axeYMesh = new THREE.Mesh(ge3,
+            new THREE.MeshBasicMaterial({
+                color: Math.random() * 0xffffff,
+                opacity: 0.7
+            })
+        );
+        axeYMesh.position.setY(500);
+        origin.add(axeYMesh);
+        let axeZMesh = new THREE.Mesh(ge3,
+            new THREE.MeshBasicMaterial({
+                color: Math.random() * 0xffffff,
+                opacity: 0.7
+            })
+        );
+        axeZMesh.rotation.set(Math.PI / 2, 0, 0);
+        axeZMesh.position.setZ(500);
+        origin.add(axeZMesh);
+        return origin;
+    }
 };
 Toolbox.R = 6378.137;
 Toolbox.singleton = new Toolbox();

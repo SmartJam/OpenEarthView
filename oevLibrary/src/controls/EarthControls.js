@@ -57,7 +57,7 @@ let self;
 
 class EarthControls extends THREE.EventDispatcher {
     // var scope = this;
-    constructor(object, domElement, render, coord) {
+    constructor(object, domElement, render, updateScene, coord, onSelectObject) {
         super();
         self = this;
         if (!instance) {
@@ -67,7 +67,10 @@ class EarthControls extends THREE.EventDispatcher {
         }
         this.object = object;
         this.render = render;
+        this.updateScene = updateScene;
         this.domElement = (domElement !== undefined) ? domElement : document;
+        this.onSelectObject = onSelectObject;
+        // this.selection = null;
         // Set to false to disable this control
         this.enabled = true;
         // "target" sets the location of focus, where the object orbits around
@@ -155,6 +158,9 @@ class EarthControls extends THREE.EventDispatcher {
         // internals
         //
 
+        // this.timer = setTimeout(function() {
+        // 	this.render();
+        // }, 0);
         this.startEvent = {
             type: 'start'
         };
@@ -204,6 +210,7 @@ class EarthControls extends THREE.EventDispatcher {
         this.domElement.addEventListener('touchmove', this.onTouchMove, false);
 
         this.domElement.addEventListener('dblclick', this.onDblClick, false);
+        this.domElement.addEventListener('click', this.onClick, false);
 
         window.addEventListener('keydown', this.onKeyDown, false);
 
@@ -218,25 +225,30 @@ class EarthControls extends THREE.EventDispatcher {
         this.longitude = lon;
         this.latitude = lat;
         this.render();
+		this.delayUpdateScene();
     }
 
     setPolarAngle(phi) {
         this.spherical.phi = phi;
         this.update();
         this.render();
+		this.delayUpdateScene();
     }
     setAzimuthalAngle(theta) {
         this.spherical.theta = theta;
         this.update();
         this.render();
+		this.delayUpdateScene();
     }
-    setPosition(lon, lat, phi, theta) {
+    setPosition(lon, lat, alti, phi, theta) {
         this.longitude = lon;
         this.latitude = lat;
+        this.object.position.z = alti;
+        // this.camera.position.z = alti;
         this.sphericalDelta.phi = phi;
         this.sphericalDelta.theta = theta;
         this.update();
-        this.render();
+        this.updateScene();
     }
 
     getPolarAngle() {
@@ -247,18 +259,23 @@ class EarthControls extends THREE.EventDispatcher {
     }
 
     reset() {
-            this.target.copy(this.target0);
-            this.object.position.copy(this.position0);
-            this.object.zoom = this.zoom0;
-            this.object.updateProjectionMatrix();
-            this.dispatchEvent({
-                type: 'change'
-            });
-            this.update();
-            this.render();
-            this.state = EarthControls.STATE.NONE;
-        }
-        // this method is exposed, but perhaps it would be better if we can make it private...
+        this.target.copy(this.target0);
+        this.object.position.copy(this.position0);
+        this.object.zoom = this.zoom0;
+        this.object.updateProjectionMatrix();
+        this.dispatchEvent({
+            type: 'change'
+        });
+        this.update();
+        this.render();
+		this.delayUpdateScene();
+        this.state = EarthControls.STATE.NONE;
+    }
+
+    // setSelection(selection) {
+    //         this.selection = selection;
+    //     }
+    // this method is exposed, but perhaps it would be better if we can make it private...
     update() {
         let offset = new THREE.Vector3();
         // so camera.up is the orbit axis
@@ -300,6 +317,7 @@ class EarthControls extends THREE.EventDispatcher {
             this.sphericalDelta.set(0, 0, 0);
         }
         this.scale = 1;
+
         // panOffset.set(0, 0, 0);
         // update condition is:
         // min(camera displacement, camera rotation in radians)^2 > EPS
@@ -330,7 +348,9 @@ class EarthControls extends THREE.EventDispatcher {
         document.removeEventListener('mouseup', this.onMouseUp, false);
         document.removeEventListener('mouseout', this.onMouseUp, false);
         document.removeEventListener('dblclick', this.onDblClick, false);
+        document.removeEventListener('click', this.onClick, false);
         window.removeEventListener('keydown', this.onKeyDown, false);
+
         //scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
     };
 
@@ -363,6 +383,8 @@ class EarthControls extends THREE.EventDispatcher {
         }
         // latitude = (latitude + 90) % 180 - 90;
         this.longitude = (this.longitude + 540) % 360 - 180;
+        // console.log('lon:', this.longitude);
+        // console.log('lat:', this.latitude);
     }
 
     getLongitude() {
@@ -382,6 +404,8 @@ class EarthControls extends THREE.EventDispatcher {
         }
         // latitude = (latitude + 90) % 180 - 90;
         this.longitude = (this.longitude + 360) % 360;
+        // console.log('lon:', this.longitude);
+        // console.log('lat:', this.latitude);
     }
 
     getLatitude() {
@@ -460,9 +484,8 @@ class EarthControls extends THREE.EventDispatcher {
         self.panStart.set(event.clientX, event.clientY);
     }
 
-    // XXX
     handleMouseMoveRotate(event) {
-        console.log('handleMouseMoveRotate');
+        // console.log('handleMouseMoveRotate');
         self.rotateEnd.set(event.clientX, event.clientY);
         self.rotateDelta.subVectors(self.rotateEnd, self.rotateStart);
         let element = self.domElement === document ? self.domElement.body : self.domElement;
@@ -473,6 +496,16 @@ class EarthControls extends THREE.EventDispatcher {
         self.rotateStart.copy(self.rotateEnd);
         self.update();
         self.render();
+        // self.delayUpdateScene();
+    }
+
+    delayUpdateScene() {
+        // console.log('Reset timer.');
+        clearTimeout(this.timer);
+        this.timer = setTimeout(function() {
+            // console.log('Render after delay.');
+            self.updateScene();
+        }, EarthControls.RENDER_DELAY);
     }
 
     handleMouseMoveDolly(event) {
@@ -487,6 +520,7 @@ class EarthControls extends THREE.EventDispatcher {
         self.dollyStart.copy(self.dollyEnd);
         self.update();
         self.render();
+        self.delayUpdateScene();
     }
 
     handleMouseMovePan(event) {
@@ -497,29 +531,52 @@ class EarthControls extends THREE.EventDispatcher {
         self.panStart.copy(self.panEnd);
         self.update();
         self.render();
+        self.delayUpdateScene();
     }
 
     handleMouseUp(event) {
         //console.log( 'handleMouseUp' );
     }
 
-    handleDblClick(event) {
-        // console.log('dblClick:', JSON.stringify(event));
-        // event.preventDefault();
-        // var mouse3D = new THREE.Vector3(
-        //     (event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1,
-        //     0.5);
-        // // var projector = new THREE.Projector();
-        // // var raycaster = projector.pickingRay(mouse3D.clone(), camera);
-        // var raycaster = new THREE.Raycaster();
-        // raycaster.setFromCamera(mouse3D, camera);
-        // var intersects = raycaster.intersectObjects(objects);
-        // console.log('intersects:', JSON.stringify(intersects));
-        //
-        // if (intersects.length > 0) {
-        //     intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
-        // }
+    handleClick(event) {
+        this.onSelectObject(event);
     }
+
+    handleDblClick(event) {
+        // this.onSelectObject(event);
+    }
+
+    // // function onDocumentMouseDown(event) {
+    //
+    //     event.preventDefault();
+    //
+    //     mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+    //     mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+    //
+    //     raycaster.setFromCamera(mouse, camera);
+    //
+    //     var intersects = raycaster.intersectObjects(objects);
+    //
+    //     if (intersects.length > 0) {
+    //
+    //         intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
+    //
+    //         var particle = new THREE.Sprite(particleMaterial);
+    //         particle.position.copy(intersects[0].point);
+    //         particle.scale.x = particle.scale.y = 16;
+    //         scene.add(particle);
+    //
+    //     }
+    //
+    //     /*
+    //     // Parse all the faces
+    //     for ( var i in intersects ) {
+    //
+    //     	intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
+    //
+    //     }
+    //     */
+    // }
 
     handleMouseWheel(event) {
         //console.log( 'handleMouseWheel' );
@@ -539,6 +596,7 @@ class EarthControls extends THREE.EventDispatcher {
         }
         self.update();
         self.render();
+        self.delayUpdateScene();
     }
 
     handleKeyDown(event) {
@@ -548,21 +606,25 @@ class EarthControls extends THREE.EventDispatcher {
                 self.pan(0, self.keyPanSpeed);
                 self.update();
                 self.render();
+                self.delayUpdateScene();
                 break;
             case self.keys.BOTTOM:
                 self.pan(0, -self.keyPanSpeed);
                 self.update();
                 self.render();
+                self.delayUpdateScene();
                 break;
             case self.keys.LEFT:
                 self.pan(self.keyPanSpeed, 0);
                 self.update();
                 self.render();
+                self.delayUpdateScene();
                 break;
             case self.keys.RIGHT:
                 self.pan(-self.keyPanSpeed, 0);
                 self.update();
                 self.render();
+                self.delayUpdateScene();
                 break;
         }
     }
@@ -597,6 +659,7 @@ class EarthControls extends THREE.EventDispatcher {
         self.rotateStart.copy(self.rotateEnd);
         self.update();
         self.render();
+        self.delayUpdateScene();
     }
 
     handleTouchMoveDolly(event) {
@@ -615,6 +678,7 @@ class EarthControls extends THREE.EventDispatcher {
         self.dollyStart.copy(self.dollyEnd);
         self.update();
         self.render();
+        self.delayUpdateScene();
     }
 
     handleTouchMovePan(event) {
@@ -625,6 +689,7 @@ class EarthControls extends THREE.EventDispatcher {
         self.panStart.copy(self.panEnd);
         self.update();
         self.render();
+        self.delayUpdateScene();
     }
 
     handleTouchEnd(event) {
@@ -656,6 +721,7 @@ class EarthControls extends THREE.EventDispatcher {
             document.addEventListener('mouseup', self.onMouseUp, false);
             document.addEventListener('mouseout', self.onMouseUp, false);
             document.addEventListener('dblClick', self.onDblClick, false);
+            document.addEventListener('click', self.onClick, false);
             self.dispatchEvent(self.startEvent);
         }
     }
@@ -682,6 +748,7 @@ class EarthControls extends THREE.EventDispatcher {
         document.removeEventListener('mouseup', self.onMouseUp, false);
         document.removeEventListener('mouseout', self.onMouseUp, false);
         document.removeEventListener('dblClick', self.onDblClick, false);
+        document.removeEventListener('click', self.onClick, false);
         self.dispatchEvent(self.endEvent);
         self.state = EarthControls.STATE.NONE;
     }
@@ -693,6 +760,19 @@ class EarthControls extends THREE.EventDispatcher {
         document.removeEventListener('mouseup', self.onMouseUp, false);
         document.removeEventListener('mouseout', self.onMouseUp, false);
         document.removeEventListener('dblClick', self.onDblClick, false);
+        document.removeEventListener('click', self.onClick, false);
+        self.dispatchEvent(self.endEvent);
+        self.state = EarthControls.STATE.NONE;
+    }
+
+    onClick(event) {
+        if (self.enabled === false) return;
+        self.handleClick(event);
+        document.removeEventListener('mousemove', self.onMouseMove, false);
+        document.removeEventListener('mouseup', self.onMouseUp, false);
+        document.removeEventListener('mouseout', self.onMouseUp, false);
+        document.removeEventListener('dblClick', self.onDblClick, false);
+        document.removeEventListener('click', self.onClick, false);
         self.dispatchEvent(self.endEvent);
         self.state = EarthControls.STATE.NONE;
     }
@@ -863,6 +943,7 @@ Object.defineProperties(EarthControls.prototype, {
         }
     }
 });
+EarthControls.RENDER_DELAY = 500;
 
 export default EarthControls;
 
